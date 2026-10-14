@@ -728,7 +728,7 @@
               <p class="text-[11px] text-morandi-slate">可填入您的大名、學校或任教班級；若留空提示詞內則不加入署名</p>
             </div>
             <div class="flex items-center gap-1.5">
-              <input id="teacherName" type="text" value="三年二班 林老師" placeholder="例如：三年二班 林老師（可留空）" oninput="updatePrompt()" 
+              <input id="teacherName" type="text" value="新趨勢老師" placeholder="例如：三年二班 林老師（可留空）" oninput="updatePrompt()" 
                      class="w-full sm:w-56 px-3 py-1.5 rounded-xl border border-morandi-sand text-xs bg-morandi-oatmeal/50 font-medium text-morandi-dark focus:outline-none focus:ring-2 focus:ring-morandi-sage/40">
             </div>
           </div>
@@ -953,6 +953,7 @@
       document.getElementById('enableEmbed').checked = data.embed;
       document.getElementById('embedUrl').value = data.embedUrl;
       document.getElementById('embedNotes').value = data.embedNotes;
+      document.getElementById('customArchText').value = '';
       toggleEmbedSection();
       toggleCustomArch();
 
@@ -969,8 +970,14 @@
     // Reset Form
     function resetForm() {
       document.querySelectorAll('input[name="grade"]').forEach(c => c.checked = false);
+      document.querySelectorAll('input[name="subject"]').forEach(c => c.checked = false);
+      document.querySelectorAll('input[name="webType"]').forEach(c => c.checked = false);
+      document.querySelectorAll('input[name="webStyle"]').forEach(c => c.checked = false);
+      document.querySelectorAll('input[name="interaction"]').forEach(c => c.checked = false);
+      document.querySelectorAll('input[name="quizType"]').forEach(c => c.checked = false);
       document.getElementById('unitName').value = '';
       document.getElementById('unitFocus').value = '';
+      document.getElementById('teacherName').value = '';
       document.getElementById('enableEmbed').checked = false;
       document.getElementById('embedUrl').value = '';
       document.getElementById('embedNotes').value = '';
@@ -1162,39 +1169,52 @@ ${customTeacher ? `
     function copyGeneratedPrompt() {
       const text = document.getElementById('promptOutput').textContent;
       if (!text) return;
-
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      
-      try {
-        const success = document.execCommand('copy');
-        if (success) {
-          showToast("提示詞已成功複製到剪貼簿！", "請點擊上方按鈕前往 Gemini 或 ChatGPT 貼上");
-          const copyBtn = document.getElementById('copyBtn');
-          const originalHtml = copyBtn.innerHTML;
-          copyBtn.innerHTML = '<i class="fa-solid fa-check text-base"></i> 已成功複製！';
-          copyBtn.classList.remove('bg-morandi-sage');
-          copyBtn.classList.add('bg-emerald-600');
-          setTimeout(() => {
-            copyBtn.innerHTML = originalHtml;
-            copyBtn.classList.remove('bg-emerald-600');
-            copyBtn.classList.add('bg-morandi-sage');
-          }, 2000);
+      const done = () => {
+        showToast("提示詞已成功複製到剪貼簿！", "請點擊上方按鈕前往 Gemini 或 ChatGPT 貼上");
+        const copyBtn = document.getElementById('copyBtn');
+        const originalHtml = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<i class="fa-solid fa-check text-base"></i> 已成功複製！';
+        copyBtn.classList.remove('bg-morandi-sage');
+        copyBtn.classList.add('bg-emerald-600');
+        setTimeout(() => {
+          copyBtn.innerHTML = originalHtml;
+          copyBtn.classList.remove('bg-emerald-600');
+          copyBtn.classList.add('bg-morandi-sage');
+        }, 2000);
+      };
+      const legacyCopy = () => {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        let success = false;
+        try {
+          success = document.execCommand('copy');
+        } catch (err) {
+          success = false;
         }
-      } catch (err) {
+        document.body.removeChild(textarea);
+        return success;
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(() => {
+          if (legacyCopy()) done();
+          else showToast("複製失敗，請手動全選複製", "可使用鍵盤 Ctrl+A, Ctrl+C");
+        });
+      } else if (legacyCopy()) {
+        done();
+      } else {
         showToast("複製失敗，請手動全選複製", "可使用鍵盤 Ctrl+A, Ctrl+C");
       }
-      document.body.removeChild(textarea);
     }
 
     // Download txt
     function downloadPromptText() {
       const text = document.getElementById('promptOutput').textContent;
-      const unitName = document.getElementById('unitName').value.trim() || '國小教學網頁';
+      const rawName = document.getElementById('unitName').value.trim() || '國小教學網頁';
+      const unitName = rawName.replace(/[\\/:*?"<>|]/g, '_');
       const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -1203,18 +1223,20 @@ ${customTeacher ? `
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
       showToast("文字檔已開始下載！", `${unitName}_AI提示詞.txt`);
     }
 
     // Toast notification
+    let toastTimer = null;
     function showToast(title, subtitle) {
       const toast = document.getElementById('toast');
       document.getElementById('toastTitle').textContent = title;
       document.getElementById('toastSub').textContent = subtitle || '';
       toast.classList.remove('translate-y-24', 'opacity-0');
       toast.classList.add('translate-y-0', 'opacity-100');
-      setTimeout(() => {
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
         toast.classList.remove('translate-y-0', 'opacity-100');
         toast.classList.add('translate-y-24', 'opacity-0');
       }, 3000);
