@@ -1,0 +1,2456 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>除法探索樂園 - 國小四年級數學互動教室</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2357466f'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='serif'%3E%E6%96%B0%3C/text%3E%3C/svg%3E">
+  
+  <!-- 載入 Google Fonts 圓體字型 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            morandi: {
+              rose: '#D8A49B',
+              roseHover: '#C9938A',
+              sage: '#8E9E8C',
+              sageHover: '#7D8E7B',
+              blue: '#8CA0B3',
+              blueHover: '#7B8F9F',
+              oatmeal: '#F6F3EE',
+              card: '#FFFFFF',
+              khaki: '#C2B69D',
+              deepKhaki: '#9E927A',
+              charcoal: '#4A4643',
+              border: '#E3DDD5'
+            }
+          },
+          fontFamily: {
+            rounded: ['"Zen Maru Gothic"', '"Noto Sans TC"', 'cursive', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      font-family: 'Zen Maru Gothic', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    /* 依規範定義的大標題與內文字級（支援筆電螢幕適應） */
+    .edu-title {
+      font-size: clamp(28px, 3.2vw, 42px) !important;
+      line-height: 1.25 !important;
+      letter-spacing: -0.01em;
+    }
+    
+    .edu-body {
+      font-size: clamp(17px, 1.4vw, 20px) !important;
+      line-height: 1.55 !important;
+    }
+
+    /* 莫蘭迪柔和卡片陰影 */
+    .morandi-card {
+      background: #FFFFFF;
+      border: 2px solid #E3DDD5;
+      box-shadow: 0 6px 20px -3px rgba(74, 70, 67, 0.05);
+      border-radius: 1.25rem;
+    }
+
+    /* 拖曳元件觸控與拖曳視覺效果 */
+    .draggable-item, .money-token-drag {
+      cursor: grab;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .draggable-item:active, .money-token-drag:active {
+      cursor: grabbing;
+      transform: scale(1.06);
+      box-shadow: 0 10px 20px -2px rgba(140, 160, 179, 0.35);
+    }
+    .drag-over {
+      background-color: #EBF2F0 !important;
+      border-color: #8E9E8C !important;
+      transform: scale(1.02);
+    }
+
+    /* 高精度直式除法（橫線與豎線完全連成一體，除數緊靠垂直線） */
+    .division-stage-wrap {
+      display: inline-flex;
+      align-items: flex-start;
+      font-family: 'Zen Maru Gothic', monospace;
+      font-weight: 700;
+    }
+    .division-divisor-cell {
+      width: 28px;
+      text-align: right;
+      padding-right: 6px;
+      padding-top: 36px;
+      font-size: 26px;
+      color: #8E9E8C;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+    .division-bracket-container {
+      display: flex;
+      flex-direction: column;
+    }
+    .division-quotient-row {
+      display: grid;
+      grid-template-columns: repeat(4, 34px);
+      justify-items: center;
+      align-items: center;
+      height: 36px;
+      font-size: 26px;
+      font-weight: 900;
+    }
+    .division-body-block {
+      border-left: 3.5px solid #4A4643;
+      border-top: 3.5px solid #4A4643;
+      padding-left: 2px;
+      padding-top: 2px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .division-grid-row {
+      display: grid;
+      grid-template-columns: repeat(4, 34px);
+      justify-items: center;
+      align-items: center;
+      height: 30px;
+      font-size: 23px;
+      font-weight: 700;
+    }
+    .division-sub-divider {
+      height: 2px;
+      background-color: #4A4643;
+      margin: 1px 0;
+      width: 100%;
+    }
+
+    /* 手寫板方格底紋 */
+    .canvas-grid-bg {
+      background-size: 24px 24px;
+      background-image: 
+        linear-gradient(to right, rgba(194, 182, 157, 0.25) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(194, 182, 157, 0.25) 1px, transparent 1px);
+    }
+
+    /* 捲軸美化 */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F6F3EE;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #C2B69D;
+      border-radius: 3px;
+    }
+
+    /* 紙花粒子動畫 */
+    @keyframes fallDown {
+      0% { transform: translateY(-30px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(350px) rotate(420deg); opacity: 0; }
+    }
+    .confetti-piece {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      pointer-events: none;
+      border-radius: 3px;
+      animation: fallDown 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    /* 側邊欄收合 transition 動畫 */
+    .sidebar-transition {
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+
+<body class="bg-morandi-oatmeal text-morandi-charcoal h-screen w-screen overflow-hidden flex flex-col md:flex-row antialiased selection:bg-morandi-rose/30">
+
+  <!-- 手機/平板小螢幕專用頂部極簡控制列 -->
+  <header class="md:hidden flex items-center justify-between px-4 py-2.5 bg-white border-b border-morandi-border z-30 shrink-0">
+    <div class="flex items-center gap-2.5">
+      <button onclick="toggleMobileSidebar()" class="p-2 rounded-xl bg-morandi-oatmeal hover:bg-morandi-khaki/20 text-morandi-charcoal text-xl active:scale-95" aria-label="打開導覽選單">
+        ☰
+      </button>
+      <div class="flex items-center gap-1.5">
+        <span class="w-7 h-7 rounded-lg bg-morandi-sage text-white text-base font-black flex items-center justify-center">÷</span>
+        <h1 class="text-lg font-bold text-morandi-charcoal tracking-tight">除法探索樂園</h1>
+      </div>
+    </div>
+    <div class="px-2.5 py-1 rounded-full bg-morandi-oatmeal border border-morandi-border text-xs font-bold text-morandi-charcoal/80">
+      四年級數學
+    </div>
+  </header>
+
+  <!-- 點擊遮罩 (手機端抽屜開啟時顯示) -->
+  <div id="mobile-backdrop" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-morandi-charcoal/40 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
+
+  <aside id="app-sidebar" class="sidebar-transition fixed md:static inset-y-0 left-0 z-50 flex flex-col justify-between bg-white border-r border-morandi-border w-64 md:w-64 h-full shadow-lg md:shadow-none -translate-x-full md:translate-x-0 shrink-0 overflow-x-hidden">
+    
+    <!-- 側邊欄頂部：品牌、年級標籤、名師署名 -->
+    <div class="p-4 border-b border-morandi-border/70 shrink-0">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2.5 overflow-hidden">
+          <div class="w-10 h-10 rounded-2xl bg-morandi-sage text-white text-xl font-black flex items-center justify-center shrink-0 shadow-sm">
+            ÷
+          </div>
+          <div class="sidebar-text-content leading-tight">
+            <span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-morandi-blue/20 text-morandi-charcoal mb-0.5">
+              四年級數學
+            </span>
+            <h1 class="text-lg font-black text-morandi-charcoal tracking-tight truncate">
+              除法探索樂園
+            </h1>
+          </div>
+        </div>
+
+        <!-- 桌機側邊欄收合切換按鈕 -->
+        <button onclick="toggleDesktopSidebar()" id="btn-collapse-sidebar" class="hidden md:flex items-center justify-center w-8 h-8 rounded-xl bg-morandi-oatmeal hover:bg-morandi-khaki/30 text-morandi-charcoal text-sm transition-all border border-morandi-border shrink-0" title="收合/展開側邊欄">
+          ❮
+        </button>
+
+        <!-- 手機端關閉按鈕 -->
+        <button onclick="toggleMobileSidebar(false)" class="md:hidden flex items-center justify-center w-8 h-8 rounded-xl bg-morandi-oatmeal text-morandi-charcoal font-bold">
+          ✕
+        </button>
+      </div>
+
+      <!-- 全螢幕切換按鈕（點擊後立即隱藏上方 Gemini 橫幅，佔滿全螢幕） -->
+      <button onclick="toggleAppFullscreen()" id="btn-fullscreen-toggle" class="w-full mt-2 py-2 px-3 rounded-xl bg-morandi-sage/20 hover:bg-morandi-sage hover:text-white text-morandi-sage border border-morandi-sage/40 flex items-center justify-center gap-2 font-bold text-xs transition-all shadow-sm active:scale-95" title="隱藏上方空白橫幅，進入全螢幕模式">
+        <span class="text-base">🖥️</span>
+        <span class="sidebar-text-content">全螢幕教學模式</span>
+      </button>
+
+      <!-- 名師署名卡片（收合時隱藏文字） -->
+      <div class="sidebar-text-content mt-2 px-3 py-1.5 rounded-xl bg-morandi-oatmeal border border-morandi-border/80 flex items-center gap-2">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-morandi-rose animate-pulse shrink-0"></span>
+        <span class="text-xs font-bold text-morandi-charcoal/90 truncate">
+          設計: 新趨勢老師
+        </span>
+      </div>
+    </div>
+
+    <!-- 側邊欄導航項目 (五大核心單元按鈕) -->
+    <nav class="flex-1 overflow-y-auto p-3 space-y-2">
+      <!-- 模組 1 -->
+      <button onclick="switchTab('concept')" id="tab-concept" class="tab-btn w-full p-2.5 rounded-2xl font-bold transition-all text-left bg-morandi-sage text-white shadow-sm flex items-center gap-3">
+        <span class="text-2xl shrink-0">🍎</span>
+        <div class="sidebar-text-content truncate">
+          <div class="text-sm font-black">1. 認識除法概念</div>
+          <div class="text-[11px] opacity-80 font-normal">分果子與千元換錢平分</div>
+        </div>
+      </button>
+
+      <!-- 模組 2 -->
+      <button onclick="switchTab('long-division')" id="tab-long-division" class="tab-btn w-full p-2.5 rounded-2xl font-bold transition-all text-left bg-white text-morandi-charcoal hover:bg-morandi-oatmeal border border-morandi-border flex items-center gap-3">
+        <span class="text-2xl shrink-0">📐</span>
+        <div class="sidebar-text-content truncate">
+          <div class="text-sm font-black">2. 四位數除以1位數</div>
+          <div class="text-[11px] opacity-75 font-normal">直式分解與中間補0</div>
+        </div>
+      </button>
+
+      <!-- 模組 3 -->
+      <button onclick="switchTab('estimate')" id="tab-estimate" class="tab-btn w-full p-2.5 rounded-2xl font-bold transition-all text-left bg-white text-morandi-charcoal hover:bg-morandi-oatmeal border border-morandi-border flex items-center gap-3">
+        <span class="text-2xl shrink-0">⚖️</span>
+        <div class="sidebar-text-content truncate">
+          <div class="text-sm font-black">3. 估商心法與二除二</div>
+          <div class="text-[11px] opacity-75 font-normal">大數估商與直式即時對照</div>
+        </div>
+      </button>
+
+      <!-- 模組 4 -->
+      <button onclick="switchTab('game')" id="tab-game" class="tab-btn w-full p-2.5 rounded-2xl font-bold transition-all text-left bg-white text-morandi-charcoal hover:bg-morandi-oatmeal border border-morandi-border flex items-center gap-3">
+        <span class="text-2xl shrink-0">🎮</span>
+        <div class="sidebar-text-content truncate">
+          <div class="text-sm font-black">4. 三位除二位寶石挑戰</div>
+          <div class="text-[11px] opacity-75 font-normal">採集商數寶石小冒險</div>
+        </div>
+      </button>
+
+      <!-- 模組 5 -->
+      <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn w-full p-2.5 rounded-2xl font-bold transition-all text-left bg-white text-morandi-charcoal hover:bg-morandi-oatmeal border border-morandi-border flex items-center gap-3">
+        <span class="text-2xl shrink-0">🏆</span>
+        <div class="sidebar-text-content truncate">
+          <div class="text-sm font-black">5. 終點十題闖關測驗</div>
+          <div class="text-[11px] opacity-75 font-normal">觀念檢核與詳細解析</div>
+        </div>
+      </button>
+    </nav>
+
+    <!-- 側邊欄底部狀態提示 -->
+    <div class="p-3 border-t border-morandi-border/70 text-center sidebar-text-content">
+      <div class="text-[11px] text-morandi-charcoal/60 leading-relaxed">
+        國小中年級數學 · 開箱即用教室
+      </div>
+    </div>
+  </aside>
+
+  <main class="flex-1 h-full overflow-y-auto p-2 sm:p-4 lg:p-5 flex flex-col justify-start relative">
+
+    <!-- ==================== 模組一：認識除法的概念 (等分除、包含除、換錢平分) ==================== -->
+    <section id="section-concept" class="learning-section w-full max-w-6xl mx-auto my-auto">
+      <div class="morandi-card p-3 sm:p-4 lg:p-5 flex flex-col justify-between relative bg-white min-h-[500px]">
+        <!-- 頂部引導與任務切換 -->
+        <div>
+          <div class="flex flex-wrap items-center justify-between border-b border-morandi-border pb-2 mb-2 gap-2">
+            <div>
+              <span class="inline-block px-2.5 py-0.5 bg-morandi-sage/20 text-morandi-sage font-bold rounded-lg text-xs mb-0.5">
+                核心重點 1：除法概念與情境分裝
+              </span>
+              <h2 id="concept-stage-title" class="edu-title font-bold text-morandi-charcoal">分果子探險：等分與分裝</h2>
+            </div>
+            <!-- 任務切換按鈕 -->
+            <div class="flex items-center gap-2 bg-morandi-oatmeal p-1.5 rounded-2xl border border-morandi-border">
+              <button onclick="switchConceptSub(1)" id="btn-sub-apples" class="px-3 py-1.5 rounded-xl font-bold text-sm bg-morandi-sage text-white shadow-sm transition-all min-h-[44px]">
+                🍎 任務1: 蘋果平均分
+              </button>
+              <button onclick="switchConceptSub(2)" id="btn-sub-money" class="px-3 py-1.5 rounded-xl font-bold text-sm bg-white text-morandi-charcoal hover:bg-white/80 transition-all min-h-[44px]">
+                💰 任務2: 1960元分給4人（換錢）
+              </button>
+            </div>
+          </div>
+
+          <!-- 子題一說明 -->
+          <div id="sub-apples-desc">
+            <p class="edu-body text-morandi-charcoal/80">
+              請把樹上的 <span class="font-bold text-morandi-rose underline decoration-2">14 顆蘋果</span>，平均分給 <span class="font-bold text-morandi-blue underline decoration-2">3 個小精靈籃子</span>。可直接拖曳蘋果，也可以點選蘋果自動放入籃子！
+            </p>
+          </div>
+
+          <!-- 子題二說明 -->
+          <div id="sub-money-desc" class="hidden">
+            <p class="edu-body text-morandi-charcoal/80">
+              請把 <span class="font-bold text-morandi-rose underline decoration-2">1960 元</span>（1張千元、9張百元、6個十元）平均分給 <span class="font-bold text-morandi-blue underline decoration-2">4 位小朋友</span>。1張千元無法平分？<span class="font-bold text-morandi-sage">請按「換錢」換成 10 張百元鈔</span>；百元分不夠時再換成十元硬幣！可以直接拖曳錢幣給小朋友喔！
+            </p>
+          </div>
+        </div>
+
+        <!-- 子任務 1：蘋果拖曳 -->
+        <div id="sub-apples-view" class="my-3 grid grid-cols-1 md:grid-cols-12 gap-3 flex-1 items-center">
+          <div class="md:col-span-5 bg-morandi-oatmeal p-4 rounded-2xl border border-morandi-border flex flex-col items-center justify-center min-h-[170px]">
+            <div class="flex items-center justify-between w-full mb-2">
+              <span class="font-bold text-morandi-charcoal text-sm">待分配蘋果池 (共 14 顆)</span>
+              <span id="apple-count-badge" class="px-2.5 py-0.5 rounded-full bg-morandi-rose text-white text-xs font-bold">剩餘 14 顆</span>
+            </div>
+            <div id="apples-pool" class="flex flex-wrap gap-2 justify-center p-2 min-h-[90px] w-full items-center bg-white/70 rounded-xl border border-dashed border-morandi-khaki">
+              <!-- JS 動態生成 14 顆蘋果 -->
+            </div>
+            <div class="flex gap-2 mt-3 w-full">
+              <button onclick="autoDistributeApples()" class="flex-1 py-2 bg-morandi-sage hover:bg-morandi-sageHover text-white rounded-xl font-bold text-sm transition-colors shadow-sm min-h-[44px]">
+                ⚡ 自動平均分
+              </button>
+              <button onclick="resetApples()" class="flex-1 py-2 bg-morandi-khaki hover:bg-morandi-deepKhaki text-white rounded-xl font-bold text-sm transition-colors shadow-sm min-h-[44px]">
+                🔄 重新分分看
+              </button>
+            </div>
+          </div>
+
+          <div class="md:col-span-1 hidden md:flex flex-col items-center justify-center text-morandi-charcoal/40 font-black text-2xl">
+            ➔
+          </div>
+
+          <!-- 3 個目標籃子 -->
+          <div class="md:col-span-6 grid grid-cols-3 gap-2 sm:gap-3">
+            <div class="basket-dropzone bg-morandi-oatmeal/60 border-2 border-dashed border-morandi-blue rounded-2xl p-2.5 flex flex-col items-center min-h-[170px] transition-all" data-basket="1" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+              <div class="w-9 h-9 rounded-full bg-morandi-blue/20 text-morandi-blue font-black flex items-center justify-center mb-1 text-base">1</div>
+              <span class="text-xs font-bold text-morandi-charcoal/70">藍精靈籃子</span>
+              <div class="basket-items flex flex-wrap gap-1 justify-center mt-2 flex-1 items-start w-full"></div>
+              <span class="basket-counter text-xs font-bold text-morandi-blue mt-1">0 顆</span>
+            </div>
+
+            <div class="basket-dropzone bg-morandi-oatmeal/60 border-2 border-dashed border-morandi-sage rounded-2xl p-2.5 flex flex-col items-center min-h-[170px] transition-all" data-basket="2" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+              <div class="w-9 h-9 rounded-full bg-morandi-sage/20 text-morandi-sage font-black flex items-center justify-center mb-1 text-base">2</div>
+              <span class="text-xs font-bold text-morandi-charcoal/70">綠精靈籃子</span>
+              <div class="basket-items flex flex-wrap gap-1 justify-center mt-2 flex-1 items-start w-full"></div>
+              <span class="basket-counter text-xs font-bold text-morandi-sage mt-1">0 顆</span>
+            </div>
+
+            <div class="basket-dropzone bg-morandi-oatmeal/60 border-2 border-dashed border-morandi-rose rounded-2xl p-2.5 flex flex-col items-center min-h-[170px] transition-all" data-basket="3" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+              <div class="w-9 h-9 rounded-full bg-morandi-rose/20 text-morandi-rose font-black flex items-center justify-center mb-1 text-base">3</div>
+              <span class="text-xs font-bold text-morandi-charcoal/70">粉精靈籃子</span>
+              <div class="basket-items flex flex-wrap gap-1 justify-center mt-2 flex-1 items-start w-full"></div>
+              <span class="basket-counter text-xs font-bold text-morandi-rose mt-1">0 顆</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 子任務 2：1960元分給4人（具體物換錢與自由拖拉平分） -->
+        <div id="sub-money-view" class="my-2 hidden flex-1 flex flex-col justify-between">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
+            
+            <!-- 待分錢幣區 -->
+            <div class="lg:col-span-5 bg-morandi-oatmeal/80 p-3 sm:p-4 rounded-2xl border border-morandi-border flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between border-b border-morandi-border pb-1.5 mb-1.5">
+                  <span class="font-bold text-morandi-charcoal text-sm">待分配錢包（可拖曳或點選）</span>
+                  <span id="money-pool-sum" class="px-2.5 py-0.5 rounded-full bg-morandi-blue text-white text-xs font-bold font-mono">
+                    剩餘 1960 元
+                  </span>
+                </div>
+
+                <!-- 換錢操作按鈕列 -->
+                <div class="grid grid-cols-2 gap-2 mb-2">
+                  <button onclick="exchange1000to100()" id="btn-exchange-1000" class="px-2 py-2 bg-morandi-blue hover:bg-morandi-blueHover text-white rounded-xl font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1 min-h-[44px]">
+                    <span>💱 換錢</span> (1千換10百)
+                  </button>
+                  <button onclick="exchange100to10()" id="btn-exchange-100" class="px-2 py-2 bg-morandi-rose hover:bg-morandi-roseHover text-white rounded-xl font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1 min-h-[44px]">
+                    <span>💱 換錢</span> (1百換10個十)
+                  </button>
+                </div>
+
+                <!-- 錢幣可拖曳池 -->
+                <div id="money-tokens-pool" class="flex flex-wrap gap-1.5 p-2 min-h-[90px] max-h-[110px] overflow-y-auto bg-white/80 rounded-xl border border-dashed border-morandi-khaki items-center justify-start content-start">
+                  <!-- JS 動態生成錢幣 -->
+                </div>
+              </div>
+
+              <!-- 快捷輔助分錢按鈕 -->
+              <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-morandi-border/60">
+                <button onclick="stepShareHundreds()" id="btn-share-100" class="py-2 bg-morandi-rose hover:bg-morandi-roseHover text-white rounded-xl font-bold text-xs shadow-sm transition-all min-h-[44px]">
+                  💵 每人分 100元
+                </button>
+                <button onclick="stepShareTens()" id="btn-share-10" class="py-2 bg-morandi-khaki hover:bg-morandi-deepKhaki text-white rounded-xl font-bold text-xs shadow-sm transition-all min-h-[44px]">
+                  🪙 每人分 10元
+                </button>
+                <button onclick="autoShareMoneyAll()" class="py-2 bg-morandi-sage hover:bg-morandi-sageHover text-white rounded-xl font-bold text-xs shadow-sm transition-all min-h-[44px]">
+                  ⚡ 一鍵分到好
+                </button>
+                <button onclick="resetMoneyGame()" class="py-2 bg-white hover:bg-morandi-oatmeal text-morandi-charcoal border border-morandi-border rounded-xl font-bold text-xs transition-all min-h-[44px]">
+                  🔄 重置 1960元
+                </button>
+              </div>
+            </div>
+
+            <!-- 右側：4 位小朋友的錢包 -->
+            <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div id="person-dropzone-0" data-person-idx="0" ondragover="handleMoneyDragOver(event)" ondragleave="handleMoneyDragLeave(event)" ondrop="handleMoneyDrop(event)" class="bg-morandi-oatmeal/40 border-2 border-dashed border-morandi-blue/60 rounded-2xl p-2 flex flex-col justify-between items-center text-center transition-all min-h-[190px]">
+                <div class="w-8 h-8 rounded-full bg-morandi-blue/20 text-morandi-blue font-bold flex items-center justify-center text-sm">🧒</div>
+                <div class="font-bold text-morandi-charcoal text-xs">小明</div>
+                <div id="person-sum-0" class="text-base font-black text-morandi-blue font-mono">0 元</div>
+                <div id="person-tokens-0" class="w-full flex-1 flex flex-wrap gap-1 justify-center items-start content-start p-1 bg-white/70 rounded-lg min-h-[60px] max-h-[75px] overflow-y-auto"></div>
+                <div id="person-detail-0" class="text-[10px] text-morandi-charcoal/70">100元:0 | 10元:0</div>
+              </div>
+
+              <div id="person-dropzone-1" data-person-idx="1" ondragover="handleMoneyDragOver(event)" ondragleave="handleMoneyDragLeave(event)" ondrop="handleMoneyDrop(event)" class="bg-morandi-oatmeal/40 border-2 border-dashed border-morandi-sage/60 rounded-2xl p-2 flex flex-col justify-between items-center text-center transition-all min-h-[190px]">
+                <div class="w-8 h-8 rounded-full bg-morandi-sage/20 text-morandi-sage font-bold flex items-center justify-center text-sm">👧</div>
+                <div class="font-bold text-morandi-charcoal text-xs">小華</div>
+                <div id="person-sum-1" class="text-base font-black text-morandi-sage font-mono">0 元</div>
+                <div id="person-tokens-1" class="w-full flex-1 flex flex-wrap gap-1 justify-center items-start content-start p-1 bg-white/70 rounded-lg min-h-[60px] max-h-[75px] overflow-y-auto"></div>
+                <div id="person-detail-1" class="text-[10px] text-morandi-charcoal/70">100元:0 | 10元:0</div>
+              </div>
+
+              <div id="person-dropzone-2" data-person-idx="2" ondragover="handleMoneyDragOver(event)" ondragleave="handleMoneyDragLeave(event)" ondrop="handleMoneyDrop(event)" class="bg-morandi-oatmeal/40 border-2 border-dashed border-morandi-rose/60 rounded-2xl p-2 flex flex-col justify-between items-center text-center transition-all min-h-[190px]">
+                <div class="w-8 h-8 rounded-full bg-morandi-rose/20 text-morandi-rose font-bold flex items-center justify-center text-sm">👦</div>
+                <div class="font-bold text-morandi-charcoal text-xs">小美</div>
+                <div id="person-sum-2" class="text-base font-black text-morandi-rose font-mono">0 元</div>
+                <div id="person-tokens-2" class="w-full flex-1 flex flex-wrap gap-1 justify-center items-start content-start p-1 bg-white/70 rounded-lg min-h-[60px] max-h-[75px] overflow-y-auto"></div>
+                <div id="person-detail-2" class="text-[10px] text-morandi-charcoal/70">100元:0 | 10元:0</div>
+              </div>
+
+              <div id="person-dropzone-3" data-person-idx="3" ondragover="handleMoneyDragOver(event)" ondragleave="handleMoneyDragLeave(event)" ondrop="handleMoneyDrop(event)" class="bg-morandi-oatmeal/40 border-2 border-dashed border-morandi-khaki/60 rounded-2xl p-2 flex flex-col justify-between items-center text-center transition-all min-h-[190px]">
+                <div class="w-8 h-8 rounded-full bg-morandi-khaki/40 text-morandi-deepKhaki font-bold flex items-center justify-center text-sm">👧</div>
+                <div class="font-bold text-morandi-charcoal text-xs">小安</div>
+                <div id="person-sum-3" class="text-base font-black text-morandi-deepKhaki font-mono">0 元</div>
+                <div id="person-tokens-3" class="w-full flex-1 flex flex-wrap gap-1 justify-center items-start content-start p-1 bg-white/70 rounded-lg min-h-[60px] max-h-[75px] overflow-y-auto"></div>
+                <div id="person-detail-3" class="text-[10px] text-morandi-charcoal/70">100元:0 | 10元:0</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 換錢提示 -->
+          <div id="money-tips-banner" class="mt-2 p-2.5 rounded-xl bg-morandi-sage/15 border border-morandi-sage/30 edu-body text-xs sm:text-sm text-morandi-charcoal">
+            💡 <strong>步驟引導：</strong> 1 張 1000 元分給 4 個人不夠分！請先點擊「💱 換錢」，把 1 張千元換成 10 張百元！
+          </div>
+        </div>
+
+        <!-- 底部算式紀錄 -->
+        <div class="bg-morandi-oatmeal/80 rounded-xl p-2.5 border border-morandi-border flex flex-wrap items-center justify-between gap-2 mt-2">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-1 rounded-lg bg-morandi-blue text-white font-bold text-xs">橫式紀錄</span>
+            <span id="equation-display" class="edu-body font-mono font-bold text-morandi-charcoal text-base">
+              14 ÷ 3 = <span class="text-morandi-blue">4</span> ... 剩下 <span class="text-morandi-rose">2</span>
+            </span>
+          </div>
+          <div class="edu-body text-xs sm:text-sm text-morandi-charcoal/90 font-medium">
+            💡 <strong>觀念小叮嚀：</strong>餘數一定要比除數小；若高位不夠除，就要換成下一位數（千換百、百換十）！
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 模組二：四位數除以 1 位數直式動態拆解 ==================== -->
+    <section id="section-long-division" class="learning-section w-full max-w-6xl mx-auto my-auto hidden">
+      <div class="morandi-card p-4 sm:p-6 lg:p-7 flex flex-col justify-between relative bg-white min-h-[560px]">
+        <div class="border-b border-morandi-border pb-2.5 mb-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="inline-block px-2.5 py-0.5 bg-morandi-blue/20 text-morandi-blue font-bold rounded-lg text-xs mb-1">
+                核心重點 2：四位數除以1位數直式拆解
+              </span>
+              <h2 class="edu-title font-bold text-morandi-charcoal">直式分步解剖器：看懂每一層</h2>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="changeDivisionProblem()" class="px-3.5 py-2 bg-morandi-sage hover:bg-morandi-sageHover text-white rounded-xl font-bold text-sm transition-all shadow-sm flex items-center gap-1 min-h-[44px]">
+                <span>🎲</span> 換一題
+              </button>
+              <button onclick="stepDivision(-1)" class="px-3 py-2 bg-morandi-oatmeal hover:bg-morandi-khaki/30 text-morandi-charcoal rounded-xl font-bold text-sm transition-all border border-morandi-border min-h-[44px]">
+                ◀ 上一步
+              </button>
+              <button onclick="stepDivision(1)" id="btn-next-step" class="px-3.5 py-2 bg-morandi-blue hover:bg-morandi-blueHover text-white rounded-xl font-bold text-sm transition-all shadow-sm min-h-[44px]">
+                下一步 ➔
+              </button>
+              <button onclick="resetDivisionStep()" class="px-3 py-2 bg-morandi-khaki hover:bg-morandi-deepKhaki text-white rounded-xl font-bold text-sm transition-all shadow-sm min-h-[44px]">
+                重來
+              </button>
+            </div>
+          </div>
+          <p class="edu-body text-morandi-charcoal/80 mt-1">
+            當前題目：<span id="division-current-eq" class="font-bold text-morandi-blue font-mono text-xl sm:text-2xl">5248 ÷ 4</span>。橫線與直線嚴密連接，除數緊靠被除數！
+          </p>
+        </div>
+
+        <!-- 直式舞台與解說對照區 -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 flex-1 items-center my-2">
+          <!-- 左側直式看板 -->
+          <div id="long-division-scroll-wrap" class="md:col-span-6 bg-morandi-oatmeal/60 p-3 sm:p-4 rounded-2xl border border-morandi-border flex items-center justify-center min-h-[280px] max-h-[340px] overflow-auto">
+            <div id="long-division-board" class="bg-white p-5 rounded-2xl shadow-sm border border-morandi-border min-w-[250px] flex justify-center">
+              <!-- 直式由 JavaScript 精確渲染 -->
+            </div>
+          </div>
+
+          <!-- 右側解說卡片 -->
+          <div class="md:col-span-6 flex flex-col justify-center space-y-2.5">
+            <div class="bg-white p-3.5 sm:p-4 rounded-2xl border-2 border-morandi-blue/30 shadow-sm">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span id="step-badge" class="px-2.5 py-0.5 rounded-lg bg-morandi-blue text-white font-bold text-xs">步驟 1 / 4</span>
+                <h3 id="step-title" class="text-lg sm:text-xl font-bold text-morandi-charcoal">千位分裝：5 個千除以 4</h3>
+              </div>
+              <p id="step-desc" class="edu-body text-morandi-charcoal/90">
+                5 ÷ 4 商 1 餘 1。千位的商寫上 1。餘下的 1 個千換成 10 個百，和原本的 2 個百合起來變成 12 個百！
+              </p>
+            </div>
+
+            <!-- 常見失誤警示提示箱 -->
+            <div class="bg-morandi-rose/10 p-3 rounded-xl border border-morandi-rose/30 flex items-start gap-2.5">
+              <span class="text-xl">💡</span>
+              <div class="edu-body text-xs sm:text-sm text-morandi-charcoal">
+                <strong class="text-morandi-rose">老師特別叮嚀：</strong>
+                若某一數位除不夠（商為0），一定要在商對應的位數<strong class="underline font-black">「補 0 佔位」</strong>，千萬不能跳過喔！
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部進度條 -->
+        <div class="w-full bg-morandi-oatmeal rounded-full h-2.5 overflow-hidden border border-morandi-border">
+          <div id="division-progress-bar" class="bg-morandi-blue h-full transition-all duration-300 w-1/4"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 模組三：估商心法與二位數除以二位數 ==================== -->
+    <section id="section-estimate" class="learning-section w-full max-w-6xl mx-auto my-auto hidden">
+      <div class="morandi-card p-4 sm:p-6 lg:p-7 flex flex-col justify-between relative bg-white min-h-[560px]">
+        <div>
+          <div class="flex items-center justify-between border-b border-morandi-border pb-2.5 mb-2">
+            <div>
+              <span class="inline-block px-2.5 py-0.5 bg-morandi-khaki/30 text-morandi-deepKhaki font-bold rounded-lg text-xs mb-1">
+                核心重點 3 & 4：估商心法與二位數除以二位數
+              </span>
+              <h2 class="edu-title font-bold text-morandi-charcoal">天平估商實驗室：用大數估商與直式對照</h2>
+            </div>
+            <button onclick="randomEstimateQuestion()" class="px-3.5 py-2 bg-morandi-khaki hover:bg-morandi-deepKhaki text-white rounded-xl font-bold text-sm transition-all shadow-sm min-h-[44px]">
+              🎲 換一題試試
+            </button>
+          </div>
+          <!-- 大數估商引導旗標 -->
+          <div class="p-2.5 bg-morandi-blue/10 border border-morandi-blue/30 rounded-xl">
+            <p class="edu-body text-xs sm:text-sm text-morandi-charcoal/90">
+              💡 <strong>大數估商秘訣：</strong>除數有兩位時，先將除數與被除數看成「<strong>整十數（大數）</strong>」來初估！例如：
+              <span id="est-guide-text" class="font-bold text-morandi-blue">把 23 看成 20、87 看成 80 ➔ 80 ÷ 20 猜猜看商是 4！</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- 互動試商拉桿與即時直式對照區 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1 items-center my-2">
+          <!-- 左側：拉桿試商 -->
+          <div class="lg:col-span-4 bg-morandi-oatmeal/60 p-3.5 rounded-2xl border border-morandi-border flex flex-col justify-center space-y-2.5">
+            <div>
+              <label class="edu-body font-bold text-morandi-charcoal block mb-1 text-sm">
+                請猜猜看商是多少（撥動或點擊）：
+              </label>
+              <div class="flex items-center gap-3">
+                <input type="range" id="trial-quotient-slider" min="1" max="9" value="4" oninput="updateEstimateSimulation(this.value)" class="w-full h-3 bg-morandi-border rounded-lg appearance-none cursor-pointer accent-morandi-sage">
+                <span id="trial-quotient-val" class="w-10 h-10 rounded-xl bg-morandi-sage text-white font-mono font-black text-xl flex items-center justify-center shadow-sm shrink-0">4</span>
+              </div>
+            </div>
+
+            <!-- 微調按鈕 -->
+            <div class="flex items-center justify-between gap-2">
+              <button onclick="adjustTrial(-1)" class="flex-1 py-2 bg-white hover:bg-morandi-oatmeal border-2 border-morandi-border rounded-xl font-bold text-morandi-charcoal text-sm active:scale-95 transition-all min-h-[44px]">
+                ➖ 試小一點 (-1)
+              </button>
+              <button onclick="adjustTrial(1)" class="flex-1 py-2 bg-white hover:bg-morandi-oatmeal border-2 border-morandi-border rounded-xl font-bold text-morandi-charcoal text-sm active:scale-95 transition-all min-h-[44px]">
+                ➕ 試大一點 (+1)
+              </button>
+            </div>
+
+            <div class="text-[11px] text-morandi-charcoal/80 bg-white/70 p-2 rounded-xl border border-morandi-border leading-relaxed">
+              📌 <strong>調商金句：</strong>「太大多退、太少要補」！乘積大於被除數就退 1；餘數大於除數就補 1。
+            </div>
+          </div>
+
+          <!-- 中間：直式對照卡片（3欄精準對齊） -->
+          <div class="lg:col-span-4 bg-white p-3.5 rounded-2xl border-2 border-morandi-border flex flex-col items-center justify-center min-h-[230px] shadow-sm relative">
+            <div class="w-full flex items-center justify-between border-b border-morandi-border/60 pb-1 mb-1.5">
+              <span class="text-xs font-bold text-morandi-charcoal/70">直式計算對照</span>
+              <span class="text-xs font-bold text-morandi-blue px-2 py-0.5 rounded-md bg-morandi-blue/15">商對齊個位</span>
+            </div>
+            
+            <div id="est-vertical-division" class="flex flex-col items-center justify-center font-mono py-1">
+              <!-- JS 動態生成包含大數估商標註的 3 欄直式 -->
+            </div>
+          </div>
+
+          <!-- 右側：驗算天平卡片 -->
+          <div class="lg:col-span-4 bg-morandi-oatmeal/40 p-3.5 rounded-2xl border border-morandi-border flex flex-col justify-between min-h-[230px]">
+            <div>
+              <div class="flex items-center justify-between border-b border-morandi-border/60 pb-1.5 mb-1.5">
+                <span class="font-bold text-morandi-charcoal text-xs">乘積即時檢驗</span>
+                <span id="est-status-tag" class="px-2 py-0.5 rounded-full text-xs font-bold bg-morandi-sage/20 text-morandi-sage">
+                  剛好合適
+                </span>
+              </div>
+
+              <div class="space-y-1 font-mono text-center my-1.5">
+                <div class="edu-body text-sm text-morandi-charcoal">
+                  除數 <span id="est-calc-divisor" class="font-bold text-morandi-sage">23</span> × 
+                  試商 <span id="est-calc-quotient" class="font-bold text-morandi-blue">4</span> = 
+                  <span id="est-calc-product" class="font-black text-morandi-rose">92</span>
+                </div>
+                <div class="text-xs text-morandi-charcoal">
+                  被除數是 <span id="est-calc-dividend" class="font-bold">87</span> ➔ 
+                  <div id="est-calc-compare" class="font-bold text-morandi-rose mt-0.5">92 比 87 大，不夠減！</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="est-feedback-box" class="p-2.5 rounded-xl bg-morandi-rose/15 border border-morandi-rose/30 text-morandi-charcoal text-xs">
+              哎呀！乘積超過了，請點擊「試小一點 (-1)」！
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-morandi-oatmeal p-2.5 rounded-xl text-center edu-body text-xs sm:text-sm text-morandi-charcoal/90">
+          📌 <strong>四位數與二位數估商關鍵：</strong> 看被除數前兩位，夠除就商在個位；先用十位整數大數抓大概，再微調直式！
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 模組四：三位數除以二位數趣味挑戰（寶石探險隊） ==================== -->
+    <section id="section-game" class="learning-section w-full max-w-6xl mx-auto my-auto hidden">
+      <div class="morandi-card p-4 sm:p-6 lg:p-7 flex flex-col justify-between relative bg-white min-h-[560px]">
+        <div class="flex items-center justify-between border-b border-morandi-border pb-2.5 mb-2">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 bg-morandi-rose/20 text-morandi-rose font-bold rounded-lg text-xs mb-1">
+              核心重點 5 & 趣味挑戰：三位數除以二位數
+            </span>
+            <h2 class="edu-title font-bold text-morandi-charcoal">除法礦坑：寶石商數採集戰</h2>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <div class="px-3 py-1.5 bg-morandi-oatmeal rounded-xl border border-morandi-border font-bold text-sm">
+              💎 寶石：<span id="game-score" class="text-morandi-rose font-black text-lg">0</span>
+            </div>
+            <button onclick="startNextGameRound()" class="px-3.5 py-2 bg-morandi-rose hover:bg-morandi-roseHover text-white rounded-xl font-bold text-sm transition-all shadow-sm min-h-[44px]">
+              下一題 ➔
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 flex-1 items-center my-2">
+          <!-- 題目巨石 -->
+          <div class="md:col-span-5 bg-morandi-oatmeal p-5 rounded-3xl border-2 border-morandi-border flex flex-col items-center justify-center text-center">
+            <span class="text-xs uppercase tracking-widest text-morandi-charcoal/60 font-black mb-1">礦石密碼題目</span>
+            <div id="game-problem" class="font-mono text-4xl sm:text-5xl font-black text-morandi-charcoal tracking-tight my-2">
+              432 ÷ 18
+            </div>
+            <div class="edu-body text-xs sm:text-sm text-morandi-charcoal/80">
+              提示：先看前兩位 43 ÷ 18 商在十位，餘下後再除個位！可開啟右下角「計算手寫板」列式計算喔！
+            </div>
+          </div>
+
+          <!-- 4 顆採集寶石選項 -->
+          <div class="md:col-span-7 grid grid-cols-2 gap-2.5 sm:gap-3">
+            <button onclick="submitGameAnswer(0)" id="game-opt-0" class="game-opt-btn p-3.5 rounded-2xl bg-white hover:bg-morandi-oatmeal border-2 border-morandi-border flex items-center justify-between shadow-sm active:scale-95 transition-all min-h-[58px]">
+              <span class="w-9 h-9 rounded-xl bg-morandi-blue/20 text-morandi-blue font-black flex items-center justify-center text-base">A</span>
+              <span class="font-mono text-xl sm:text-2xl font-black text-morandi-charcoal opt-text">24</span>
+              <span class="text-xl">💎</span>
+            </button>
+
+            <button onclick="submitGameAnswer(1)" id="game-opt-1" class="game-opt-btn p-3.5 rounded-2xl bg-white hover:bg-morandi-oatmeal border-2 border-morandi-border flex items-center justify-between shadow-sm active:scale-95 transition-all min-h-[58px]">
+              <span class="w-9 h-9 rounded-xl bg-morandi-sage/20 text-morandi-sage font-black flex items-center justify-center text-base">B</span>
+              <span class="font-mono text-xl sm:text-2xl font-black text-morandi-charcoal opt-text">22</span>
+              <span class="text-xl">💎</span>
+            </button>
+
+            <button onclick="submitGameAnswer(2)" id="game-opt-2" class="game-opt-btn p-3.5 rounded-2xl bg-white hover:bg-morandi-oatmeal border-2 border-morandi-border flex items-center justify-between shadow-sm active:scale-95 transition-all min-h-[58px]">
+              <span class="w-9 h-9 rounded-xl bg-morandi-rose/20 text-morandi-rose font-black flex items-center justify-center text-base">C</span>
+              <span class="font-mono text-xl sm:text-2xl font-black text-morandi-charcoal opt-text">26</span>
+              <span class="text-xl">💎</span>
+            </button>
+
+            <button onclick="submitGameAnswer(3)" id="game-opt-3" class="game-opt-btn p-3.5 rounded-2xl bg-white hover:bg-morandi-oatmeal border-2 border-morandi-border flex items-center justify-between shadow-sm active:scale-95 transition-all min-h-[58px]">
+              <span class="w-9 h-9 rounded-xl bg-morandi-khaki/30 text-morandi-deepKhaki font-black flex items-center justify-center text-base">D</span>
+              <span class="font-mono text-xl sm:text-2xl font-black text-morandi-charcoal opt-text">28</span>
+              <span class="text-xl">💎</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="game-feedback" class="p-2.5 bg-morandi-oatmeal rounded-xl text-center edu-body text-sm text-morandi-charcoal font-bold">
+          請點選你認為正確的商數寶石！
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 模組五：終點十題闖關測驗 ==================== -->
+    <section id="section-quiz" class="learning-section w-full max-w-6xl mx-auto my-auto hidden">
+      <div class="morandi-card p-4 sm:p-6 lg:p-7 flex flex-col justify-between relative bg-white min-h-[560px]">
+        
+        <!-- 測驗中畫面 -->
+        <div id="quiz-active-view" class="h-full flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between border-b border-morandi-border pb-2.5 mb-2">
+              <div class="flex items-center gap-2.5">
+                <span class="w-9 h-9 rounded-2xl bg-morandi-rose text-white font-black flex items-center justify-center text-base shadow-sm">
+                  Q
+                </span>
+                <div>
+                  <span id="quiz-question-counter" class="text-[11px] font-bold text-morandi-rose uppercase tracking-wider">
+                    第 1 / 10 題
+                  </span>
+                  <h2 class="text-lg sm:text-xl font-bold text-morandi-charcoal" id="quiz-cat-name">
+                    單元總結成效檢核
+                  </h2>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 font-mono font-bold text-morandi-charcoal text-sm">
+                <span>得分：</span>
+                <span id="quiz-current-score" class="text-morandi-sage font-black text-xl">0</span>
+                <span>/ 100</span>
+              </div>
+            </div>
+
+            <!-- 進度條小點 -->
+            <div class="flex gap-1.5 w-full my-2" id="quiz-indicators"></div>
+          </div>
+
+          <!-- 題目 -->
+          <div class="my-2 bg-morandi-oatmeal/60 p-3.5 sm:p-4 rounded-2xl border border-morandi-border">
+            <p id="quiz-question-text" class="edu-body font-bold text-morandi-charcoal">
+              題目載入中...
+            </p>
+          </div>
+
+          <!-- 4 個選項按鈕 -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 my-2" id="quiz-options-container"></div>
+
+          <!-- 即時觀念解析 -->
+          <div id="quiz-explanation-box" class="p-3 rounded-2xl border hidden transition-all">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span id="quiz-result-icon" class="text-xl">🎉</span>
+                <span id="quiz-result-title" class="font-bold text-base">答對了！</span>
+              </div>
+              <button onclick="nextQuizQuestion()" id="btn-next-quiz" class="px-4 py-2 bg-morandi-charcoal hover:bg-morandi-charcoal/80 text-white rounded-xl font-bold text-sm transition-all shadow-sm min-h-[44px]">
+                下一題 ➔
+              </button>
+            </div>
+            <p id="quiz-explanation-text" class="edu-body text-xs sm:text-sm mt-1.5 text-morandi-charcoal/90">
+              觀念解析載入中...
+            </p>
+          </div>
+        </div>
+
+        <!-- 測驗完成成績看板 -->
+        <div id="quiz-summary-view" class="h-full flex flex-col justify-between items-center text-center p-4 sm:p-6 hidden">
+          <div>
+            <div class="w-16 h-16 rounded-3xl bg-morandi-sage/20 text-morandi-sage flex items-center justify-center text-3xl mx-auto mb-2 shadow-inner">
+              👑
+            </div>
+            <h2 class="edu-title font-bold text-morandi-charcoal">除法挑戰結算看板</h2>
+            <p class="edu-body text-morandi-charcoal/70 mt-1">恭喜你完成了全部 10 道除法闖關考驗！</p>
+          </div>
+
+          <div class="my-3 p-5 rounded-3xl bg-morandi-oatmeal border-2 border-morandi-border max-w-md w-full">
+            <div class="text-xs font-bold text-morandi-charcoal/70 uppercase">最終總得分</div>
+            <div class="text-5xl font-black text-morandi-rose font-mono my-1.5" id="final-score-display">
+              100
+            </div>
+            <div id="final-badge-title" class="inline-block px-3.5 py-1 rounded-full bg-morandi-sage text-white font-bold text-sm mb-1.5">
+              🏆 除法神算宗師
+            </div>
+            <p id="final-comment" class="edu-body text-sm text-morandi-charcoal">
+              你的估商直覺與除法直式概念非常清晰，繼續保持！
+            </p>
+          </div>
+
+          <div class="flex gap-3">
+            <button onclick="restartQuiz()" class="px-5 py-2.5 bg-morandi-sage hover:bg-morandi-sageHover text-white rounded-xl font-bold text-base shadow-sm transition-all flex items-center gap-1.5 min-h-[44px]">
+              🔄 重新挑戰一次
+            </button>
+            <button onclick="switchTab('concept')" class="px-5 py-2.5 bg-white hover:bg-morandi-oatmeal text-morandi-charcoal border-2 border-morandi-border rounded-xl font-bold text-base shadow-sm transition-all min-h-[44px]">
+              📖 回到觀念複習
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 浮動手寫草稿板按鈕 (FAB) -->
+  <div id="scratchpad-toggle-btn" class="fixed right-4 bottom-4 z-40">
+    <button onclick="toggleScratchpad()" class="flex items-center gap-2 px-4 py-3 rounded-2xl bg-morandi-charcoal text-white hover:bg-morandi-charcoal/90 shadow-xl border-2 border-white/60 active:scale-95 transition-all group min-h-[48px]">
+      <span class="text-xl group-hover:rotate-12 transition-transform">📝</span>
+      <span class="font-bold text-sm sm:text-base">計算手寫板</span>
+      <span id="scratchpad-badge" class="px-2 py-0.5 text-[10px] rounded-full bg-morandi-rose text-white font-black animate-pulse">草稿</span>
+    </button>
+  </div>
+
+  <!-- 大型展開式浮動手寫板面板 -->
+  <div id="scratchpad-container" class="fixed right-0 bottom-0 z-50 transform translate-y-full md:translate-y-0 md:translate-x-full transition-all duration-300 w-full md:w-[50vw] h-[65vh] md:h-[88vh] bg-white rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none shadow-2xl border-4 border-morandi-border flex flex-col overflow-hidden">
+    <div class="bg-morandi-oatmeal px-3.5 py-2.5 border-b border-morandi-border flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">✏️</span>
+        <h3 class="font-bold text-morandi-charcoal text-base sm:text-lg">草稿計算紙</h3>
+        <span class="text-[11px] px-2 py-0.5 rounded-md bg-morandi-sage/20 text-morandi-sage font-bold hidden sm:inline-block">支援觸控與筆寫</span>
+      </div>
+
+      <!-- 工具區 -->
+      <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-1 bg-white p-1 rounded-xl border border-morandi-border">
+          <button onclick="setPenColor('#4A4643')" class="pen-color-btn w-6 h-6 rounded-lg bg-[#4A4643] border-2 border-morandi-border" title="黑鉛筆"></button>
+          <button onclick="setPenColor('#8CA0B3')" class="pen-color-btn w-6 h-6 rounded-lg bg-[#8CA0B3] border-2 border-morandi-border" title="藍筆"></button>
+          <button onclick="setPenColor('#D8A49B')" class="pen-color-btn w-6 h-6 rounded-lg bg-[#D8A49B] border-2 border-morandi-border" title="粉紅筆"></button>
+        </div>
+
+        <button id="eraser-btn" onclick="toggleEraser()" class="p-1.5 rounded-xl bg-white hover:bg-morandi-oatmeal border border-morandi-border text-morandi-charcoal text-sm font-bold flex items-center gap-1 min-h-[36px]" title="橡皮擦">
+          <span>🧹</span>
+        </button>
+
+        <button onclick="toggleGridBackground()" class="p-1.5 rounded-xl bg-white hover:bg-morandi-oatmeal border border-morandi-border text-morandi-charcoal text-sm font-bold min-h-[36px]" title="方格線">
+          <span>📐</span>
+        </button>
+
+        <button onclick="clearScratchpad()" class="px-2.5 py-1.5 rounded-xl bg-morandi-rose/20 hover:bg-morandi-rose text-morandi-rose hover:text-white border border-morandi-rose/40 text-xs font-bold transition-colors min-h-[36px]">
+          清空
+        </button>
+
+        <button id="expand-scratchpad-btn" onclick="toggleExpandScratchpad()" class="p-1.5 rounded-xl bg-white hover:bg-morandi-oatmeal border border-morandi-border text-morandi-charcoal font-bold text-sm min-h-[36px]" title="放大/縮小">
+          ⤢
+        </button>
+
+        <button onclick="toggleScratchpad(false)" class="p-1.5 rounded-xl bg-morandi-charcoal text-white hover:bg-morandi-charcoal/80 text-sm font-bold min-h-[36px]">
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <div id="canvas-wrapper" class="flex-1 relative bg-white canvas-grid-bg overflow-hidden cursor-crosshair">
+      <canvas id="scratchpad-canvas" class="w-full h-full block touch-none"></canvas>
+    </div>
+  </div>
+
+  <div id="confetti-container" class="fixed inset-0 pointer-events-none z-50 overflow-hidden"></div>
+
+  <script>
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+          audioCtx = new AudioContext();
+        }
+      }
+    }
+
+    function playChordSound(type) {
+      try {
+        initAudio();
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        if (!audioCtx) return;
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'success') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.1);
+          osc.frequency.setValueAtTime(783.99, now + 0.2);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+          osc.start(now);
+          osc.stop(now + 0.5);
+        } else {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(329.63, now);
+          osc.frequency.setValueAtTime(261.63, now + 0.15);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        }
+      } catch (e) {}
+    }
+
+    function triggerConfetti() {
+      const container = document.getElementById('confetti-container');
+      if (!container) return;
+      const colors = ['#D8A49B', '#8E9E8C', '#8CA0B3', '#C2B69D', '#F6F3EE'];
+      for (let i = 0; i < 28; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = `${Math.random() * 100}vw`;
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.top = `${Math.random() * 20}vh`;
+        piece.style.animationDelay = `${Math.random() * 0.4}s`;
+        container.appendChild(piece);
+        setTimeout(() => piece.remove(), 2200);
+      }
+    }
+
+    /* ========== 全螢幕切換（消除上方 Gemini 分享外框空白） ========== */
+    function toggleAppFullscreen() {
+      initAudio();
+      try {
+        if (!document.fullscreenElement) {
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+          } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen();
+          } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      } catch (err) {
+        console.warn('Fullscreen request failed:', err);
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const fsBtn = document.getElementById('btn-fullscreen-toggle');
+      if (!fsBtn) return;
+      if (document.fullscreenElement) {
+        fsBtn.innerHTML = `<span class="text-base">✖️</span><span class="sidebar-text-content">退出全螢幕</span>`;
+        fsBtn.classList.add('bg-morandi-sage', 'text-white');
+      } else {
+        fsBtn.innerHTML = `<span class="text-base">🖥️</span><span class="sidebar-text-content">全螢幕教學模式</span>`;
+        fsBtn.classList.remove('bg-morandi-sage', 'text-white');
+      }
+    });
+
+    /* ========== 側邊欄切換與響應式折疊管理 ========== */
+    let isDesktopSidebarCollapsed = false;
+    let isMobileSidebarOpen = false;
+
+    function toggleDesktopSidebar() {
+      const sidebar = document.getElementById('app-sidebar');
+      const collapseBtn = document.getElementById('btn-collapse-sidebar');
+      if (!sidebar) return;
+
+      isDesktopSidebarCollapsed = !isDesktopSidebarCollapsed;
+
+      if (isDesktopSidebarCollapsed) {
+        sidebar.classList.remove('md:w-64');
+        sidebar.classList.add('md:w-20');
+        if (collapseBtn) collapseBtn.textContent = '❯';
+        document.querySelectorAll('.sidebar-text-content').forEach(el => el.classList.add('md:hidden'));
+      } else {
+        sidebar.classList.remove('md:w-20');
+        sidebar.classList.add('md:w-64');
+        if (collapseBtn) collapseBtn.textContent = '❮';
+        document.querySelectorAll('.sidebar-text-content').forEach(el => el.classList.remove('md:hidden'));
+      }
+    }
+
+    function toggleMobileSidebar(forceState) {
+      const sidebar = document.getElementById('app-sidebar');
+      const backdrop = document.getElementById('mobile-backdrop');
+      if (!sidebar) return;
+
+      isMobileSidebarOpen = (forceState !== undefined) ? forceState : !isMobileSidebarOpen;
+
+      if (isMobileSidebarOpen) {
+        sidebar.classList.remove('-translate-x-full');
+        if (backdrop) backdrop.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        if (backdrop) backdrop.classList.add('hidden');
+      }
+    }
+
+    function switchTab(tabKey) {
+      initAudio();
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = "tab-btn w-full p-2.5 rounded-2xl font-bold transition-all text-left bg-white text-morandi-charcoal hover:bg-morandi-oatmeal border border-morandi-border flex items-center gap-3";
+      });
+      document.querySelectorAll('.learning-section').forEach(sec => sec.classList.add('hidden'));
+
+      const activeBtn = document.getElementById(`tab-${tabKey}`);
+      if (activeBtn) {
+        activeBtn.className = "tab-btn w-full p-2.5 rounded-2xl font-bold transition-all text-left bg-morandi-sage text-white shadow-sm flex items-center gap-3";
+      }
+      const activeSection = document.getElementById(`section-${tabKey}`);
+      if (activeSection) {
+        activeSection.classList.remove('hidden');
+      }
+
+      const scratchBadge = document.getElementById('scratchpad-badge');
+      if (scratchBadge) {
+        if (tabKey === 'game' || tabKey === 'quiz') {
+          scratchBadge.classList.remove('hidden');
+          scratchBadge.classList.add('animate-pulse');
+        } else {
+          scratchBadge.classList.add('hidden');
+        }
+      }
+
+      // 手機切換單元後自動收合抽屜
+      if (window.innerWidth < 768) {
+        toggleMobileSidebar(false);
+      }
+    }
+
+    /* ========== 模組一：蘋果與1960元分錢邏輯 ========== */
+    let remainingApples = 14;
+    let basketApples = [0, 0, 0];
+
+    function renderApplesPool() {
+      const pool = document.getElementById('apples-pool');
+      if (!pool) return;
+      pool.innerHTML = '';
+      for (let i = 0; i < remainingApples; i++) {
+        const apple = document.createElement('div');
+        apple.className = 'draggable-item text-3xl select-none p-1 rounded-xl hover:bg-morandi-rose/10 cursor-grab active:cursor-grabbing transition-transform';
+        apple.textContent = '🍎';
+        apple.draggable = true;
+        apple.title = '拖曳或點選放入籃子';
+
+        apple.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', 'apple');
+        });
+        apple.addEventListener('click', () => {
+          let minIdx = 0;
+          for (let b = 1; b < 3; b++) {
+            if (basketApples[b] < basketApples[minIdx]) minIdx = b;
+          }
+          addAppleToBasket(minIdx);
+        });
+
+        pool.appendChild(apple);
+      }
+      const countBadge = document.getElementById('apple-count-badge');
+      if (countBadge) countBadge.textContent = `剩餘 ${remainingApples} 顆`;
+      updateBasketVisuals();
+      updateEquation();
+    }
+
+    function addAppleToBasket(basketIdx) {
+      if (remainingApples > 0) {
+        remainingApples--;
+        basketApples[basketIdx]++;
+        renderApplesPool();
+        playChordSound('success');
+      }
+    }
+
+    function removeAppleFromBasket(basketIdx) {
+      if (basketApples[basketIdx] > 0) {
+        basketApples[basketIdx]--;
+        remainingApples++;
+        renderApplesPool();
+        playChordSound('fail');
+      }
+    }
+
+    function updateBasketVisuals() {
+      document.querySelectorAll('.basket-dropzone').forEach((zone, idx) => {
+        const itemsWrap = zone.querySelector('.basket-items');
+        const counter = zone.querySelector('.basket-counter');
+        if (!itemsWrap || !counter) return;
+        itemsWrap.innerHTML = '';
+        const count = basketApples[idx];
+        counter.textContent = `${count} 顆`;
+
+        for (let i = 0; i < count; i++) {
+          const item = document.createElement('span');
+          item.className = 'text-xl cursor-pointer hover:scale-110 transition-transform';
+          item.textContent = '🍎';
+          item.title = '點擊收回';
+          item.addEventListener('click', () => removeAppleFromBasket(idx));
+          itemsWrap.appendChild(item);
+        }
+      });
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      const bIndex = parseInt(e.currentTarget.dataset.basket) - 1;
+      addAppleToBasket(bIndex);
+    }
+
+    function autoDistributeApples() {
+      initAudio();
+      remainingApples = 2;
+      basketApples = [4, 4, 4];
+      renderApplesPool();
+      triggerConfetti();
+      playChordSound('success');
+    }
+
+    function resetApples() {
+      remainingApples = 14;
+      basketApples = [0, 0, 0];
+      renderApplesPool();
+    }
+
+    function updateEquation() {
+      const eqEl = document.getElementById('equation-display');
+      if (!eqEl) return;
+      if (currentConceptSub === 1) {
+        const isDistributedEqually = (basketApples[0] === basketApples[1] && basketApples[1] === basketApples[2] && basketApples[0] > 0);
+        if (isDistributedEqually) {
+          eqEl.innerHTML = `14 ÷ 3 = <span class="text-morandi-blue font-black">${basketApples[0]}</span> ... 剩下 <span class="text-morandi-rose font-black">${remainingApples}</span>`;
+        } else {
+          eqEl.innerHTML = `14 ÷ 3 = <span class="text-morandi-charcoal font-black">?</span>（分配中...剩餘 ${remainingApples} 顆）`;
+        }
+      }
+    }
+
+    let currentConceptSub = 1;
+    let draggedMoneyType = null;
+
+    let moneyState = {
+      pool1000: 1,
+      pool100: 9,
+      pool10: 6,
+      persons: [
+        { c1000: 0, c100: 0, c10: 0 },
+        { c1000: 0, c100: 0, c10: 0 },
+        { c1000: 0, c100: 0, c10: 0 },
+        { c1000: 0, c100: 0, c10: 0 }
+      ]
+    };
+
+    function switchConceptSub(subId) {
+      initAudio();
+      currentConceptSub = subId;
+      const titleEl = document.getElementById('concept-stage-title');
+      const btnApples = document.getElementById('btn-sub-apples');
+      const btnMoney = document.getElementById('btn-sub-money');
+      const descApples = document.getElementById('sub-apples-desc');
+      const descMoney = document.getElementById('sub-money-desc');
+      const viewApples = document.getElementById('sub-apples-view');
+      const viewMoney = document.getElementById('sub-money-view');
+
+      if (subId === 1) {
+        if (titleEl) titleEl.textContent = "分果子探險：等分與分裝";
+        if (btnApples) btnApples.className = "px-3 py-1.5 rounded-xl font-bold text-sm bg-morandi-sage text-white shadow-sm transition-all min-h-[44px]";
+        if (btnMoney) btnMoney.className = "px-3 py-1.5 rounded-xl font-bold text-sm bg-white text-morandi-charcoal hover:bg-white/80 transition-all min-h-[44px]";
+        if (descApples) descApples.classList.remove('hidden');
+        if (descMoney) descMoney.classList.add('hidden');
+        if (viewApples) viewApples.classList.remove('hidden');
+        if (viewMoney) viewMoney.classList.add('hidden');
+        updateEquation();
+      } else {
+        if (titleEl) titleEl.textContent = "千元鈔平分大考驗：1960元分給4人";
+        if (btnMoney) btnMoney.className = "px-3 py-1.5 rounded-xl font-bold text-sm bg-morandi-sage text-white shadow-sm transition-all min-h-[44px]";
+        if (btnApples) btnApples.className = "px-3 py-1.5 rounded-xl font-bold text-sm bg-white text-morandi-charcoal hover:bg-white/80 transition-all min-h-[44px]";
+        if (descMoney) descMoney.classList.remove('hidden');
+        if (descApples) descApples.classList.add('hidden');
+        if (viewMoney) viewMoney.classList.remove('hidden');
+        if (viewApples) viewApples.classList.add('hidden');
+        updateMoneyUI();
+      }
+    }
+
+    function updateMoneyUI() {
+      const poolContainer = document.getElementById('money-tokens-pool');
+      if (!poolContainer) return;
+      poolContainer.innerHTML = '';
+
+      for (let i = 0; i < moneyState.pool1000; i++) {
+        poolContainer.appendChild(createDraggableMoneyToken('1000', '💵 1000', 'bg-morandi-blue/25 border-morandi-blue text-morandi-blue'));
+      }
+      for (let i = 0; i < moneyState.pool100; i++) {
+        poolContainer.appendChild(createDraggableMoneyToken('100', '💵 100', 'bg-morandi-rose/25 border-morandi-rose text-morandi-rose'));
+      }
+      for (let i = 0; i < moneyState.pool10; i++) {
+        poolContainer.appendChild(createDraggableMoneyToken('10', '🪙 10', 'bg-morandi-khaki/40 border-morandi-deepKhaki text-morandi-deepKhaki'));
+      }
+
+      if (moneyState.pool1000 === 0 && moneyState.pool100 === 0 && moneyState.pool10 === 0) {
+        poolContainer.innerHTML = '<span class="text-xs text-morandi-charcoal/50 font-bold m-auto">已全部分配完畢！</span>';
+      }
+
+      const poolTotal = (moneyState.pool1000 * 1000) + (moneyState.pool100 * 100) + (moneyState.pool10 * 10);
+      const poolSumEl = document.getElementById('money-pool-sum');
+      if (poolSumEl) poolSumEl.textContent = `剩餘 ${poolTotal} 元`;
+
+      const btnEx1000 = document.getElementById('btn-exchange-1000');
+      const btnEx100 = document.getElementById('btn-exchange-100');
+      const btnSh100 = document.getElementById('btn-share-100');
+      const btnSh10 = document.getElementById('btn-share-10');
+
+      if (btnEx1000) {
+        btnEx1000.disabled = (moneyState.pool1000 < 1);
+        btnEx1000.classList.toggle('opacity-40', moneyState.pool1000 < 1);
+      }
+      if (btnEx100) {
+        btnEx100.disabled = (moneyState.pool100 < 1);
+        btnEx100.classList.toggle('opacity-40', moneyState.pool100 < 1);
+      }
+      if (btnSh100) {
+        btnSh100.disabled = (moneyState.pool100 < 4);
+        btnSh100.classList.toggle('opacity-40', moneyState.pool100 < 4);
+      }
+      if (btnSh10) {
+        btnSh10.disabled = (moneyState.pool10 < 4);
+        btnSh10.classList.toggle('opacity-40', moneyState.pool10 < 4);
+      }
+
+      let allSums = [];
+      for (let i = 0; i < 4; i++) {
+        const p = moneyState.persons[i];
+        const sum = (p.c1000 * 1000) + (p.c100 * 100) + (p.c10 * 10);
+        allSums.push(sum);
+        const sumEl = document.getElementById(`person-sum-${i}`);
+        const detailEl = document.getElementById(`person-detail-${i}`);
+        if (sumEl) sumEl.textContent = `${sum} 元`;
+        if (detailEl) detailEl.textContent = `100元: ${p.c100}張 | 10元: ${p.c10}個${p.c1000 > 0 ? ` | 千元: ${p.c1000}張` : ''}`;
+
+        const tokensContainer = document.getElementById(`person-tokens-${i}`);
+        if (tokensContainer) {
+          tokensContainer.innerHTML = '';
+          for (let k = 0; k < p.c1000; k++) {
+            tokensContainer.appendChild(createReturnableChip(i, '1000', '1000', 'bg-morandi-blue/20 text-morandi-blue border-morandi-blue'));
+          }
+          for (let k = 0; k < p.c100; k++) {
+            tokensContainer.appendChild(createReturnableChip(i, '100', '100', 'bg-morandi-rose/20 text-morandi-rose border-morandi-rose'));
+          }
+          for (let k = 0; k < p.c10; k++) {
+            tokensContainer.appendChild(createReturnableChip(i, '10', '10', 'bg-morandi-khaki/30 text-morandi-deepKhaki border-morandi-deepKhaki'));
+          }
+          if (sum === 0) {
+            tokensContainer.innerHTML = `<span class="text-[10px] text-morandi-charcoal/40 m-auto select-none">拖曳至此</span>`;
+          }
+        }
+      }
+
+      const eqEl = document.getElementById('equation-display');
+      const isAllEqual = (allSums[0] === allSums[1] && allSums[1] === allSums[2] && allSums[2] === allSums[3]);
+      if (eqEl) {
+        if (isAllEqual && allSums[0] > 0) {
+          eqEl.innerHTML = `1960 ÷ 4 = <span class="text-morandi-blue font-black">${allSums[0]}</span>（每人 ${allSums[0]} 元，零錢包剩餘 ${poolTotal} 元）`;
+        } else {
+          eqEl.innerHTML = `1960 ÷ 4 = <span class="text-morandi-charcoal font-black">?</span>（分配中... 剩餘 ${poolTotal} 元）`;
+        }
+      }
+
+      const tipBanner = document.getElementById('money-tips-banner');
+      const hasUnfair1000 = moneyState.persons.some(p => p.c1000 > 0);
+
+      if (tipBanner) {
+        if (hasUnfair1000) {
+          tipBanner.innerHTML = `⚠️ <strong>分配提醒：</strong> 1 張千元鈔分給其中 1 人，其他人就分不到了！請點擊小朋友身上的千元鈔收回，點擊「💱 換錢」換成 10 張百元鈔再來分！`;
+        } else if (moneyState.pool1000 > 0) {
+          tipBanner.innerHTML = `💡 <strong>步驟 1（千位）：</strong> 1 張 1000 元分給 4 個人不夠分！請先點擊「💱 換錢」，把 1 張千元換成 10 張百元！`;
+        } else if (moneyState.pool100 >= 4) {
+          tipBanner.innerHTML = `💡 <strong>步驟 2（百位）：</strong> 請拖曳百元鈔給 4 位小朋友（每人可分 4 張）！也可以按「💵 每人分 100元」！`;
+        } else if (moneyState.pool100 > 0 && moneyState.pool100 < 4) {
+          tipBanner.innerHTML = `💡 <strong>步驟 3（換錢到十位）：</strong> 零錢包剩下 ${moneyState.pool100} 張百元鈔，4個人不夠分了！請點擊「💱 換錢」，把百元鈔換成 10 個十元硬幣！`;
+        } else if (moneyState.pool10 >= 4) {
+          tipBanner.innerHTML = `💡 <strong>步驟 4（十位）：</strong> 拖曳十元硬幣給 4 位小朋友平分！也可以點擊硬幣或按「🪙 每人分 10元」！`;
+        } else if (poolTotal === 0) {
+          if (isAllEqual && allSums[0] === 490) {
+            tipBanner.innerHTML = `🎉 <strong>大功告成！</strong> 1960 元全部完美平均分給 4 個人！每人分到 4 張百元（400元）和 9 個十元（90元），每人拿到 <strong class="text-morandi-blue underline font-black">490 元</strong>！整除無餘數！`;
+          } else {
+            tipBanner.innerHTML = `⚠️ <strong>錢已分完，但金額不一樣：</strong> 4 位小朋友拿到的錢不一樣多喔！請點擊小朋友身上的錢幣收回，再重新平均平分！`;
+          }
+        }
+      }
+    }
+
+    function createDraggableMoneyToken(type, label, styleClasses) {
+      const el = document.createElement('div');
+      el.className = `money-token-drag px-2 py-1 rounded-xl border font-black text-xs shadow-sm flex items-center gap-1 active:scale-95 ${styleClasses}`;
+      el.textContent = label;
+      el.setAttribute('draggable', 'true');
+      el.dataset.moneyType = type;
+
+      el.addEventListener('dragstart', (e) => {
+        draggedMoneyType = type;
+        e.dataTransfer.setData('text/plain', type);
+      });
+
+      el.addEventListener('click', () => {
+        giveMoneyToPerson(getLeastMoneyPersonIdx(), type);
+      });
+
+      return el;
+    }
+
+    function createReturnableChip(personIdx, type, label, styleClasses) {
+      const chip = document.createElement('span');
+      chip.className = `inline-flex items-center justify-center px-1 py-0.5 rounded border text-[10px] font-bold cursor-pointer hover:opacity-75 transition-opacity ${styleClasses}`;
+      chip.textContent = label;
+      chip.title = "點擊收回至零錢包";
+      chip.addEventListener('click', () => {
+        returnMoneyFromPerson(personIdx, type);
+      });
+      return chip;
+    }
+
+    function getLeastMoneyPersonIdx() {
+      let minVal = Infinity;
+      let targetIdx = 0;
+      for (let i = 0; i < 4; i++) {
+        const p = moneyState.persons[i];
+        const val = (p.c1000 * 1000) + (p.c100 * 100) + (p.c10 * 10);
+        if (val < minVal) {
+          minVal = val;
+          targetIdx = i;
+        }
+      }
+      return targetIdx;
+    }
+
+    function giveMoneyToPerson(personIdx, type) {
+      if (type === '1000' && moneyState.pool1000 > 0) {
+        moneyState.pool1000--;
+        moneyState.persons[personIdx].c1000++;
+      } else if (type === '100' && moneyState.pool100 > 0) {
+        moneyState.pool100--;
+        moneyState.persons[personIdx].c100++;
+      } else if (type === '10' && moneyState.pool10 > 0) {
+        moneyState.pool10--;
+        moneyState.persons[personIdx].c10++;
+      }
+      updateMoneyUI();
+      playChordSound('success');
+    }
+
+    function returnMoneyFromPerson(personIdx, type) {
+      if (type === '1000' && moneyState.persons[personIdx].c1000 > 0) {
+        moneyState.persons[personIdx].c1000--;
+        moneyState.pool1000++;
+      } else if (type === '100' && moneyState.persons[personIdx].c100 > 0) {
+        moneyState.persons[personIdx].c100--;
+        moneyState.pool100++;
+      } else if (type === '10' && moneyState.persons[personIdx].c10 > 0) {
+        moneyState.persons[personIdx].c10--;
+        moneyState.pool10++;
+      }
+      updateMoneyUI();
+      playChordSound('fail');
+    }
+
+    function handleMoneyDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('drag-over');
+    }
+
+    function handleMoneyDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleMoneyDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      const personIdx = parseInt(e.currentTarget.dataset.personIdx);
+      const type = draggedMoneyType || e.dataTransfer.getData('text/plain');
+      if (type && !isNaN(personIdx)) {
+        giveMoneyToPerson(personIdx, type);
+      }
+    }
+
+    function exchange1000to100() {
+      if (moneyState.pool1000 >= 1) {
+        initAudio();
+        moneyState.pool1000 -= 1;
+        moneyState.pool100 += 10;
+        updateMoneyUI();
+        playChordSound('success');
+      }
+    }
+
+    function exchange100to10() {
+      if (moneyState.pool100 >= 1) {
+        initAudio();
+        moneyState.pool100 -= 1;
+        moneyState.pool10 += 10;
+        updateMoneyUI();
+        playChordSound('success');
+      }
+    }
+
+    function stepShareHundreds() {
+      if (moneyState.pool100 >= 4) {
+        initAudio();
+        moneyState.pool100 -= 4;
+        for (let i = 0; i < 4; i++) {
+          moneyState.persons[i].c100 += 1;
+        }
+        updateMoneyUI();
+        playChordSound('success');
+      }
+    }
+
+    function stepShareTens() {
+      if (moneyState.pool10 >= 4) {
+        initAudio();
+        moneyState.pool10 -= 4;
+        for (let i = 0; i < 4; i++) {
+          moneyState.persons[i].c10 += 1;
+        }
+        updateMoneyUI();
+        playChordSound('success');
+      }
+    }
+
+    function autoShareMoneyAll() {
+      initAudio();
+      moneyState.pool1000 = 0;
+      moneyState.pool100 = 0;
+      moneyState.pool10 = 0;
+      for (let i = 0; i < 4; i++) {
+        moneyState.persons[i].c1000 = 0;
+        moneyState.persons[i].c100 = 4;
+        moneyState.persons[i].c10 = 9;
+      }
+      updateMoneyUI();
+      triggerConfetti();
+      playChordSound('success');
+    }
+
+    function resetMoneyGame() {
+      moneyState = {
+        pool1000: 1,
+        pool100: 9,
+        pool10: 6,
+        persons: [
+          { c1000: 0, c100: 0, c10: 0 },
+          { c1000: 0, c100: 0, c10: 0 },
+          { c1000: 0, c100: 0, c10: 0 },
+          { c1000: 0, c100: 0, c10: 0 }
+        ]
+      };
+      updateMoneyUI();
+    }
+
+    /* ========== 模組二：四位數除以一位數直式解剖器 ========== */
+    const divisionProblems = [
+      {
+        dividend: 5248,
+        divisor: 4,
+        quotient: "1312",
+        displayEq: "5248 ÷ 4 = 1312",
+        digits: ["5", "2", "4", "8"],
+        steps: [
+          {
+            stepNum: 1,
+            title: "步驟 1 / 4：千位除算（5 個千 ÷ 4）",
+            desc: "千位是 5，5 ÷ 4 商 1 餘 1。千位的商寫 1。4 × 1 = 4，5 減 4 剩下 1 個千。",
+            qDigits: ["1", "", "", ""],
+            rows: [
+              { val: "4", col: 0, type: "sub" },
+              { type: "line" }
+            ],
+            progress: 25
+          },
+          {
+            stepNum: 2,
+            title: "步驟 2 / 4：百位移下（12 個百 ÷ 4）",
+            desc: "千位剩下的 1 個千換成 10 個百，將百位 2 移下來變成 12 個百。12 ÷ 4 = 3，百位的商寫 3。4 × 3 = 12，整除無餘數！",
+            qDigits: ["1", "3", "", ""],
+            rows: [
+              { val: "4", col: 0, type: "sub" },
+              { type: "line" },
+              { val: "12", col: 1, type: "down" },
+              { val: "12", col: 1, type: "sub" },
+              { type: "line" }
+            ],
+            progress: 50
+          },
+          {
+            stepNum: 3,
+            title: "步驟 3 / 4：十位移下（4 個十 ÷ 4）",
+            desc: "把十位的 4 移下來。4 ÷ 4 = 1，十位的商寫 1。4 × 1 = 4，4 減 4 剩下 0。",
+            qDigits: ["1", "3", "1", ""],
+            rows: [
+              { val: "4", col: 0, type: "sub" },
+              { type: "line" },
+              { val: "12", col: 1, type: "down" },
+              { val: "12", col: 1, type: "sub" },
+              { type: "line" },
+              { val: "4", col: 2, type: "down" },
+              { val: "4", col: 2, type: "sub" },
+              { type: "line" }
+            ],
+            progress: 75
+          },
+          {
+            stepNum: 4,
+            title: "步驟 4 / 4：個位移下（8 個一 ÷ 4）",
+            desc: "把個位的 8 移下來。8 ÷ 4 = 2，個位的商寫 2。4 × 2 = 8，相減為 0。整除無餘數，最終商為 1312！",
+            qDigits: ["1", "3", "1", "2"],
+            rows: [
+              { val: "4", col: 0, type: "sub" },
+              { type: "line" },
+              { val: "12", col: 1, type: "down" },
+              { val: "12", col: 1, type: "sub" },
+              { type: "line" },
+              { val: "4", col: 2, type: "down" },
+              { val: "4", col: 2, type: "sub" },
+              { type: "line" },
+              { val: "8", col: 3, type: "down" },
+              { val: "8", col: 3, type: "sub" },
+              { type: "line" },
+              { val: "0", col: 3, type: "rem" }
+            ],
+            progress: 100
+          }
+        ]
+      },
+      {
+        dividend: 8160,
+        divisor: 8,
+        quotient: "1020",
+        displayEq: "8160 ÷ 8 = 1020（中間有 0 補位示範）",
+        digits: ["8", "1", "6", "0"],
+        steps: [
+          {
+            stepNum: 1,
+            title: "步驟 1 / 4：千位除算（8 個千 ÷ 8）",
+            desc: "千位是 8，8 ÷ 8 = 1，千位商寫 1。8 × 1 = 8，8 減 8 等於 0。",
+            qDigits: ["1", "", "", ""],
+            rows: [
+              { val: "8", col: 0, type: "sub" },
+              { type: "line" }
+            ],
+            progress: 25
+          },
+          {
+            stepNum: 2,
+            title: "步驟 2 / 4：百位移下（1 個百不夠除，商補 0！）",
+            desc: "移下百位 1。1 個百除以 8 不夠分！非常重要：必須在商的百位寫上『0』佔位！",
+            qDigits: ["1", "0", "", ""],
+            rows: [
+              { val: "8", col: 0, type: "sub" },
+              { type: "line" },
+              { val: "1", col: 1, type: "down" },
+              { val: "0", col: 1, type: "sub" },
+              { type: "line" }
+            ],
+            progress: 50
+          },
+          {
+            stepNum: 3,
+            title: "步驟 3 / 4：十位移下（16 個十 ÷ 8）",
+            desc: "把十位的 6 移下來，合在一起變成 16 個十。16 ÷ 8 = 2，十位商寫 2。8 × 2 = 16，相減為 0。",
+            qDigits: ["1", "0", "2", ""],
+            rows: [
+              { val: "8", col: 0, type: "sub" },
+              { type: "line" },
+              { val: "1", col: 1, type: "down" },
+              { val: "0", col: 1, type: "sub" },
+              { type: "line" },
+              { val: "16", col: 2, type: "down" },
+              { val: "16", col: 2, type: "sub" },
+              { type: "line" }
+            ],
+            progress: 75
+          },
+          {
+            stepNum: 4,
+            title: "步驟 4 / 4：個位移下（0 個一，商補 0！）",
+            desc: "個位是 0，移下來 0 ÷ 8 = 0，個位的商務必補 0！答案即為 1020，整除無餘數。",
+            qDigits: ["1", "0", "2", "0"],
+            rows: [
+              { val: "8", col: 0, type: "sub" },
+              { type: "line" },
+              { val: "1", col: 1, type: "down" },
+              { val: "0", col: 1, type: "sub" },
+              { type: "line" },
+              { val: "16", col: 2, type: "down" },
+              { val: "16", col: 2, type: "sub" },
+              { type: "line" },
+              { val: "0", col: 3, type: "down" },
+              { val: "0", col: 3, type: "sub" },
+              { type: "line" },
+              { val: "0", col: 3, type: "rem" }
+            ],
+            progress: 100
+          }
+        ]
+      }
+    ];
+
+    let currentProblemIdx = 0;
+    let currentDivisionStep = 0;
+
+    function changeDivisionProblem() {
+      initAudio();
+      currentProblemIdx = (currentProblemIdx + 1) % divisionProblems.length;
+      currentDivisionStep = 0;
+      const eqEl = document.getElementById('division-current-eq');
+      if (eqEl) eqEl.textContent = divisionProblems[currentProblemIdx].displayEq;
+      renderLongDivisionBoard();
+      playChordSound('success');
+    }
+
+    function renderLongDivisionBoard() {
+      const prob = divisionProblems[currentProblemIdx];
+      const stepData = prob.steps[currentDivisionStep];
+      const board = document.getElementById('long-division-board');
+      if (!board) return;
+
+      let html = `<div class="division-stage-wrap">`;
+      html += `<div class="division-divisor-cell">${prob.divisor}</div>`;
+      html += `<div class="division-bracket-container">`;
+      html += `<div class="division-quotient-row">`;
+      for (let i = 0; i < 4; i++) {
+        const qDigit = stepData.qDigits[i] || "";
+        const isActive = (i === currentDivisionStep);
+        html += `<div class="${isActive ? 'text-morandi-blue font-black scale-110' : 'text-morandi-charcoal'}">${qDigit}</div>`;
+      }
+      html += `</div>`;
+
+      html += `<div class="division-body-block">`;
+      html += `<div class="division-grid-row">`;
+      for (let i = 0; i < 4; i++) {
+        html += `<div class="text-morandi-charcoal font-black">${prob.digits[i]}</div>`;
+      }
+      html += `</div>`;
+
+      stepData.rows.forEach(r => {
+        if (r.type === "line") {
+          html += `<div class="division-sub-divider"></div>`;
+        } else {
+          html += `<div class="division-grid-row">`;
+          const s = String(r.val);
+          const endCol = r.col;
+          const startCol = endCol - s.length + 1;
+
+          for (let c = 0; c < 4; c++) {
+            if (c >= startCol && c <= endCol) {
+              const char = s[c - startCol];
+              let colorClass = "text-morandi-charcoal font-bold";
+              if (r.type === "sub") colorClass = "text-morandi-rose font-black";
+              if (r.type === "rem") colorClass = "text-morandi-sage font-black text-xl";
+              html += `<div class="${colorClass}">${char}</div>`;
+            } else {
+              html += `<div></div>`;
+            }
+          }
+          html += `</div>`;
+        }
+      });
+
+      html += `</div></div></div>`;
+      board.innerHTML = html;
+
+      const badge = document.getElementById('step-badge');
+      const title = document.getElementById('step-title');
+      const desc = document.getElementById('step-desc');
+      const pBar = document.getElementById('division-progress-bar');
+      if (badge) badge.textContent = `步驟 ${stepData.stepNum} / 4`;
+      if (title) title.textContent = stepData.title;
+      if (desc) desc.textContent = stepData.desc;
+      if (pBar) pBar.style.width = `${stepData.progress}%`;
+
+      const scrollWrap = document.getElementById('long-division-scroll-wrap');
+      if (scrollWrap && currentDivisionStep >= 2) {
+        setTimeout(() => {
+          scrollWrap.scrollTo({ top: scrollWrap.scrollHeight, behavior: 'smooth' });
+        }, 60);
+      }
+    }
+
+    function stepDivision(delta) {
+      initAudio();
+      currentDivisionStep = Math.max(0, Math.min(3, currentDivisionStep + delta));
+      renderLongDivisionBoard();
+      playChordSound('success');
+    }
+
+    function resetDivisionStep() {
+      currentDivisionStep = 0;
+      renderLongDivisionBoard();
+    }
+
+    /* ========== 模組三：估商天平與3欄直式對照 ========== */
+    let estState = {
+      dividend: 87,
+      divisor: 23,
+      currentTrial: 4,
+      roundDivisor: 20,
+      roundDividend: 80
+    };
+
+    const estimatePresets = [
+      { dividend: 87, divisor: 23, roundDivisor: 20, roundDividend: 80, ideal: 3 },
+      { dividend: 96, divisor: 32, roundDivisor: 30, roundDividend: 90, ideal: 3 },
+      { dividend: 75, divisor: 19, roundDivisor: 20, roundDividend: 80, ideal: 3 },
+      { dividend: 84, divisor: 26, roundDivisor: 30, roundDividend: 80, ideal: 3 },
+      { dividend: 92, divisor: 28, roundDivisor: 30, roundDividend: 90, ideal: 3 }
+    ];
+
+    function randomEstimateQuestion() {
+      const item = estimatePresets[Math.floor(Math.random() * estimatePresets.length)];
+      estState.dividend = item.dividend;
+      estState.divisor = item.divisor;
+      estState.roundDivisor = item.roundDivisor;
+      estState.roundDividend = item.roundDividend;
+      
+      const suggestedTrial = Math.floor(item.roundDividend / item.roundDivisor);
+      estState.currentTrial = Math.max(1, Math.min(9, suggestedTrial));
+      
+      const slider = document.getElementById('trial-quotient-slider');
+      if (slider) slider.value = estState.currentTrial;
+      updateEstimateSimulation(estState.currentTrial);
+    }
+
+    function adjustTrial(delta) {
+      const newVal = Math.max(1, Math.min(9, estState.currentTrial + delta));
+      const slider = document.getElementById('trial-quotient-slider');
+      if (slider) slider.value = newVal;
+      updateEstimateSimulation(newVal);
+    }
+
+    function updateEstimateSimulation(val) {
+      initAudio();
+      const trial = parseInt(val);
+      estState.currentTrial = trial;
+      const trialValEl = document.getElementById('trial-quotient-val');
+      if (trialValEl) trialValEl.textContent = trial;
+
+      const roundD = estState.roundDivisor || (Math.round(estState.divisor / 10) * 10);
+      const roundDd = estState.roundDividend || (Math.floor(estState.dividend / 10) * 10);
+
+      const guideText = document.getElementById('est-guide-text');
+      if (guideText) {
+        guideText.innerHTML = 
+          `把 <strong class="text-morandi-sage">${estState.divisor}</strong> 看成 <strong>${roundD}</strong>、<strong class="text-morandi-blue">${estState.dividend}</strong> 看成 <strong>${roundDd}</strong> ➔ 用大數估商：${roundDd} ÷ ${roundD} 初估商為 ${Math.floor(roundDd / roundD)}！`;
+      }
+
+      const product = estState.divisor * trial;
+      const remainder = estState.dividend - product;
+
+      const cDiv = document.getElementById('est-calc-divisor');
+      const cQuo = document.getElementById('est-calc-quotient');
+      const cProd = document.getElementById('est-calc-product');
+      const cDivd = document.getElementById('est-calc-dividend');
+      if (cDiv) cDiv.textContent = estState.divisor;
+      if (cQuo) cQuo.textContent = trial;
+      if (cProd) cProd.textContent = product;
+      if (cDivd) cDivd.textContent = estState.dividend;
+
+      const compareEl = document.getElementById('est-calc-compare');
+      const statusTag = document.getElementById('est-status-tag');
+      const feedbackBox = document.getElementById('est-feedback-box');
+
+      let isTooBig = (product > estState.dividend);
+      let isTooSmall = (!isTooBig && remainder >= estState.divisor);
+
+      if (isTooBig) {
+        if (compareEl) compareEl.innerHTML = `${product} 比 ${estState.dividend} 大，不夠減！<span class="text-morandi-rose font-black">（商太大了！）</span>`;
+        if (statusTag) {
+          statusTag.className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-morandi-rose/20 text-morandi-rose';
+          statusTag.textContent = '❌ 商太大了';
+        }
+        if (feedbackBox) {
+          feedbackBox.className = 'p-2.5 rounded-xl bg-morandi-rose/15 border border-morandi-rose/30 text-morandi-charcoal text-xs';
+          feedbackBox.innerHTML = `乘積 ${product} 超過被除數 ${estState.dividend}，不夠減！請將商「調小 1」！`;
+        }
+      } else if (isTooSmall) {
+        if (compareEl) compareEl.innerHTML = `相減剩下 ${remainder}，比除數 ${estState.divisor} 還大！<span class="text-morandi-blue font-black">（商太小了！）</span>`;
+        if (statusTag) {
+          statusTag.className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-morandi-blue/20 text-morandi-blue';
+          statusTag.textContent = '⚠️ 商太小了';
+        }
+        if (feedbackBox) {
+          feedbackBox.className = 'p-2.5 rounded-xl bg-morandi-blue/15 border border-morandi-blue/30 text-morandi-charcoal text-xs';
+          feedbackBox.innerHTML = `餘數 ${remainder} ≥ 除數 ${estState.divisor}，表示還能再分！請將商「調大 1」！`;
+        }
+      } else {
+        if (compareEl) compareEl.innerHTML = `相減剩下 ${remainder}，比除數小且可減！<span class="text-morandi-sage font-black">（剛剛好！）</span>`;
+        if (statusTag) {
+          statusTag.className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-morandi-sage/20 text-morandi-sage';
+          statusTag.textContent = '✅ 正確適當商數！';
+        }
+        if (feedbackBox) {
+          feedbackBox.className = 'p-2.5 rounded-xl bg-morandi-sage/15 border border-morandi-sage/30 text-morandi-charcoal text-xs font-bold';
+          feedbackBox.innerHTML = `太棒了！商是 ${trial}，餘數為 ${remainder}，完全符合除法定理！`;
+        }
+        playChordSound('success');
+      }
+
+      renderEstimateVertical(trial, product, remainder, isTooBig, roundD);
+    }
+
+    function renderEstimateVertical(trial, product, remainder, isTooBig, roundD) {
+      const container = document.getElementById('est-vertical-division');
+      if (!container) return;
+
+      const divStr = String(estState.dividend).padStart(3, ' ');
+      const prodStr = String(product).padStart(3, ' ');
+      const remStr = String(remainder).padStart(3, ' ');
+
+      let subHtml = '';
+      if (isTooBig) {
+        subHtml = `
+          <div class="grid text-center text-morandi-rose font-black text-xl py-0.5" style="grid-template-columns: repeat(3, 30px);">
+            <div>${prodStr[0] === ' ' ? '' : prodStr[0]}</div>
+            <div>${prodStr[1] === ' ' ? '' : prodStr[1]}</div>
+            <div>${prodStr[2]}</div>
+          </div>
+          <div class="h-[2px] bg-morandi-rose w-full my-0.5"></div>
+          <div class="text-center text-morandi-rose font-bold text-[11px] py-0.5 whitespace-nowrap">⚠️ 超過了，不夠減！</div>
+        `;
+      } else {
+        subHtml = `
+          <div class="grid text-center text-morandi-rose font-bold text-xl py-0.5" style="grid-template-columns: repeat(3, 30px);">
+            <div>${prodStr[0] === ' ' ? '' : prodStr[0]}</div>
+            <div>${prodStr[1] === ' ' ? '' : prodStr[1]}</div>
+            <div>${prodStr[2]}</div>
+          </div>
+          <div class="h-[2px] bg-morandi-charcoal w-full my-0.5"></div>
+          <div class="grid text-center text-morandi-sage font-black text-xl py-0.5" style="grid-template-columns: repeat(3, 30px);">
+            <div>${remStr[0] === ' ' ? '' : remStr[0]}</div>
+            <div>${remStr[1] === ' ' ? '' : remStr[1]}</div>
+            <div>${remStr[2]}</div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div class="inline-flex items-start">
+          <div class="flex flex-col items-end pr-2 pt-6">
+            <span class="text-[10px] font-bold text-morandi-sage bg-morandi-sage/15 px-1 py-0.5 rounded mb-1">
+              看成 ${roundD}
+            </span>
+            <span class="text-2xl font-black text-morandi-sage leading-none">${estState.divisor}</span>
+          </div>
+          <div class="flex flex-col">
+            <div class="grid text-center font-black text-2xl h-7 items-center" style="grid-template-columns: repeat(3, 30px);">
+              <div></div>
+              <div></div>
+              <div class="${isTooBig ? 'text-morandi-rose' : 'text-morandi-blue'} scale-110">${trial}</div>
+            </div>
+            <div class="border-l-[3.5px] border-t-[3.5px] border-morandi-charcoal pl-1 pt-1" style="width: 98px;">
+              <div class="grid text-center text-2xl font-black text-morandi-charcoal py-0.5" style="grid-template-columns: repeat(3, 30px);">
+                <div>${divStr[0] === ' ' ? '' : divStr[0]}</div>
+                <div>${divStr[1] === ' ' ? '' : divStr[1]}</div>
+                <div>${divStr[2]}</div>
+              </div>
+              ${subHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ========== 模組四：寶石探險小遊戲 ========== */
+    let gameScore = 0;
+    const gameQuestions = [
+      { p: "432 ÷ 18", options: ["24", "22", "26", "28"], correct: 0, tip: "43 ÷ 18 商 2 餘 7，72 ÷ 18 商 4，答案是 24！" },
+      { p: "675 ÷ 25", options: ["25", "27", "29", "23"], correct: 1, tip: "67 ÷ 25 商 2 餘 17，175 ÷ 25 商 7，答案是 27！" },
+      { p: "588 ÷ 14", options: ["42", "44", "38", "46"], correct: 0, tip: "58 ÷ 14 商 4 餘 2，28 ÷ 14 商 2，答案是 42！" },
+      { p: "896 ÷ 32", options: ["26", "38", "28", "24"], correct: 2, tip: "89 ÷ 32 商 2 餘 25，256 ÷ 32 商 8，答案是 28！" }
+    ];
+    let currentGameIdx = 0;
+
+    function renderGameRound() {
+      const q = gameQuestions[currentGameIdx];
+      const probEl = document.getElementById('game-problem');
+      const feedEl = document.getElementById('game-feedback');
+      if (probEl) probEl.textContent = q.p;
+      if (feedEl) {
+        feedEl.textContent = "請點選你認為正確的商數寶石！";
+        feedEl.className = "p-2.5 bg-morandi-oatmeal rounded-xl text-center edu-body text-sm text-morandi-charcoal font-bold";
+      }
+
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById(`game-opt-${i}`);
+        if (btn) {
+          const optText = btn.querySelector('.opt-text');
+          if (optText) optText.textContent = q.options[i];
+          btn.disabled = false;
+          btn.classList.remove('bg-morandi-sage/30', 'bg-morandi-rose/30', 'opacity-50');
+        }
+      }
+    }
+
+    function submitGameAnswer(choiceIdx) {
+      initAudio();
+      const q = gameQuestions[currentGameIdx];
+      const feedback = document.getElementById('game-feedback');
+
+      if (choiceIdx === q.correct) {
+        gameScore += 10;
+        const scoreEl = document.getElementById('game-score');
+        if (scoreEl) scoreEl.textContent = gameScore;
+        if (feedback) {
+          feedback.className = "p-2.5 bg-morandi-sage/20 border border-morandi-sage text-center edu-body text-sm text-morandi-sage font-black rounded-xl";
+          feedback.innerHTML = `🎉 答對了！採集到璀璨寶石！${q.tip}`;
+        }
+        triggerConfetti();
+        playChordSound('success');
+      } else {
+        if (feedback) {
+          feedback.className = "p-2.5 bg-morandi-rose/20 border border-morandi-rose text-center edu-body text-sm text-morandi-rose font-black rounded-xl";
+          feedback.innerHTML = `💡 差一點點喔！${q.tip}`;
+        }
+        playChordSound('fail');
+      }
+
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById(`game-opt-${i}`);
+        if (btn) btn.disabled = true;
+      }
+    }
+
+    function startNextGameRound() {
+      currentGameIdx = (currentGameIdx + 1) % gameQuestions.length;
+      renderGameRound();
+    }
+
+    /* ========== 模組五：終點成效檢核（10題測驗） ========== */
+    const quizDatabase = [
+      {
+        id: 1,
+        category: "1. 認識除法概念與餘數關係",
+        question: "媽媽烤了 38 塊餅乾，每 6 塊裝成一盒。最多可以裝滿幾盒？還剩下幾塊餅乾？",
+        options: [
+          "裝滿 6 盒，剩下 2 塊",
+          "裝滿 5 盒，剩下 8 塊",
+          "裝滿 7 盒，剩下 1 塊",
+          "裝滿 6 盒，剩下 4 塊"
+        ],
+        correct: 0,
+        explanation: "38 ÷ 6 = 6 餘 2。餘數 2 比除數 6 小，所以最多可裝滿 6 盒，還剩下 2 塊餅乾。"
+      },
+      {
+        id: 2,
+        category: "1. 除法與餘數基本定理",
+        question: "在算式「某數 ÷ 7 = 9 ... ★」中，餘數 ★「最大」可能是多少？",
+        options: [
+          "8",
+          "7",
+          "6",
+          "5"
+        ],
+        correct: 2,
+        explanation: "除法關鍵定理：餘數一定要比除數小！除數是 7，所以餘數最大只能是 6。"
+      },
+      {
+        id: 3,
+        category: "2. 四位數除以一位數直式（補0概念）",
+        question: "計算 8160 ÷ 8 的商是多少？（注意百位與個位的補 0 處理）",
+        options: [
+          "120",
+          "1020",
+          "1200",
+          "102"
+        ],
+        correct: 1,
+        explanation: "千位 8÷8=1；百位 1 不夠除要在商補 0；接著看 16÷8=2；個位 0 直接補 0，因此商為 1020。"
+      },
+      {
+        id: 4,
+        category: "2. 四位數除以一位數生活應用",
+        question: "學校圖書館買進 4525 本新故事書，平均分送給 5 個年級。每個年級可以分到多少本？",
+        options: [
+          "95 本",
+          "905 本",
+          "950 本",
+          "805 本"
+        ],
+        correct: 1,
+        explanation: "4525 ÷ 5：45 個百除以 5 得 9 個百；十位 2 不夠除要補 0；25 個一除以 5 得 5，故每學年分得 905 本。"
+      },
+      {
+        id: 5,
+        category: "3. 二位數除以二位數直式計算",
+        question: "算式 98 ÷ 24 的商和餘數分別是多少？",
+        options: [
+          "商 3，餘 26",
+          "商 4，餘 2",
+          "商 4，餘 12",
+          "商 5，餘 0"
+        ],
+        correct: 1,
+        explanation: "24 × 4 = 96，98 - 96 = 2。餘數 2 比除數 24 小，所以商是 4，餘數是 2。"
+      },
+      {
+        id: 6,
+        category: "4. 估商技巧（太大多退）",
+        question: "小華在計算 85 ÷ 28 時，先把 28 看作 30 來估商。他第一次試商猜 3，請問這個估商恰當嗎？",
+        options: [
+          "恰當，28 × 3 = 84，85 - 84 = 1，剛好合適",
+          "太大了，乘起來會超過 85",
+          "太小了，餘數會比 28 大",
+          "無法判斷"
+        ],
+        correct: 0,
+        explanation: "28 × 3 = 84，85 - 84 = 1，餘數 1 比除數 28 小且不為負，因此試商 3 非常精準！"
+      },
+      {
+        id: 7,
+        category: "4. 估商調商技巧（少補原則）",
+        question: "小明計算 93 ÷ 18 時試商為 4，發現 18 × 4 = 72，93 - 72 = 21。請問接下來他應該怎麼調整？",
+        options: [
+          "商太大，應該把商調小改為 3",
+          "商太小，因為餘數 21 大於除數 18，應該把商調大改為 5",
+          "不用調整，答案就是商 4 餘 21",
+          "把除數換掉"
+        ],
+        correct: 1,
+        explanation: "當算出的餘數（21）比除數（18）還大時，表示「商太小了，還能繼續分」，必須少補加 1，將商調大成 5（18×5=90，餘3）。"
+      },
+      {
+        id: 8,
+        category: "5. 三位數除以二位數（商為二位數）",
+        question: "計算 756 ÷ 36，請問商是幾位數？商是多少？",
+        options: [
+          "商是一位數，商是 9",
+          "商是二位數，商是 21",
+          "商是二位數，商是 12",
+          "商是三位數，商是 102"
+        ],
+        correct: 1,
+        explanation: "先看前兩位 75 比 36 大，夠除！最高位商在十位，商是二位數。75÷36 商 2 餘 3，放下 6 變成 36÷36=1，商為 21。"
+      },
+      {
+        id: 9,
+        category: "5. 三位數除以二位數生活情境應用",
+        question: "童軍營有 348 位學員，每 28 個人搭乘一輛遊覽車。至少需要租幾輛遊覽車才能把全部人都載走？",
+        options: [
+          "12 輛",
+          "13 輛",
+          "14 輛",
+          "11 輛"
+        ],
+        correct: 1,
+        explanation: "348 ÷ 28 = 12 輛車 ... 剩下 12 個人。剩下的 12 個人也必須有車坐，所以需要 12 + 1 = 13 輛遊覽車。"
+      },
+      {
+        id: 10,
+        category: "綜合除法觀念驗算檢核",
+        question: "老師在黑板上寫「□ ÷ 35 = 14 ... 18」，請問被除數 □ 應該是多少？",
+        options: [
+          "490",
+          "508",
+          "520",
+          "472"
+        ],
+        correct: 1,
+        explanation: "除法驗算公式：被除數 = 除數 × 商 + 餘數。35 × 14 + 18 = 490 + 18 = 508。"
+      }
+    ];
+
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+    let userAnswers = new Array(quizDatabase.length).fill(null);
+
+    function initQuiz() {
+      currentQuizIndex = 0;
+      quizScore = 0;
+      userAnswers.fill(null);
+      
+      const activeV = document.getElementById('quiz-active-view');
+      const summV = document.getElementById('quiz-summary-view');
+      if (activeV) activeV.classList.remove('hidden');
+      if (summV) summV.classList.add('hidden');
+
+      renderQuizIndicators();
+      renderCurrentQuizQuestion();
+    }
+
+    function renderQuizIndicators() {
+      const container = document.getElementById('quiz-indicators');
+      if (!container) return;
+      container.innerHTML = '';
+      for (let i = 0; i < quizDatabase.length; i++) {
+        const dot = document.createElement('div');
+        dot.id = `quiz-dot-${i}`;
+        dot.className = `flex-1 h-2 rounded-full transition-all ${i === currentQuizIndex ? 'bg-morandi-blue scale-y-125' : 'bg-morandi-border'}`;
+        container.appendChild(dot);
+      }
+    }
+
+    function renderCurrentQuizQuestion() {
+      const q = quizDatabase[currentQuizIndex];
+      const counterEl = document.getElementById('quiz-question-counter');
+      const catEl = document.getElementById('quiz-cat-name');
+      const scoreEl = document.getElementById('quiz-current-score');
+      const qTextEl = document.getElementById('quiz-question-text');
+      const expBox = document.getElementById('quiz-explanation-box');
+
+      if (counterEl) counterEl.textContent = `第 ${currentQuizIndex + 1} / ${quizDatabase.length} 題`;
+      if (catEl) catEl.textContent = q.category;
+      if (scoreEl) scoreEl.textContent = quizScore;
+      if (qTextEl) qTextEl.textContent = q.question;
+      if (expBox) expBox.classList.add('hidden');
+
+      for (let i = 0; i < quizDatabase.length; i++) {
+        const dot = document.getElementById(`quiz-dot-${i}`);
+        if (dot) {
+          if (userAnswers[i] === true) dot.className = 'flex-1 h-2 rounded-full bg-morandi-sage';
+          else if (userAnswers[i] === false) dot.className = 'flex-1 h-2 rounded-full bg-morandi-rose';
+          else if (i === currentQuizIndex) dot.className = 'flex-1 h-2 rounded-full bg-morandi-blue scale-y-125';
+          else dot.className = 'flex-1 h-2 rounded-full bg-morandi-border';
+        }
+      }
+
+      const optionsContainer = document.getElementById('quiz-options-container');
+      if (!optionsContainer) return;
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn w-full p-3 rounded-2xl bg-white hover:bg-morandi-oatmeal border-2 border-morandi-border flex items-center gap-2.5 text-left transition-all active:scale-98 min-h-[50px]';
+        btn.innerHTML = `
+          <span class="w-7 h-7 rounded-xl bg-morandi-oatmeal text-morandi-charcoal font-black flex items-center justify-center text-xs border border-morandi-border shrink-0">
+            ${['A', 'B', 'C', 'D'][optIdx]}
+          </span>
+          <span class="edu-body text-morandi-charcoal font-medium text-sm sm:text-base">${optText}</span>
+        `;
+        btn.onclick = () => handleQuizSelection(optIdx);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function handleQuizSelection(selectedIdx) {
+      initAudio();
+      const q = quizDatabase[currentQuizIndex];
+      const isCorrect = (selectedIdx === q.correct);
+      userAnswers[currentQuizIndex] = isCorrect;
+
+      const btns = document.querySelectorAll('.quiz-opt-btn');
+      btns.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === q.correct) {
+          btn.classList.add('bg-morandi-sage/20', 'border-morandi-sage');
+        } else if (idx === selectedIdx && !isCorrect) {
+          btn.classList.add('bg-morandi-rose/20', 'border-morandi-rose');
+        }
+      });
+
+      const expBox = document.getElementById('quiz-explanation-box');
+      const resultIcon = document.getElementById('quiz-result-icon');
+      const resultTitle = document.getElementById('quiz-result-title');
+      const expText = document.getElementById('quiz-explanation-text');
+      const nextBtn = document.getElementById('btn-next-quiz');
+
+      if (expBox) expBox.classList.remove('hidden');
+
+      if (isCorrect) {
+        quizScore += 10;
+        const scoreEl = document.getElementById('quiz-current-score');
+        if (scoreEl) scoreEl.textContent = quizScore;
+        if (resultIcon) resultIcon.textContent = '🎉';
+        if (resultTitle) {
+          resultTitle.textContent = '太棒了，答對了！';
+          resultTitle.className = 'font-bold text-sm sm:text-base text-morandi-sage';
+        }
+        if (expBox) expBox.className = 'p-3 rounded-2xl border-2 border-morandi-sage bg-morandi-sage/10 transition-all';
+        triggerConfetti();
+        playChordSound('success');
+      } else {
+        if (resultIcon) resultIcon.textContent = '💡';
+        if (resultTitle) {
+          resultTitle.textContent = '觀念小叮嚀，沒關係再想想！';
+          resultTitle.className = 'font-bold text-sm sm:text-base text-morandi-rose';
+        }
+        if (expBox) expBox.className = 'p-3 rounded-2xl border-2 border-morandi-rose bg-morandi-rose/10 transition-all';
+        playChordSound('fail');
+      }
+
+      if (expText) expText.textContent = q.explanation;
+      if (nextBtn) nextBtn.textContent = (currentQuizIndex === quizDatabase.length - 1) ? '查看測驗總成果 ➔' : '下一題 ➔';
+
+      renderQuizIndicators();
+    }
+
+    function nextQuizQuestion() {
+      if (currentQuizIndex < quizDatabase.length - 1) {
+        currentQuizIndex++;
+        renderCurrentQuizQuestion();
+      } else {
+        showQuizSummary();
+      }
+    }
+
+    function showQuizSummary() {
+      const activeV = document.getElementById('quiz-active-view');
+      const summV = document.getElementById('quiz-summary-view');
+      if (activeV) activeV.classList.add('hidden');
+      if (summV) summV.classList.remove('hidden');
+
+      const fScoreEl = document.getElementById('final-score-display');
+      if (fScoreEl) fScoreEl.textContent = quizScore;
+      const badgeTitle = document.getElementById('final-badge-title');
+      const comment = document.getElementById('final-comment');
+
+      if (quizScore === 100) {
+        if (badgeTitle) {
+          badgeTitle.textContent = '🏆 滿分除法大宗師';
+          badgeTitle.className = 'inline-block px-3.5 py-1 rounded-full bg-morandi-sage text-white font-bold text-sm mb-1.5';
+        }
+        if (comment) comment.textContent = '太不可思議了！10 題全部完全正確，你的估商與直式運算技巧完美無缺！';
+        triggerConfetti();
+        playChordSound('success');
+      } else if (quizScore >= 80) {
+        if (badgeTitle) {
+          badgeTitle.textContent = '🌟 除法計算小達人';
+          badgeTitle.className = 'inline-block px-3.5 py-1 rounded-full bg-morandi-blue text-white font-bold text-sm mb-1.5';
+        }
+        if (comment) comment.textContent = '非常優秀！概念掌握得非常扎實，稍微留心細微題目就能邁向滿分喔！';
+        playChordSound('success');
+      } else if (quizScore >= 60) {
+        if (badgeTitle) {
+          badgeTitle.textContent = '🌱 除法潛力探索家';
+          badgeTitle.className = 'inline-block px-3.5 py-1 rounded-full bg-morandi-khaki text-white font-bold text-sm mb-1.5';
+        }
+        if (comment) comment.textContent = '基本觀念已經建立，建議多回去玩玩「天平估商實驗室」和「直式拆解」加強熟練度喔！';
+      } else {
+        if (badgeTitle) {
+          badgeTitle.textContent = '💪 勇敢除法小學徒';
+          badgeTitle.className = 'inline-block px-3.5 py-1 rounded-full bg-morandi-rose text-white font-bold text-sm mb-1.5';
+        }
+        if (comment) comment.textContent = '別氣餒，數學是透過練習越來越強的！按下方按鈕再挑戰一次，一定會進步！';
+      }
+    }
+
+    function restartQuiz() {
+      initQuiz();
+    }
+
+    /* ========== 浮動手寫板 Canvas 引擎 ========== */
+    let canvas, ctx;
+    let isDrawing = false;
+    let isEraser = false;
+    let penColor = '#4A4643';
+    let penLineWidth = 3;
+    let isExpanded = false;
+    let isScratchpadOpen = false;
+
+    function initScratchpad() {
+      canvas = document.getElementById('scratchpad-canvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d', { willReadFrequently: true });
+      resizeCanvas();
+
+      window.addEventListener('resize', () => {
+        if (isScratchpadOpen) resizeCanvas();
+      });
+
+      canvas.addEventListener('pointerdown', startDraw);
+      canvas.addEventListener('pointermove', draw);
+      canvas.addEventListener('pointerup', stopDraw);
+      canvas.addEventListener('pointercancel', stopDraw);
+      canvas.addEventListener('pointerout', stopDraw);
+    }
+
+    function resizeCanvas() {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      
+      let tempImg = null;
+      try {
+        if (canvas.width > 0 && canvas.height > 0) {
+          tempImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        }
+      } catch (e) {}
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      if (tempImg) {
+        try {
+          ctx.putImageData(tempImg, 0, 0);
+        } catch (e) {}
+      }
+    }
+
+    function getCanvasCoordinates(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+
+    function startDraw(e) {
+      e.preventDefault();
+      isDrawing = true;
+      canvas.setPointerCapture(e.pointerId);
+      const pos = getCanvasCoordinates(e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+      applyPenStyle();
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      e.preventDefault();
+      const pos = getCanvasCoordinates(e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+    }
+
+    function stopDraw(e) {
+      if (!isDrawing) return;
+      isDrawing = false;
+      ctx.closePath();
+      try {
+        canvas.releasePointerCapture(e.pointerId);
+      } catch (err) {}
+    }
+
+    function applyPenStyle() {
+      if (isEraser) {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.lineWidth = 24;
+      } else {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = penColor;
+        ctx.lineWidth = penLineWidth;
+      }
+    }
+
+    function toggleScratchpad(forceState) {
+      const container = document.getElementById('scratchpad-container');
+      if (!container) return;
+      isScratchpadOpen = (forceState !== undefined) ? forceState : !isScratchpadOpen;
+
+      if (isScratchpadOpen) {
+        container.classList.remove('translate-y-full', 'md:translate-x-full');
+        setTimeout(() => resizeCanvas(), 320);
+      } else {
+        container.classList.add('translate-y-full', 'md:translate-x-full');
+      }
+    }
+
+    function toggleExpandScratchpad() {
+      const container = document.getElementById('scratchpad-container');
+      const btn = document.getElementById('expand-scratchpad-btn');
+      if (!container || !btn) return;
+      isExpanded = !isExpanded;
+
+      if (isExpanded) {
+        container.classList.remove('md:w-[50vw]', 'h-[65vh]', 'md:h-[88vh]');
+        container.classList.add('md:w-[92vw]', 'w-full', 'h-[92vh]', 'md:h-[95vh]');
+        btn.textContent = '⤡';
+        btn.title = "縮小回半版";
+      } else {
+        container.classList.remove('md:w-[92vw]', 'h-[92vh]', 'md:h-[95vh]');
+        container.classList.add('md:w-[50vw]', 'w-full', 'h-[65vh]', 'md:h-[88vh]');
+        btn.textContent = '⤢';
+        btn.title = "放大至全螢幕";
+      }
+      setTimeout(() => resizeCanvas(), 320);
+    }
+
+    function setPenColor(color) {
+      isEraser = false;
+      penColor = color;
+      penLineWidth = 3;
+      const eraserBtn = document.getElementById('eraser-btn');
+      if (eraserBtn) eraserBtn.classList.remove('bg-morandi-sage', 'text-white');
+    }
+
+    function toggleEraser() {
+      isEraser = !isEraser;
+      const eraserBtn = document.getElementById('eraser-btn');
+      if (!eraserBtn) return;
+      if (isEraser) {
+        eraserBtn.classList.add('bg-morandi-sage', 'text-white');
+      } else {
+        eraserBtn.classList.remove('bg-morandi-sage', 'text-white');
+      }
+    }
+
+    function clearScratchpad() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      playChordSound('fail');
+    }
+
+    function toggleGridBackground() {
+      const wrapper = document.getElementById('canvas-wrapper');
+      if (wrapper) wrapper.classList.toggle('canvas-grid-bg');
+    }
+
+    // 初始化啟動
+    window.addEventListener('DOMContentLoaded', () => {
+      renderApplesPool();
+      updateMoneyUI();
+      renderLongDivisionBoard();
+      updateEstimateSimulation(4);
+      renderGameRound();
+      initQuiz();
+      initScratchpad();
+    });
+  </script>
+</body>
+</html>

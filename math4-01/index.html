@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>國小四年級數學：一億以內的數 魔法探索樂園</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2357466f'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='serif'%3E%E6%96%B0%3C/text%3E%3C/svg%3E">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#3B82F6',
+                            purple: '#8B5CF6',
+                            pink: '#EC4899',
+                            yellow: '#F59E0B',
+                            green: '#10B981',
+                            bg: '#F0F9FF'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #F3F4F6;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tab-btn.active {
+            background-color: #3B82F6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+        }
+        .bill-card {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .text-18px {
+            font-size: 18px !important;
+            line-height: 1.6 !important;
+        }
+        /* Touch friendly sizing */
+        button, input {
+            min-height: 44px;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 pb-16 select-none">
+
+    <!-- Top Header Banner -->
+    <header class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/20 p-2 rounded-2xl backdrop-blur-md">
+                    <i class="fa-solid font-bold text-yellow-300 text-2xl md:text-3xl fa-shapes"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black tracking-wide">一億以內的數 <span class="bg-yellow-400 text-blue-900 text-xs px-2 py-0.5 rounded-full uppercase font-bold ml-1">國小四年級</span></h1>
+                    <p class="text-xs text-blue-100 hidden sm:block">十進位進位 • 活動定位板 • 人口數據換算 • 四位劃線比大小 • 捷運加減法 • 綜合挑戰10題 <span class="bg-white/20 text-yellow-200 px-2 py-0.5 rounded-full font-bold ml-1.5">👨‍🏫 新趨勢老師設計</span></p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 mt-2 sm:mt-0">
+                <!-- Audio Toggle Button -->
+                <button onclick="toggleAudio()" id="audioBtn" class="bg-white/20 hover:bg-white/30 text-xs md:text-sm px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 backdrop-blur-sm">
+                    <i class="fa-solid fa-volume-high" id="audioIcon"></i> <span id="audioText">音效 ON</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Tabs (Tablet & Mobile Optimized Grid) -->
+    <nav class="max-w-6xl mx-auto px-4 mt-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 bg-white p-2 rounded-2xl shadow-md border border-slate-200">
+            <button onclick="switchTab('tab1')" id="nav-tab1" class="tab-btn active text-xs sm:text-sm font-bold py-2.5 px-2 rounded-xl transition flex flex-col items-center justify-center gap-1">
+                <i class="fa-solid fa-money-bill-wave text-base"></i>
+                <span>1. 紙鈔點數</span>
+            </button>
+            <button onclick="switchTab('tab2')" id="nav-tab2" class="tab-btn bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs sm:text-sm font-bold py-2.5 px-2 rounded-xl transition flex flex-col items-center justify-center gap-1">
+                <i class="fa-solid fa-table-cells text-base"></i>
+                <span>2. 活動定位板</span>
+            </button>
+            <button onclick="switchTab('tab3')" id="nav-tab3" class="tab-btn bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs sm:text-sm font-bold py-2.5 px-2 rounded-xl transition flex flex-col items-center justify-center gap-1">
+                <i class="fa-solid fa-earth-americas text-base"></i>
+                <span>3. 人口換算題</span>
+            </button>
+            <button onclick="switchTab('tab4')" id="nav-tab4" class="tab-btn bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs sm:text-sm font-bold py-2.5 px-2 rounded-xl transition flex flex-col items-center justify-center gap-1">
+                <i class="fa-solid fa-code-compare text-base"></i>
+                <span>4. 四位比大小</span>
+            </button>
+            <button onclick="switchTab('tab5')" id="nav-tab5" class="tab-btn bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs sm:text-sm font-bold py-2.5 px-2 rounded-xl transition flex flex-col items-center justify-center gap-1">
+                <i class="fa-solid fa-train-subway text-base"></i>
+                <span>5. 捷運大數加減</span>
+            </button>
+            <button onclick="switchTab('tab6')" id="nav-tab6" class="tab-btn bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs sm:text-sm font-bold py-2.5 px-2 rounded-xl transition flex flex-col items-center justify-center gap-1">
+                <i class="fa-solid fa-trophy text-base text-amber-500"></i>
+                <span>6. 綜合挑戰10題</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 mt-6">
+
+        <!-- ================= MODULE 1: Banknote Counting ================= -->
+        <section id="tab1" class="tab-content block">
+            <div class="bg-white rounded-3xl p-5 md:p-8 shadow-xl border border-slate-200">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="bg-emerald-100 text-emerald-600 p-3 rounded-2xl text-2xl">
+                        <i class="fa-solid fa-coins"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-black text-slate-800">10進位魔法：紙鈔湊大數</h2>
+                        <p class="text-sm text-slate-500">點擊按鈕累積紙鈔，觀察「每排5張，湊滿10張進位」的過程！</p>
+                    </div>
+                </div>
+
+                <!-- Level Selector for Money Counting -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                    <button onclick="setMoneyStage(1)" id="mstage-1" class="money-stage-btn bg-emerald-600 text-white p-3 rounded-xl font-bold text-sm shadow transition border-2 border-emerald-600">
+                        10個一千 ➔ 一萬
+                    </button>
+                    <button onclick="setMoneyStage(2)" id="mstage-2" class="money-stage-btn bg-slate-100 text-slate-700 hover:bg-slate-200 p-3 rounded-xl font-bold text-sm transition border-2 border-transparent">
+                        10個十萬 ➔ 一百萬
+                    </button>
+                    <button onclick="setMoneyStage(3)" id="mstage-3" class="money-stage-btn bg-slate-100 text-slate-700 hover:bg-slate-200 p-3 rounded-xl font-bold text-sm transition border-2 border-transparent">
+                        10個一百萬 ➔ 一千萬
+                    </button>
+                    <button onclick="setMoneyStage(4)" id="mstage-4" class="money-stage-btn bg-slate-100 text-slate-700 hover:bg-slate-200 p-3 rounded-xl font-bold text-sm transition border-2 border-transparent">
+                        10個一千萬 ➔ 一億
+                    </button>
+                </div>
+
+                <!-- Interactive Money Area -->
+                <div class="bg-emerald-50 rounded-2xl p-6 border-2 border-emerald-200 mb-6 text-center">
+                    <div class="text-sm text-emerald-700 font-bold mb-2" id="moneyGoalText">
+                        目標：點擊按鈕收集 10 張 <span class="text-emerald-900 underline text-lg">1,000 元</span> 鈔票
+                    </div>
+
+                    <!-- Money Display Container: 5 Columns Grid for row alignment -->
+                    <div id="moneyContainer" class="min-h-[180px] py-4 bg-white/90 rounded-2xl shadow-inner border border-emerald-100 my-4 p-4 flex flex-col justify-center items-center">
+                        <!-- Money elements dynamically injected into a 5-col grid -->
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-200 rounded-full h-5 overflow-hidden mb-4 shadow-inner max-w-xl mx-auto">
+                        <div id="moneyProgressBar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-300 flex items-center justify-center text-[11px] text-white font-black" style="width: 0%">
+                            0 / 10
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center items-center gap-4 flex-wrap">
+                        <button onclick="addBill()" id="addBillBtn" class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-black text-lg px-8 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2">
+                            <i class="fa-solid fa-plus-circle"></i> 加入一張 <span id="addBtnText">1,000元</span>
+                        </button>
+                        <button onclick="resetBills()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-3.5 rounded-2xl transition">
+                            <i class="fa-solid fa-arrow-rotate-left"></i> 重設
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Knowledge Summary Box -->
+                <div id="moneySummary" class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-2xl">
+                    <div class="flex items-start gap-3">
+                        <span class="text-2xl">💡</span>
+                        <div>
+                            <h4 class="font-bold text-amber-900 text-base mb-1">國小四年級觀念引導：</h4>
+                            <p class="text-sm text-amber-800 leading-relaxed" id="moneySummaryText">
+                                10個 1,000 是 10,000，我們讀作「一萬」。十進位系統中，每滿 10 個同單位的數，就會向左邊進一位！
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODULE 2: Place Value Board ================= -->
+        <section id="tab2" class="tab-content hidden">
+            <div class="bg-white rounded-3xl p-5 md:p-8 shadow-xl border border-slate-200">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="bg-blue-100 text-blue-600 p-3 rounded-2xl text-2xl">
+                        <i class="fa-solid fa-table-cells"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-black text-slate-800">魔法活動定位板</h2>
+                        <p class="text-sm text-slate-500">點選上下箭頭調整數字，認識一億以內的每個位值，並可將數字加入複習清單！</p>
+                    </div>
+                </div>
+
+                <!-- Quick Preset Buttons -->
+                <div class="flex flex-wrap items-center gap-2 mb-6">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">快速載入範例：</span>
+                    <button onclick="loadPresetNumber(23400000)" class="bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-blue-200 transition">
+                        🇹🇼 台灣人口 (約2340萬)
+                    </button>
+                    <button onclick="loadPresetNumber(100000000)" class="bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-purple-200 transition">
+                        🌟 一億 (100,000,000)
+                    </button>
+                    <button onclick="loadPresetNumber(65804320)" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-200 transition">
+                        🚇 捷運年運量 (6580萬4320)
+                    </button>
+                    <button onclick="resetPlaceValue()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-lg transition ml-auto">
+                        <i class="fa-solid fa-trash-can"></i> 清空
+                    </button>
+                </div>
+
+                <!-- The Interactive Place Value Table -->
+                <div class="overflow-x-auto pb-4">
+                    <div class="min-w-[700px]">
+                        <!-- Column Group Header (億級, 萬級, 個級) -->
+                        <div class="grid grid-cols-9 gap-1 mb-1 text-center text-xs font-black">
+                            <div class="col-span-1 bg-purple-200 text-purple-900 py-1.5 rounded-t-xl border-b-2 border-purple-400">億級</div>
+                            <div class="col-span-4 bg-blue-200 text-blue-900 py-1.5 rounded-t-xl border-b-2 border-blue-400">萬級</div>
+                            <div class="col-span-4 bg-emerald-200 text-emerald-900 py-1.5 rounded-t-xl border-b-2 border-emerald-400">個級</div>
+                        </div>
+
+                        <!-- Place Value Titles -->
+                        <div class="grid grid-cols-9 gap-1 text-center font-bold text-xs md:text-sm bg-slate-800 text-white rounded-md py-2">
+                            <div>億</div>
+                            <div>千萬</div>
+                            <div>百萬</div>
+                            <div>十萬</div>
+                            <div>萬</div>
+                            <div>千</div>
+                            <div>百</div>
+                            <div>十</div>
+                            <div>個</div>
+                        </div>
+
+                        <!-- Digit Control Column Row -->
+                        <div class="grid grid-cols-9 gap-1 bg-slate-50 p-2 rounded-b-2xl border border-slate-200 mt-1">
+                            <div id="placeValueGrid" class="contents">
+                                <!-- Dynamically generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Number Display & Reading Panel -->
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Numbers Box -->
+                    <div class="bg-slate-900 text-white p-5 rounded-2xl shadow-md flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs text-slate-400 font-bold mb-1">阿拉伯數字寫法 (四位劃線分級)</div>
+                            <div id="formattedNumDisplay" class="text-2xl md:text-3xl font-black text-yellow-400 tracking-wider">
+                                0
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs text-slate-300">
+                            <span>總位數：<strong id="digitLengthDisplay" class="text-white">1</strong> 位數</span>
+                            <button onclick="copyNumber()" class="hover:text-yellow-400 transition flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded-lg">
+                                <i class="fa-solid fa-copy"></i> 複製阿拉伯數字
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chinese Reading Box -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-blue-50 p-5 rounded-2xl border border-indigo-100 shadow-md flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs text-indigo-500 font-bold mb-1"><i class="fa-solid fa-bullhorn"></i> 中文國字讀法</div>
+                            <div id="chineseReadDisplay" class="text-xl md:text-2xl font-black text-indigo-900">
+                                零
+                            </div>
+                            <div class="mt-2 text-xs text-indigo-700 font-medium" id="placeValueBreakdown">
+                                結構拆解：0
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-indigo-100 flex justify-between items-center gap-2">
+                            <button onclick="copyChineseRead()" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                                <i class="fa-solid fa-copy"></i> 複製中文國字
+                            </button>
+                            <button onclick="addToReviewList()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                                <i class="fa-solid fa-bookmark"></i> 加入複習清單
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review and Practice History Container -->
+                <div class="mt-8 bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-indigo-600"></i> 我的大數複習與紀錄空間
+                        </h3>
+                        <button onclick="clearReviewList()" class="text-xs text-slate-500 hover:text-red-500 font-bold">
+                            清空複習紀錄
+                        </button>
+                    </div>
+                    <div id="reviewListContainer" class="space-y-2 min-h-[60px]">
+                        <p class="text-18px text-slate-400 italic" id="emptyReviewHint">目前尚未加入複習資料，點擊上方「加入複習清單」即可收集練習過的數字！</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODULE 3: Population & Breakdown Quiz ================= -->
+        <section id="tab3" class="tab-content hidden">
+            <div class="bg-white rounded-3xl p-5 md:p-8 shadow-xl border border-slate-200">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="bg-purple-100 text-purple-600 p-3 rounded-2xl text-2xl">
+                        <i class="fa-solid fa-earth-americas"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-black text-slate-800">一億以內的數換算與真實人口大考驗</h2>
+                        <p class="text-sm text-slate-500">學習大數的組成拆解（幾個十萬、幾個千...），並結合世界與台灣人口數據！</p>
+                    </div>
+                </div>
+
+                <!-- Official External Population Links Bar -->
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-4 text-white mb-8 shadow-lg">
+                    <div class="font-bold text-base mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-link text-yellow-300"></i> 真實資料拓展：認識各國與台灣人口
+                    </div>
+                    <p class="text-xs text-blue-100 mb-3 leading-relaxed">
+                        在數學課學的大數，正是用來記錄國家人口的利器！點擊下方官方連結查看最新人口統計：
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="https://zh.wikipedia.org/zh-tw/%E5%90%84%E5%9B%BD%E5%AE%B6%E5%92%8C%E5%9C%B0%E5%8C%BA%E4%BA%BA%E5%8F%A3%E5%88%97%E8%A1%A8" target="_blank" rel="noopener noreferrer" class="bg-white text-blue-900 hover:bg-yellow-300 font-bold text-xs px-4 py-2 rounded-xl transition flex items-center gap-2 shadow">
+                            <i class="fa-brands fa-wikipedia-w text-blue-600"></i> 世界各國與地區人口列表 (維基百科)
+                        </a>
+                        <a href="https://gis.ris.gov.tw/dashboard.html?key=B01" target="_blank" rel="noopener noreferrer" class="bg-yellow-400 text-blue-950 hover:bg-yellow-300 font-bold text-xs px-4 py-2 rounded-xl transition flex items-center gap-2 shadow">
+                            <i class="fa-solid fa-chart-pie text-red-600"></i> 台灣人口統計儀表板 (內政部戶政司)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Teaching Concept Card with 18px text -->
+                <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 mb-8">
+                    <h3 class="font-bold text-slate-800 text-base mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i> 概念解析：如何進行大數換算？
+                    </h3>
+                    <p class="text-18px text-slate-700 leading-relaxed">
+                        當題目說「<span class="text-purple-600 font-bold">5個十萬</span>、<span class="text-blue-600 font-bold">3個千</span>和<span class="text-emerald-600 font-bold">8個十</span>合起來是多少？」時：<br>
+                        • 5個十萬 = 500,000<br>
+                        • 3個千 = 3,000<br>
+                        • 8個十 = 80<br>
+                        合起來就是：<span class="font-black text-slate-900 bg-yellow-200 px-2 py-0.5 rounded">503,080</span>（注意：沒有數字的百位與萬位要補 0 喔！）
+                    </p>
+                </div>
+
+                <!-- Practice Quiz Section (3 Questions) -->
+                <div class="space-y-6">
+                    <h3 class="font-black text-slate-800 text-lg flex items-center justify-between border-b pb-2">
+                        <span><i class="fa-solid fa-pen-to-square text-purple-600"></i> 課堂小考驗（共 3 題）</span>
+                        <span id="quizScoreText" class="text-xs font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full">已完成 0 / 3 題</span>
+                    </h3>
+
+                    <!-- Question 1 -->
+                    <div class="quiz-card bg-white border-2 border-slate-200 rounded-2xl p-5 shadow-sm transition hover:border-purple-300" id="q1-box">
+                        <div class="font-bold text-slate-800 mb-3 flex items-start gap-2 text-18px">
+                            <span class="bg-purple-600 text-white text-xs px-2.5 py-1 rounded-lg mt-1 shrink-0">第 1 題</span>
+                            <span>歐洲國家「冰島」的人口數大約是 <strong class="text-purple-700">3個十萬、8個千和 7個百</strong> 合起來，請問冰島大約有多少人？</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                            <button onclick="checkAnswer(1, 1, false)" class="q1-opt text-left p-3.5 rounded-xl border border-slate-200 text-18px font-semibold hover:bg-slate-50 transition">A. 38,700 人</button>
+                            <button onclick="checkAnswer(1, 2, true)" class="q1-opt text-left p-3.5 rounded-xl border border-slate-200 text-18px font-semibold hover:bg-slate-50 transition">B. 308,700 人</button>
+                            <button onclick="checkAnswer(1, 3, false)" class="q1-opt text-left p-3.5 rounded-xl border border-slate-200 text-18px font-semibold hover:bg-slate-50 transition">C. 387,000 人</button>
+                            <button onclick="checkAnswer(1, 4, false)" class="q1-opt text-left p-3.5 rounded-xl border border-slate-200 text-18px font-semibold hover:bg-slate-50 transition">D. 3,080,700 人</button>
+                        </div>
+                        <div id="q1-feedback" class="mt-3 text-18px font-bold hidden"></div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="quiz-card bg-white border-2 border-slate-200 rounded-2xl p-5 shadow-sm transition hover:border-purple-300" id="q2-box">
+                        <div class="font-bold text-slate-800 mb-3 flex items-start gap-2 text-18px">
+                            <span class="bg-purple-600 text-white text-xs px-2.5 py-1 rounded-lg mt-1 shrink-0">第 2 題</span>
+                            <span>台灣某縣市的人口調查顯示有 <strong class="text-purple-700">7個十萬、2個萬、5個千和 4個十</strong>，寫成阿拉伯數字是多少？</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                            <button onclick="checkAnswer(2, 1, false)" class="q2-opt text-left p-3.5 rounded-xl border border-slate-200 text-18px font-semibold hover:bg-slate-50 transition">A. 725,400</button>
+                            <button onclick="checkAnswer(2, 2, false)" class="q2-opt text-left p-3.5 rounded-xl border border-slate-200 text-18px font-semibold hover:bg-slate-50 transition">B. 702,540</button>
+                            <button onclick="checkAnswer(2, 3, true)" class="q2-opt text-left p-3.5 rounded-xl border border-slate-200 text-18px font-semibold hover:bg-slate-50 transition">C. 725,040</button>
+                            <button onclick="checkAnswer(2, 4, false)" class="q2-opt text-left p-3.5 rounded-xl border border-slate-200 text-18px font-semibold hover:bg-slate-50 transition">D. 7,250,040</button>
+                        </div>
+                        <div id="q2-feedback" class="mt-3 text-18px font-bold hidden"></div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="quiz-card bg-white border-2 border-slate-200 rounded-2xl p-5 shadow-sm transition hover:border-purple-300" id="q3-box">
+                        <div class="font-bold text-slate-800 mb-3 flex items-start gap-2 text-18px">
+                            <span class="bg-purple-600 text-white text-xs px-2.5 py-1 rounded-lg mt-1 shrink-0">第 3 題</span>
+                            <span>澳洲（Australia）人口大約是 <strong class="text-purple-700">2個千萬、5個百萬、6個十萬</strong> 合起來，是多少人？</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                            <button onclick="checkAnswer(3, 1, true)" class="q3-opt text-left p-3.5 rounded-xl border border-slate-200 text-18px font-semibold hover:bg-slate-50 transition">A. 25,600,000 人 (2560萬)</button>
+                            <button onclick="checkAnswer(3, 2, false)" class="q3-opt text-left p-3.5 rounded-xl border border-slate-200 text-18px font-semibold hover:bg-slate-50 transition">B. 250,600,000 人</button>
+                            <button onclick="checkAnswer(3, 3, false)" class="q3-opt text-left p-3.5 rounded-xl border border-slate-200 text-18px font-semibold hover:bg-slate-50 transition">C. 2,560,000 人 (256萬)</button>
+                            <button onclick="checkAnswer(3, 4, false)" class="q3-opt text-left p-3.5 rounded-xl border border-slate-200 text-18px font-semibold hover:bg-slate-50 transition">D. 205,600,000 人</button>
+                        </div>
+                        <div id="q3-feedback" class="mt-3 text-18px font-bold hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODULE 4: Comparing Large Numbers ================= -->
+        <section id="tab4" class="tab-content hidden">
+            <div class="bg-white rounded-3xl p-5 md:p-8 shadow-xl border border-slate-200">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="bg-amber-100 text-amber-600 p-3 rounded-2xl text-2xl">
+                        <i class="fa-solid fa-highlighter"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-black text-slate-800">一億以內的大小比較：螢光筆四位劃線法</h2>
+                        <p class="text-sm text-slate-500">拿起螢光筆畫出「萬級」與「個級」，比較大數一眼就看穿！</p>
+                    </div>
+                </div>
+
+                <!-- Teaching Trick Box with 18px text -->
+                <div class="bg-amber-50 rounded-2xl p-5 border border-amber-200 mb-8">
+                    <h3 class="font-bold text-amber-900 text-base mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-600"></i> 螢光筆劃線秘訣（四位一數）
+                    </h3>
+                    <ol class="list-decimal list-inside text-18px text-amber-900 space-y-2 font-medium">
+                        <li><strong>四位劃線分界</strong>：從右邊個位往左數 4 位數字（個、十、百、千），在千位與萬位中間劃上記號！</li>
+                        <li><strong>螢光筆分級塗色</strong>：左邊是<span class="bg-yellow-300 px-2 py-0.5 rounded font-black text-amber-950">黃色萬級</span>，右邊是<span class="bg-lime-300 px-2 py-0.5 rounded font-black text-lime-950">綠色個級</span>。</li>
+                        <li><strong>先比較萬級大數</strong>：先比位數，位數相同時，黃色萬級數字比較大的那個數就比較大！</li>
+                    </ol>
+                </div>
+
+                <!-- Interactive Fluorescent Highlighter Comparison Tool -->
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 mb-8">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                        <h4 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-pen-ruler text-amber-500"></i> 🖍️ 螢光筆劃線比大小面板
+                        </h4>
+                        <!-- Highlighter Tool Selector -->
+                        <div class="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm">
+                            <span class="text-xs font-bold text-slate-400 pl-2">選擇螢光筆：</span>
+                            <button onclick="setHighlighterTool('divider')" id="tool-divider" class="hl-tool-btn active bg-amber-500 text-white font-bold text-xs px-3 py-1.5 rounded-xl transition shadow flex items-center gap-1">
+                                🖍️ 四位劃線 (分界)
+                            </button>
+                            <button onclick="setHighlighterTool('wan')" id="tool-wan" class="hl-tool-btn bg-slate-100 text-slate-700 font-bold text-xs px-3 py-1.5 rounded-xl transition flex items-center gap-1">
+                                🟡 黃筆 (萬級)
+                            </button>
+                            <button onclick="setHighlighterTool('ge')" id="tool-ge" class="hl-tool-btn bg-slate-100 text-slate-700 font-bold text-xs px-3 py-1.5 rounded-xl transition flex items-center gap-1">
+                                🟢 綠筆 (個級)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                        <!-- Input A -->
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="text-xs font-bold text-slate-500">第一個數字 A：</label>
+                                <button onclick="autoHighlight('A')" class="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-lg hover:bg-amber-200 transition">
+                                    ✨ 自動螢光劃線
+                                </button>
+                            </div>
+                            <input type="number" id="numAInput" value="54320000" oninput="initLineDrawing()" class="w-full text-2xl font-black border border-slate-300 rounded-xl p-2.5 focus:ring-2 focus:ring-amber-400 outline-none">
+                            
+                            <!-- Interactive Fluorescent Highlighter Canvas Container A -->
+                            <div class="mt-4">
+                                <div class="text-xs font-bold text-amber-800 mb-2 flex items-center gap-1">
+                                    <i class="fa-solid fa-hand-pointer"></i> 點擊數字進行螢光筆塗色與四位劃線：
+                                </div>
+                                <div id="lineDrawContainerA" class="flex items-center justify-center flex-wrap gap-1 bg-amber-50/60 p-4 rounded-2xl border border-amber-200 min-h-[90px]">
+                                    <!-- Injected by JS -->
+                                </div>
+                                <div id="lineFeedbackA" class="mt-3 text-18px font-bold text-center min-h-[28px]"></div>
+                            </div>
+                        </div>
+
+                        <!-- Input B -->
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="text-xs font-bold text-slate-500">第二個數字 B：</label>
+                                <button onclick="autoHighlight('B')" class="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-lg hover:bg-amber-200 transition">
+                                    ✨ 自動螢光劃線
+                                </button>
+                            </div>
+                            <input type="number" id="numBInput" value="53999999" oninput="initLineDrawing()" class="w-full text-2xl font-black border border-slate-300 rounded-xl p-2.5 focus:ring-2 focus:ring-amber-400 outline-none">
+                            
+                            <!-- Interactive Fluorescent Highlighter Canvas Container B -->
+                            <div class="mt-4">
+                                <div class="text-xs font-bold text-amber-800 mb-2 flex items-center gap-1">
+                                    <i class="fa-solid fa-hand-pointer"></i> 點擊數字進行螢光筆塗色與四位劃線：
+                                </div>
+                                <div id="lineDrawContainerB" class="flex items-center justify-center flex-wrap gap-1 bg-amber-50/60 p-4 rounded-2xl border border-amber-200 min-h-[90px]">
+                                    <!-- Injected by JS -->
+                                </div>
+                                <div id="lineFeedbackB" class="mt-3 text-18px font-bold text-center min-h-[28px]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comparison Result Box -->
+                    <div class="mt-6 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-2xl p-5 text-center shadow-lg">
+                        <div class="text-xs text-amber-100 uppercase font-bold mb-1">螢光筆比大小結果</div>
+                        <div id="compareResultSymbol" class="text-3xl font-black mb-2">
+                            5432萬 > 5399萬9999
+                        </div>
+                        <div id="compareResultReason" class="text-18px text-amber-100 bg-black/10 rounded-xl p-3 max-w-xl mx-auto font-medium">
+                            最高位的萬級比較：5432 萬 大於 5399 萬，所以 A 比 B 大！
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mini Practice Game -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200">
+                    <h3 class="font-black text-slate-800 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-yellow-500"></i> 快問快答：點擊正確的符號！
+                    </h3>
+
+                    <div id="compareQuizList" class="space-y-4">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODULE 5: Metro Addition & Subtraction ================= -->
+        <section id="tab5" class="tab-content hidden">
+            <div class="bg-white rounded-3xl p-5 md:p-8 shadow-xl border border-slate-200">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="bg-indigo-100 text-indigo-600 p-3 rounded-2xl text-2xl">
+                        <i class="fa-solid fa-train-subway"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-black text-slate-800">捷運生活應用：大數加法與減法</h2>
+                        <p class="text-sm text-slate-500">透過台北與高雄捷運搭乘人次，練習千萬與百萬大數的直式加減！</p>
+                    </div>
+                </div>
+
+                <!-- Scenario Card with 18px readable text -->
+                <div class="bg-slate-900 text-white rounded-2xl p-6 shadow-md mb-8 relative overflow-hidden">
+                    <div class="absolute right-[-20px] bottom-[-20px] text-slate-800 text-9xl opacity-40">
+                        <i class="fa-solid fa-train-subway"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <span class="bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">生活情境題</span>
+                        <h3 class="text-xl font-bold mt-2 text-yellow-300" id="metroScenarioTitle">
+                            台北捷運板南線 暑假搭乘人次統計
+                        </h3>
+                        <!-- 18px text for clarity -->
+                        <p class="text-18px text-slate-100 mt-3 leading-relaxed font-normal" id="metroScenarioText">
+                            板南線 7 月份搭乘人次為 <strong>1,850,000 人次</strong>，8 月份因舉辦演唱會增加至 <strong>2,120,000 人次</strong>。請問這兩個月總共有多少人次搭乘？
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Problem Selector Buttons -->
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <button onclick="loadMetroProblem(1)" id="mprob-1" class="metro-prob-btn bg-indigo-600 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition shadow">
+                        例題 1：兩月搭乘總人次 (加法)
+                    </button>
+                    <button onclick="loadMetroProblem(2)" id="mprob-2" class="metro-prob-btn bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-sm px-4 py-2.5 rounded-xl transition">
+                        例題 2：月份搭乘人次相差 (減法)
+                    </button>
+                    <button onclick="loadMetroProblem(3)" id="mprob-3" class="metro-prob-btn bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-sm px-4 py-2.5 rounded-xl transition">
+                        例題 3：跨線路總和挑戰 (加法)
+                    </button>
+                </div>
+
+                <!-- Vertical Alignment Board (直式計算對齊板 - Input matching place values width & Button below) -->
+                <div class="bg-indigo-50/60 rounded-2xl p-6 border-2 border-indigo-100">
+                    <h4 class="font-bold text-indigo-950 text-base mb-4 flex items-center justify-between flex-wrap gap-2">
+                        <span><i class="fa-solid fa-calculator text-indigo-600"></i> 直式計算對齊板</span>
+                        <button onclick="toggleCarryHint()" class="text-xs bg-white text-indigo-600 border border-indigo-200 px-3 py-1.5 rounded-lg hover:bg-indigo-50 font-bold">
+                            💡 顯示/隱藏位值顏色
+                        </button>
+                    </h4>
+
+                    <!-- The Vertical Grid Container -->
+                    <div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-md border border-slate-200">
+                        <!-- Column Headers (千萬, 百萬, 十萬, 萬, 千, 百, 十, 個) -->
+                        <div id="verticalHeader" class="grid grid-cols-8 gap-1 text-center font-bold text-xs text-indigo-700 border-b-2 border-indigo-200 pb-2 mb-2 transition-colors duration-300">
+                            <div>千萬</div>
+                            <div>百萬</div>
+                            <div>十萬</div>
+                            <div>萬</div>
+                            <div>千</div>
+                            <div>百</div>
+                            <div>十</div>
+                            <div>個</div>
+                        </div>
+
+                        <!-- Number 1 Row -->
+                        <div id="vNum1Row" class="grid grid-cols-8 gap-1 text-center font-black text-xl md:text-2xl text-slate-800 py-1">
+                            <!-- Injected by JS -->
+                        </div>
+
+                        <!-- Operator + Number 2 Row -->
+                        <div class="relative">
+                            <span id="vOperator" class="absolute -left-6 top-1 font-black text-2xl text-indigo-600">+</span>
+                            <div id="vNum2Row" class="grid grid-cols-8 gap-1 text-center font-black text-xl md:text-2xl text-slate-800 py-1 border-b-4 border-slate-800">
+                                <!-- Injected by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Answer Input Row: Perfectly aligned with the 8 place-value columns -->
+                        <div class="mt-4">
+                            <div class="text-xs font-bold text-slate-500 mb-1.5">請在下方填入計算結果（與位值對齊）：</div>
+                            <input type="number" id="metroAnswerInput" placeholder="請輸入算出的數字" class="w-full text-2xl font-black text-center border-2 border-indigo-400 rounded-xl py-3 focus:ring-4 focus:ring-indigo-200 outline-none tracking-widest text-indigo-900 bg-indigo-50/30">
+                        </div>
+
+                        <!-- Check Answer Button: Placed Below the Input Field -->
+                        <div class="mt-4">
+                            <button onclick="checkMetroAnswer()" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white font-black text-lg py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-circle-check"></i> 核對答案
+                            </button>
+                        </div>
+
+                        <div id="metroFeedback" class="mt-4 text-center font-bold text-18px hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MODULE 6: Comprehensive 10-Question Quiz ================= -->
+        <section id="tab6" class="tab-content hidden">
+            <div class="bg-white rounded-3xl p-5 md:p-8 shadow-xl border border-slate-200">
+                <div class="flex items-center justify-between flex-wrap gap-3 mb-6 border-b pb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-amber-100 text-amber-600 p-3 rounded-2xl text-2xl">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl md:text-2xl font-black text-slate-800">一億以內的數：綜合挑戰 10 題</h2>
+                            <p class="text-sm text-slate-500">測試你的學習成果！完成 10 道多元挑戰題並獲得分數！</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-100 px-4 py-2 rounded-2xl text-right">
+                        <span class="text-xs text-slate-500 font-bold block">目前得分</span>
+                        <span id="finalScoreDisplay" class="text-2xl font-black text-purple-600">0 / 100 分</span>
+                    </div>
+                </div>
+
+                <!-- Questions List Container -->
+                <div id="comp10QuestionsList" class="space-y-6">
+                    <!-- Dynamic 10 Questions injected by JS -->
+                </div>
+
+                <!-- Submit & Score Summary Box -->
+                <div class="mt-8 p-6 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-3xl text-center shadow-xl">
+                    <button onclick="calculateFinalScore()" id="submit10QuizBtn" class="bg-yellow-400 hover:bg-yellow-300 text-blue-950 font-black text-xl px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95">
+                        <i class="fa-solid fa-paper-plane"></i> 提交測驗並計算總分
+                    </button>
+
+                    <div id="finalScoreCard" class="hidden mt-6 pt-6 border-t border-white/20">
+                        <div class="text-3xl font-black text-yellow-300 mb-2" id="scoreTitleText">🎉 恭喜完成測驗！</div>
+                        <div class="text-5xl font-black my-2" id="scoreNumText">100 分</div>
+                        <div class="text-base text-purple-100 max-w-md mx-auto mb-4" id="scoreDescText">評語載入中...</div>
+                        <button onclick="reset10Quiz()" class="bg-white text-purple-900 font-bold px-6 py-2.5 rounded-xl shadow hover:bg-slate-100 transition">
+                            <i class="fa-solid fa-rotate-right"></i> 重新測驗
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-6xl mx-auto px-4 mt-12 text-center text-xs text-slate-400 space-y-1">
+        <p class="font-bold text-slate-600">設計者：新趨勢老師</p>
+        <p>© 國小四年級數學互動教學輔具 • 一億以內的數全方位學習網頁</p>
+    </footer>
+
+    <script>
+        /* ================= AUDIO CONTROLS ================= */
+        let audioEnabled = true;
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const icon = document.getElementById('audioIcon');
+            const text = document.getElementById('audioText');
+            if (audioEnabled) {
+                icon.className = 'fa-solid fa-volume-high';
+                text.innerText = '音效 ON';
+                playBeep(600, 0.1);
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark';
+                text.innerText = '音效 OFF';
+            }
+        }
+
+        function playBeep(freq = 440, type = 'sine', duration = 0.1) {
+            if (!audioEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function playSuccessSound() {
+            if (!audioEnabled) return;
+            playBeep(523.25, 'triangle', 0.1);
+            setTimeout(() => playBeep(659.25, 'triangle', 0.1), 100);
+            setTimeout(() => playBeep(783.99, 'triangle', 0.2), 200);
+        }
+
+        function switchTab(tabId) {
+            playBeep(500, 0.05);
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('bg-slate-100', 'text-slate-600');
+            });
+            const activeBtn = document.getElementById('nav-' + tabId);
+            activeBtn.classList.add('active');
+            activeBtn.classList.remove('bg-slate-100', 'text-slate-600');
+        }
+
+        /* ================= MODULE 1: MONEY COUNTING LOGIC (5 PER ROW) ================= */
+        let currentMoneyStage = 1;
+        let currentBillCount = 0;
+        let isSynthesized = false;
+
+        const moneyStageData = {
+            1: { unitVal: 1000, targetVal: 10000, unitText: '1,000元', targetText: '1萬 (10,000元)', bg: 'bg-emerald-100 border-emerald-300 text-emerald-900', summary: '10個 1,000 是 10,000，我們讀作「一萬」。每滿 10 個千就進位成 1 個萬！' },
+            2: { unitVal: 100000, targetVal: 1000000, unitText: '10萬元', targetText: '100萬 (1,000,000元)', bg: 'bg-blue-100 border-blue-300 text-blue-900', summary: '10個 10萬 是 100萬（一百萬）。10個十萬位會進位到百萬位！' },
+            3: { unitVal: 1000000, targetVal: 10000000, unitText: '100萬元', targetText: '1,000萬 (10,000,000元)', bg: 'bg-indigo-100 border-indigo-300 text-indigo-900', summary: '10個 100萬 是 1,000萬（一千萬）。十個百萬換成一個千萬！' },
+            4: { unitVal: 10000000, targetVal: 100000000, unitText: '1,000萬元', targetText: '1億 (100,000,000元)', bg: 'bg-purple-100 border-purple-300 text-purple-900', summary: '10個 1,000萬 是 1億（一億）！滿十個千萬，就跨入「億級」囉！' }
+        };
+
+        function setMoneyStage(stage) {
+            currentMoneyStage = stage;
+            currentBillCount = 0;
+            isSynthesized = false;
+            
+            document.querySelectorAll('.money-stage-btn').forEach((b, i) => {
+                if (i + 1 === stage) {
+                    b.className = 'money-stage-btn bg-emerald-600 text-white p-3 rounded-xl font-bold text-sm shadow transition border-2 border-emerald-600';
+                } else {
+                    b.className = 'money-stage-btn bg-slate-100 text-slate-700 hover:bg-slate-200 p-3 rounded-xl font-bold text-sm transition border-2 border-transparent';
+                }
+            });
+
+            const data = moneyStageData[stage];
+            document.getElementById('moneyGoalText').innerHTML = `目標：點擊按鈕收集 10 張 <span class="text-emerald-900 underline font-bold text-base">${data.unitText}</span> 卡片`;
+            document.getElementById('addBtnText').innerText = data.unitText;
+            document.getElementById('moneySummaryText').innerText = data.summary;
+
+            renderBills();
+        }
+
+        function addBill() {
+            if (currentBillCount < 10) {
+                currentBillCount++;
+                playBeep(400 + currentBillCount * 30, 'sine', 0.1);
+                renderBills();
+            }
+        }
+
+        function synthesizeBills() {
+            isSynthesized = true;
+            playSuccessSound();
+            confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+            renderBills();
+        }
+
+        function resetBills() {
+            currentBillCount = 0;
+            isSynthesized = false;
+            playBeep(300, 0.08);
+            renderBills();
+        }
+
+        function renderBills() {
+            const container = document.getElementById('moneyContainer');
+            const data = moneyStageData[currentMoneyStage];
+            container.innerHTML = '';
+
+            if (isSynthesized) {
+                container.innerHTML = `
+                    <div class="animate-bounce bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-amber-950 border-4 border-yellow-200 p-6 rounded-3xl shadow-2xl flex flex-col items-center justify-center min-w-[280px]">
+                        <i class="fa-solid fa-crown text-4xl mb-2 text-amber-700"></i>
+                        <span class="text-xs font-black uppercase tracking-widest text-amber-800">10 個湊齊！滿十進位！</span>
+                        <span class="text-2xl md:text-3xl font-black mt-1">${data.targetText}</span>
+                    </div>
+                `;
+            } else {
+                if (currentBillCount === 0) {
+                    container.innerHTML = `<span class="text-slate-400 text-xs font-bold my-8">目前沒有卡片，請點擊下方按鈕加入！</span>`;
+                } else {
+                    const grid = document.createElement('div');
+                    grid.className = "grid grid-cols-5 gap-2 md:gap-3 w-full max-w-xl mx-auto";
+
+                    for (let i = 0; i < currentBillCount; i++) {
+                        const card = document.createElement('div');
+                        card.className = `bill-card ${data.bg} border-2 px-2 py-3 rounded-xl shadow-md font-black text-xs md:text-sm flex flex-col sm:flex-row items-center justify-center gap-1 text-center`;
+                        card.innerHTML = `<i class="fa-solid fa-money-bill text-emerald-600"></i> <span>${data.unitText}</span>`;
+                        grid.appendChild(card);
+                    }
+                    container.appendChild(grid);
+
+                    if (currentBillCount === 10) {
+                        const actionDiv = document.createElement('div');
+                        actionDiv.className = "mt-4";
+                        actionDiv.innerHTML = `
+                            <button onclick="synthesizeBills()" class="bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-slate-900 font-black text-base px-6 py-2.5 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2 mx-auto animate-pulse">
+                                ✨ 滿 10 個了！點擊進行進位合體！
+                            </button>
+                        `;
+                        container.appendChild(actionDiv);
+                    }
+                }
+            }
+
+            const bar = document.getElementById('moneyProgressBar');
+            const pct = (currentBillCount / 10) * 100;
+            bar.style.width = pct + '%';
+            bar.innerText = `${currentBillCount} / 10`;
+        }
+
+        /* ================= MODULE 2: PLACE VALUE BOARD LOGIC ================= */
+        let digits = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let reviewList = [];
+
+        function initPlaceValueBoard() {
+            const grid = document.getElementById('placeValueGrid');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < 9; i++) {
+                const col = document.createElement('div');
+                col.className = 'flex flex-col items-center';
+                col.innerHTML = `
+                    <button onclick="changeDigit(${i}, 1)" class="w-full bg-white hover:bg-slate-100 text-slate-600 rounded-t-lg border border-slate-300 py-1.5 flex justify-center items-center active:bg-blue-100">
+                        <i class="fa-solid fa-chevron-up text-xs"></i>
+                    </button>
+                    <div id="pvd-${i}" class="w-full bg-white font-black text-2xl md:text-3xl text-center py-2 border-x border-slate-300 digit-display text-blue-600">
+                        0
+                    </div>
+                    <button onclick="changeDigit(${i}, -1)" class="w-full bg-white hover:bg-slate-100 text-slate-600 rounded-b-lg border border-slate-300 py-1.5 flex justify-center items-center active:bg-blue-100">
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </button>
+                `;
+                grid.appendChild(col);
+            }
+            updatePlaceValueDisplay();
+        }
+
+        function changeDigit(index, delta) {
+            playBeep(450 + delta * 50, 'sine', 0.05);
+            digits[index] = (digits[index] + delta + 10) % 10;
+            updatePlaceValueDisplay();
+        }
+
+        function loadPresetNumber(num) {
+            playBeep(600, 0.1);
+            let str = num.toString().padStart(9, '0');
+            for (let i = 0; i < 9; i++) {
+                digits[i] = parseInt(str[i]);
+            }
+            updatePlaceValueDisplay();
+        }
+
+        function resetPlaceValue() {
+            digits = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+            updatePlaceValueDisplay();
+        }
+
+        function updatePlaceValueDisplay() {
+            for (let i = 0; i < 9; i++) {
+                const el = document.getElementById(`pvd-${i}`);
+                if (el) el.innerText = digits[i];
+            }
+
+            const rawVal = parseInt(digits.join(''), 10);
+            const formattedStr = rawVal.toLocaleString('en-US');
+            document.getElementById('formattedNumDisplay').innerText = formattedStr;
+            document.getElementById('digitLengthDisplay').innerText = rawVal === 0 ? '1' : rawVal.toString().length;
+
+            const chineseReading = numberToChinese(rawVal);
+            document.getElementById('chineseReadDisplay').innerText = chineseReading;
+
+            const names = ['億', '千萬', '百萬', '十萬', '萬', '千', '百', '十', '個'];
+            let parts = [];
+            for (let i = 0; i < 9; i++) {
+                if (digits[i] > 0) {
+                    parts.push(`${digits[i]} 個 ${names[i]}`);
+                }
+            }
+            document.getElementById('placeValueBreakdown').innerText = parts.length > 0 
+                ? '結構拆解：' + parts.join('、')
+                : '結構拆解：0';
+        }
+
+        function copyNumber() {
+            const rawVal = parseInt(digits.join(''), 10);
+            copyTextToClipboard(rawVal.toString());
+            alert('已複製阿拉伯數字：' + rawVal.toLocaleString());
+        }
+
+        function copyChineseRead() {
+            const text = document.getElementById('chineseReadDisplay').innerText;
+            copyTextToClipboard(text);
+            alert('已複製中文國字讀法：' + text);
+        }
+
+        function copyTextToClipboard(text) {
+            const input = document.createElement('textarea');
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            playBeep(800, 0.1);
+        }
+
+        function addToReviewList() {
+            const rawVal = parseInt(digits.join(''), 10);
+            const chineseText = document.getElementById('chineseReadDisplay').innerText;
+            
+            reviewList.unshift({
+                num: rawVal.toLocaleString(),
+                cn: chineseText
+            });
+
+            playSuccessSound();
+            renderReviewList();
+        }
+
+        function clearReviewList() {
+            reviewList = [];
+            renderReviewList();
+        }
+
+        function renderReviewList() {
+            const container = document.getElementById('reviewListContainer');
+            if (reviewList.length === 0) {
+                container.innerHTML = `<p class="text-18px text-slate-400 italic" id="emptyReviewHint">目前尚未加入複習資料，點擊上方「加入複習清單」即可收集練習過的數字！</p>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            reviewList.forEach((item, idx) => {
+                const el = document.createElement('div');
+                el.className = "flex items-center justify-between p-4 bg-white rounded-2xl border-2 border-indigo-100 shadow-sm text-18px font-bold text-slate-800 gap-3";
+                el.innerHTML = `
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <span class="bg-indigo-100 text-indigo-800 px-3.5 py-1.5 rounded-xl font-black font-mono text-18px shadow-inner">${item.num}</span>
+                        <span class="text-indigo-950 font-black text-18px">${item.cn}</span>
+                    </div>
+                    <button onclick="reviewList.splice(${idx},1); renderReviewList();" class="text-slate-400 hover:text-red-500 transition text-xl p-2 shrink-0">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        /* Module 3 Quiz Handler */
+        let module3Score = [false, false, false];
+        function checkAnswer(qNum, optNum, isCorrect) {
+            const box = document.getElementById(`q${qNum}-box`);
+            const feedback = document.getElementById(`q${qNum}-feedback`);
+            
+            const opts = box.querySelectorAll(`.q${qNum}-opt`);
+            opts.forEach((btn, idx) => {
+                btn.classList.remove('bg-emerald-100', 'border-emerald-500', 'bg-red-100', 'border-red-500', 'text-emerald-900', 'text-red-900');
+                if (idx + 1 === optNum) {
+                    if (isCorrect) {
+                        btn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+                    } else {
+                        btn.classList.add('bg-red-100', 'border-red-500', 'text-red-900');
+                    }
+                }
+            });
+
+            feedback.classList.remove('hidden');
+            if (isCorrect) {
+                playSuccessSound();
+                module3Score[qNum - 1] = true;
+                feedback.className = "mt-3 text-18px font-bold text-emerald-700 bg-emerald-50 p-3 rounded-xl border border-emerald-200 block";
+                feedback.innerHTML = "✅ 答對了！太棒了！算法是將各位值組合起來。";
+            } else {
+                playBeep(200, 0.2);
+                module3Score[qNum - 1] = false;
+                feedback.className = "mt-3 text-18px font-bold text-red-600 bg-red-50 p-3 rounded-xl border border-red-200 block";
+                feedback.innerHTML = "❌ 答錯了，再想想看各個位值代表的數量喔！";
+            }
+
+            const solvedCount = module3Score.filter(Boolean).length;
+            document.getElementById('quizScoreText').innerText = `已完成 ${solvedCount} / 3 題`;
+        }
+
+        /* Standard Elementary Math Chinese Reading Logic */
+        function numberToChinese(num) {
+            if (num === 0) return '零';
+            if (num === 100000000) return '一億';
+
+            const digitsCN = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+            const units = ['', '十', '百', '千'];
+
+            function render4Digits(val, isHighest) {
+                let strVal = val.toString().padStart(4, '0');
+                let res = '';
+                let zeroFlag = false;
+
+                for (let i = 0; i < 4; i++) {
+                    let d = parseInt(strVal[i]);
+                    let unitIndex = 3 - i;
+
+                    if (d === 0) {
+                        if (res.length > 0) {
+                            zeroFlag = true;
+                        }
+                    } else {
+                        if (zeroFlag) {
+                            res += '零';
+                            zeroFlag = false;
+                        }
+                        if (d === 1 && unitIndex === 1) {
+                            if ((isHighest && res.length === 0) || res.endsWith('零')) {
+                                res += '十';
+                            } else {
+                                res += '一十';
+                            }
+                        } else {
+                            res += digitsCN[d] + units[unitIndex];
+                        }
+                    }
+                }
+                return res;
+            }
+
+            let yi = Math.floor(num / 100000000);
+            let wan = Math.floor((num % 100000000) / 10000);
+            let ge = num % 10000;
+
+            let result = '';
+
+            if (yi > 0) {
+                result += render4Digits(yi, true) + '億';
+            }
+
+            if (wan > 0) {
+                let isWanHighest = (yi === 0);
+                let wanStr = render4Digits(wan, isWanHighest);
+                
+                if (yi > 0 && wan < 1000) {
+                    result += '零' + wanStr;
+                } else {
+                    result += wanStr;
+                }
+                result += '萬';
+            } else if (yi > 0 && ge > 0) {
+                result += '零';
+            }
+
+            if (ge > 0) {
+                let isGeHighest = (yi === 0 && wan === 0);
+                let geStr = render4Digits(ge, isGeHighest);
+
+                if ((yi > 0 || wan > 0) && ge < 1000) {
+                    result += '零' + geStr;
+                } else {
+                    result += geStr;
+                }
+            }
+
+            result = result.replace(/零+/g, '零');
+            result = result.replace(/零一十/g, '零十');
+            return result;
+        }
+
+        /* ================= MODULE 4: FLUORESCENT HIGHLIGHTER COMPARISON LOGIC ================= */
+        let currentHLTool = 'divider';
+        let linePosA = null;
+        let linePosB = null;
+        let highlightedWanA = false;
+        let highlightedGeA = false;
+        let highlightedWanB = false;
+        let highlightedGeB = false;
+
+        function setHighlighterTool(tool) {
+            currentHLTool = tool;
+            playBeep(650, 0.05);
+
+            document.querySelectorAll('.hl-tool-btn').forEach(b => {
+                b.className = 'hl-tool-btn bg-slate-100 text-slate-700 font-bold text-xs px-3 py-1.5 rounded-xl transition flex items-center gap-1';
+            });
+
+            const activeBtn = document.getElementById(`tool-${tool}`);
+            if (tool === 'divider') activeBtn.className = 'hl-tool-btn active bg-amber-500 text-white font-bold text-xs px-3 py-1.5 rounded-xl transition shadow flex items-center gap-1';
+            if (tool === 'wan') activeBtn.className = 'hl-tool-btn active bg-yellow-400 text-amber-950 font-bold text-xs px-3 py-1.5 rounded-xl transition shadow flex items-center gap-1';
+            if (tool === 'ge') activeBtn.className = 'hl-tool-btn active bg-lime-400 text-lime-950 font-bold text-xs px-3 py-1.5 rounded-xl transition shadow flex items-center gap-1';
+        }
+
+        function autoHighlight(target) {
+            playSuccessSound();
+            const numStr = document.getElementById(`num${target}Input`).value || '0';
+            const len = numStr.length;
+            const correctGap = len - 4;
+
+            if (target === 'A') {
+                linePosA = correctGap;
+                highlightedWanA = true;
+                highlightedGeA = true;
+            } else {
+                linePosB = correctGap;
+                highlightedWanB = true;
+                highlightedGeB = true;
+            }
+            renderLineTile(target, numStr);
+            updateComparison();
+        }
+
+        function initLineDrawing() {
+            const valA = document.getElementById('numAInput').value || '0';
+            const valB = document.getElementById('numBInput').value || '0';
+
+            linePosA = null;
+            linePosB = null;
+            highlightedWanA = false;
+            highlightedGeA = false;
+            highlightedWanB = false;
+            highlightedGeB = false;
+
+            renderLineTile('A', valA);
+            renderLineTile('B', valB);
+
+            updateComparison();
+        }
+
+        function renderLineTile(target, numStr) {
+            const container = document.getElementById(`lineDrawContainer${target}`);
+            const feedback = document.getElementById(`lineFeedback${target}`);
+            const currentLinePos = target === 'A' ? linePosA : linePosB;
+            const hWan = target === 'A' ? highlightedWanA : highlightedWanB;
+            const hGe = target === 'A' ? highlightedGeA : highlightedGeB;
+
+            container.innerHTML = '';
+            const len = numStr.length;
+            const correctGap = len - 4;
+
+            for (let i = 0; i < len; i++) {
+                const isWanDigit = (i < len - 4);
+                let digitStyle = "bg-white text-slate-800 border-slate-300";
+
+                if (isWanDigit && hWan) {
+                    digitStyle = "bg-yellow-300 text-amber-950 border-yellow-400 font-black shadow-[0_0_12px_rgba(253,224,71,0.8)] transform scale-105";
+                } else if (!isWanDigit && hGe) {
+                    digitStyle = "bg-lime-300 text-lime-950 border-lime-400 font-black shadow-[0_0_12px_rgba(163,230,53,0.8)] transform scale-105";
+                }
+
+                const digitBox = document.createElement('button');
+                digitBox.className = `w-11 h-14 flex items-center justify-center font-black text-2xl rounded-xl border-2 ${digitStyle} transition cursor-pointer active:scale-95`;
+                digitBox.innerText = numStr[i];
+                digitBox.title = isWanDigit ? "點擊塗黃色萬級" : "點擊塗綠色個級";
+                
+                digitBox.onclick = () => {
+                    playBeep(700, 0.08);
+                    if (currentHLTool === 'wan' || isWanDigit) {
+                        if (target === 'A') highlightedWanA = true;
+                        if (target === 'B') highlightedWanB = true;
+                    }
+                    if (currentHLTool === 'ge' || !isWanDigit) {
+                        if (target === 'A') highlightedGeA = true;
+                        if (target === 'B') highlightedGeB = true;
+                    }
+                    if (currentHLTool === 'divider' && correctGap > 0) {
+                        if (target === 'A') linePosA = correctGap;
+                        if (target === 'B') linePosB = correctGap;
+                    }
+                    renderLineTile(target, numStr);
+                    updateComparison();
+                };
+                container.appendChild(digitBox);
+
+                if (i === len - 5 && len > 4) {
+                    const isLineHere = (currentLinePos === correctGap);
+
+                    const gapBtn = document.createElement('button');
+                    gapBtn.onclick = () => {
+                        playBeep(600, 0.08);
+                        if (target === 'A') {
+                            linePosA = isLineHere ? null : correctGap;
+                            highlightedWanA = true;
+                            highlightedGeA = true;
+                        } else {
+                            linePosB = isLineHere ? null : correctGap;
+                            highlightedWanB = true;
+                            highlightedGeB = true;
+                        }
+                        renderLineTile(target, numStr);
+                        updateComparison();
+                    };
+
+                    if (isLineHere) {
+                        gapBtn.className = "w-3.5 h-16 bg-gradient-to-b from-amber-400 to-yellow-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,1)] animate-pulse relative flex items-center justify-center mx-1.5 cursor-pointer hover:scale-110 transition";
+                        gapBtn.title = "四位劃線分界點";
+                    } else {
+                        gapBtn.className = "w-3 h-12 bg-amber-200 hover:bg-amber-400 rounded-full transition mx-1 cursor-pointer opacity-80 hover:opacity-100 flex items-center justify-center text-xs font-bold text-amber-800";
+                        gapBtn.title = "點擊在此進行四位劃線";
+                        gapBtn.innerText = "🖍️";
+                    }
+                    container.appendChild(gapBtn);
+                }
+            }
+
+            if (currentLinePos === null && !hWan && !hGe) {
+                feedback.className = "mt-3 text-18px font-bold text-amber-800 bg-amber-100/80 p-2.5 rounded-xl border border-amber-300 block";
+                feedback.innerHTML = "🖍️ 點擊中間「🖍️ 劃線處」進行四位劃線，或點擊數字用螢光筆塗色！";
+            } else if (currentLinePos === correctGap || (hWan && hGe)) {
+                playSuccessSound();
+                feedback.className = "mt-3 text-18px font-bold text-emerald-800 bg-emerald-100 p-2.5 rounded-xl border border-emerald-300 block";
+                feedback.innerHTML = "🎉 四位劃線成功！由右往左數 4 位切開，輕鬆分辨黃色萬級與綠色個級！";
+            } else {
+                feedback.className = "mt-3 text-18px font-bold text-amber-800 bg-amber-100 p-2.5 rounded-xl border border-amber-300 block";
+                feedback.innerHTML = "✨ 點擊螢光筆按鈕開始塗色或劃線！";
+            }
+        }
+
+        function updateComparison() {
+            const numAVal = parseInt(document.getElementById('numAInput').value) || 0;
+            const numBVal = parseInt(document.getElementById('numBInput').value) || 0;
+
+            const resultBox = document.getElementById('compareResultSymbol');
+            const reasonBox = document.getElementById('compareResultReason');
+
+            const strA = numAVal.toString();
+            const strB = numBVal.toString();
+            const allUnits = ['個位', '十位', '百位', '千位', '萬位', '十萬位', '百萬位', '千萬位', '億位'];
+
+            if (numAVal === numBVal) {
+                resultBox.innerText = `${numAVal}  ＝  ${numBVal}`;
+                reasonBox.innerText = `兩數都是 ${strA.length} 位數（同位數），每個位值的數字都完全相同，所以兩數相等！`;
+                return;
+            }
+
+            const symbol = numAVal > numBVal ? '＞' : '＜';
+            resultBox.innerText = `${numAVal}  ${symbol}  ${numBVal}`;
+
+            if (strA.length !== strB.length) {
+                const longer = strA.length > strB.length ? 'A' : 'B';
+                reasonBox.innerText = `兩數位數不同：A 是 ${strA.length} 位數，B 是 ${strB.length} 位數。同為正數時，位數多的數比較大，所以 ${longer} 比較大！`;
+            } else {
+                const len = strA.length;
+                let diffIdx = 0;
+                while (diffIdx < len && strA[diffIdx] === strB[diffIdx]) {
+                    diffIdx++;
+                }
+
+                const placeName = allUnits[len - 1 - diffIdx] || '該位';
+                const digitA = strA[diffIdx];
+                const digitB = strB[diffIdx];
+
+                if (diffIdx === 0) {
+                    reasonBox.innerText = `兩數都是 ${len} 位數（同位數）。從最左邊最高位開始比：第 1 個數（${placeName}）${digitA} ${symbol} ${digitB}，所以 A ${symbol} B！`;
+                } else {
+                    reasonBox.innerText = `兩數都是 ${len} 位數（同位數）。從最高位開始比：前 ${diffIdx} 位數字皆相同，所以再比第 ${diffIdx + 1} 個數（${placeName}）${digitA} ${symbol} ${digitB}，以此類推，所以 A ${symbol} B！`;
+                }
+            }
+        }
+
+        const compQuizData = [
+            { num1: 45200000, num2: 45099999, ans: '>' },
+            { num1: 12000000, num2: 12005000, ans: '<' },
+            { num1: 9999999, num2: 10000000, ans: '<' }
+        ];
+
+        function initComparisonQuiz() {
+            const container = document.getElementById('compareQuizList');
+            container.innerHTML = '';
+
+            compQuizData.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = "flex flex-col sm:flex-row items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200 gap-4";
+                item.innerHTML = `
+                    <div class="flex items-center justify-center gap-3 w-full sm:w-auto flex-wrap">
+                        <span class="font-black text-slate-800 text-xl md:text-2xl tracking-wider">${q.num1}</span>
+                        <div class="flex items-center gap-1.5 bg-amber-50 p-1.5 rounded-xl border border-amber-200">
+                            <button onclick="checkCompQuiz(${idx}, '>')" class="bg-white hover:bg-amber-400 hover:text-white text-amber-900 font-black border border-amber-300 w-10 h-10 rounded-lg text-xl shadow-sm transition active:scale-95 flex items-center justify-center">＞</button>
+                            <button onclick="checkCompQuiz(${idx}, '<')" class="bg-white hover:bg-amber-400 hover:text-white text-amber-900 font-black border border-amber-300 w-10 h-10 rounded-lg text-xl shadow-sm transition active:scale-95 flex items-center justify-center">＜</button>
+                            <button onclick="checkCompQuiz(${idx}, '=')" class="bg-white hover:bg-amber-400 hover:text-white text-amber-900 font-black border border-amber-300 w-10 h-10 rounded-lg text-xl shadow-sm transition active:scale-95 flex items-center justify-center">＝</button>
+                        </div>
+                        <span class="font-black text-slate-800 text-xl md:text-2xl tracking-wider">${q.num2}</span>
+                    </div>
+                    <div id="compFeedback-${idx}" class="text-18px font-bold min-w-[100px] text-center"></div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function checkCompQuiz(idx, choice) {
+            const q = compQuizData[idx];
+            const feedback = document.getElementById(`compFeedback-${idx}`);
+            if (choice === q.ans) {
+                playSuccessSound();
+                feedback.className = "text-18px font-bold text-emerald-600 bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200";
+                feedback.innerText = "✅ 答對了！";
+            } else {
+                playBeep(200, 0.2);
+                feedback.className = "text-18px font-bold text-red-600 bg-red-100 px-3 py-1.5 rounded-xl border border-red-200";
+                feedback.innerText = "❌ 再試試看！";
+            }
+        }
+
+        /* ================= MODULE 5: METRO ADDITION & SUBTRACTION LOGIC ================= */
+        const metroProblems = {
+            1: {
+                title: "台北捷運板南線 暑假搭乘人次總計",
+                text: "板南線 7 月份搭乘人次為 <strong>1,850,000 人次</strong>，8 月份增加至 <strong>2,120,000 人次</strong>。請問這兩個月總共有多少人次搭乘？",
+                n1: 1850000,
+                n2: 2120000,
+                op: '+',
+                ans: 3970000
+            },
+            2: {
+                title: "高雄捷運紅線 人次流量比較",
+                text: "高雄捷運紅線 5 月份運量為 <strong>3,450,000 人次</strong>，6 月因大雨減少為 <strong>2,800,000 人次</strong>。請問 5 月比 6 月多出多少人次？",
+                n1: 3450000,
+                n2: 2800000,
+                op: '-',
+                ans: 650000
+            },
+            3: {
+                title: "跨線路搭乘總人次挑戰",
+                text: "淡水信義線月運量約為 <strong>12,500,000 人次</strong>，文湖線月運量約為 <strong>5,400,000 人次</strong>，兩條路線合起來共是多少人次？",
+                n1: 12500000,
+                n2: 5400000,
+                op: '+',
+                ans: 17900000
+            }
+        };
+
+        let currentMetroProb = 1;
+
+        function loadMetroProblem(pId) {
+            currentMetroProb = pId;
+            playBeep(500, 0.05);
+
+            document.querySelectorAll('.metro-prob-btn').forEach((b, i) => {
+                if (i + 1 === pId) {
+                    b.className = 'metro-prob-btn bg-indigo-600 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition shadow';
+                } else {
+                    b.className = 'metro-prob-btn bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-sm px-4 py-2.5 rounded-xl transition';
+                }
+            });
+
+            const p = metroProblems[pId];
+            document.getElementById('metroScenarioTitle').innerText = p.title;
+            document.getElementById('metroScenarioText').innerHTML = p.text;
+            document.getElementById('vOperator').innerText = p.op;
+
+            renderVerticalGrid(p.n1, 'vNum1Row');
+            renderVerticalGrid(p.n2, 'vNum2Row');
+
+            document.getElementById('metroAnswerInput').value = '';
+            document.getElementById('metroFeedback').className = 'mt-4 text-center font-bold text-18px hidden';
+        }
+
+        function renderVerticalGrid(num, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            let str = num.toString().padStart(8, ' ');
+
+            for (let i = 0; i < 8; i++) {
+                const char = str[i] === ' ' ? '' : str[i];
+                const cell = document.createElement('div');
+                cell.className = "h-9 flex items-center justify-center border-b border-dashed border-slate-200";
+                cell.innerText = char;
+                container.appendChild(cell);
+            }
+        }
+
+        function checkMetroAnswer() {
+            const inputVal = parseInt(document.getElementById('metroAnswerInput').value);
+            const p = metroProblems[currentMetroProb];
+            const feedback = document.getElementById('metroFeedback');
+
+            if (inputVal === p.ans) {
+                playSuccessSound();
+                confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+                feedback.className = "mt-4 text-center font-bold text-18px text-emerald-600 bg-emerald-100 p-3.5 rounded-xl border border-emerald-200 block";
+                feedback.innerHTML = `🎉 計算完全正確！答案是 ${p.ans.toLocaleString()} 人次！`;
+            } else {
+                playBeep(200, 0.2);
+                feedback.className = "mt-4 text-center font-bold text-18px text-red-600 bg-red-100 p-3.5 rounded-xl border border-red-200 block";
+                feedback.innerHTML = `❌ 算錯囉，請記得由右至左對齊位值計算，正確答案是 ${p.ans.toLocaleString()}。`;
+            }
+        }
+
+        function toggleCarryHint() {
+            const header = document.getElementById('verticalHeader');
+            header.classList.toggle('bg-yellow-200');
+            playBeep(650, 0.05);
+        }
+
+        /* ================= MODULE 6: COMPREHENSIVE 10-QUESTION QUIZ LOGIC ================= */
+        const comp10QuizData = [
+            {
+                q: "10個十萬是多少？",
+                opts: ["A. 10,000 (一萬)", "B. 100,000 (十萬)", "C. 1,000,000 (一百萬)", "D. 10,000,000 (一千萬)"],
+                ans: 2,
+                exp: "10個十萬會向左邊進一位，成為「一百萬 (1,000,000)」。"
+            },
+            {
+                q: "5個千萬、3個萬和 8個百合起來是多少？",
+                opts: ["A. 50,030,800", "B. 50,300,800", "C. 5,030,800", "D. 503,080"],
+                ans: 0,
+                exp: "5個千萬(50,000,000) + 3個萬(30,000) + 8個百(800) = 50,030,800。"
+            },
+            {
+                q: "數字 68,040,000 的中文國字正確讀法是？",
+                opts: ["A. 六千八百四萬", "B. 六千八百零四萬", "C. 六千八百零四千", "D. 六千零八十四萬"],
+                ans: 1,
+                exp: "萬級是6804，讀作「六千八百零四萬」，個級全是零不讀。"
+            },
+            {
+                q: "利用四位劃線法比較：4520萬 與 4509萬9999 哪一個比較大？",
+                opts: ["A. 4520萬 比較大", "B. 4509萬9999 比較大", "C. 一樣大", "D. 無法比較"],
+                ans: 0,
+                exp: "先比萬級：4520萬 大於 4509萬，所以 4520萬 比較大。"
+            },
+            {
+                q: "70,000,000 (七千萬) 是由幾個「一萬」合起來的？",
+                opts: ["A. 70個", "B. 700個", "C. 7,000個", "D. 70,000個"],
+                ans: 2,
+                exp: "70,000,000 劃去個級4個零，代表有 7,000 個一萬。"
+            },
+            {
+                q: "捷運板南線 7月有 2,500,000 人次，8月有 1,300,000 人次，兩月總共是多少人次？",
+                opts: ["A. 3,800,000 人次", "B. 3,500,000 人次", "C. 1,200,000 人次", "D. 38,000,000 人次"],
+                ans: 0,
+                exp: "2,500,000 + 1,300,000 = 3,800,000 人次。"
+            },
+            {
+                q: "100,000,000 (一億) 是由幾個「一千萬」組成的？",
+                opts: ["A. 5個", "B. 10個", "C. 100個", "D. 1000個"],
+                ans: 1,
+                exp: "10個一千萬滿十進位，就會變成「一億」。"
+            },
+            {
+                q: "甲國人口 3,200,000 人，乙國人口 3,050,000 人，甲國比乙國多多少人？",
+                opts: ["A. 15,000 人", "B. 150,000 人", "C. 1,500,000 人", "D. 250,000 人"],
+                ans: 1,
+                exp: "3,200,000 - 3,050,000 = 150,000 人。"
+            },
+            {
+                q: "在活動定位板上，「百萬位」的左邊緊鄰的是什麼位值？",
+                opts: ["A. 十萬位", "B. 萬位", "C. 千萬位", "D. 億位"],
+                ans: 2,
+                exp: "位值由右向左依序是：個、十、百、千、萬、十萬、百萬、千萬、億。百萬左邊是千萬位。"
+            },
+            {
+                q: "計算算式：50,000,000 - 1,000,000 = ?",
+                opts: ["A. 49,000,000", "B. 40,000,000", "C. 49,900,000", "D. 51,000,000"],
+                ans: 0,
+                exp: "50個百萬 減去 1個百萬 等於 49個百萬 (49,000,000)。"
+            }
+        ];
+
+        let user10QuizAnswers = new Array(10).fill(null);
+
+        function init10Questions() {
+            const container = document.getElementById('comp10QuestionsList');
+            container.innerHTML = '';
+
+            comp10QuizData.forEach((qObj, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white border-2 border-slate-200 rounded-2xl p-5 shadow-sm";
+                card.id = `c10q-${idx}`;
+
+                let optionsHTML = '';
+                qObj.opts.forEach((optStr, optIdx) => {
+                    optionsHTML += `
+                        <button onclick="select10QuizOpt(${idx}, ${optIdx})" id="c10opt-${idx}-${optIdx}" class="c10opt-${idx} text-left p-3.5 rounded-xl border border-slate-200 text-18px font-medium hover:bg-slate-50 transition w-full">
+                            ${optStr}
+                        </button>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="font-bold text-slate-800 mb-3 flex items-start gap-2 text-18px">
+                        <span class="bg-indigo-600 text-white text-xs px-2.5 py-1 rounded-lg mt-1 shrink-0">第 ${idx + 1} 題</span>
+                        <span>${qObj.q}</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                        ${optionsHTML}
+                    </div>
+                    <div id="c10feedback-${idx}" class="mt-3 text-18px font-bold hidden"></div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function select10QuizOpt(qIdx, optIdx) {
+            playBeep(500 + optIdx * 40, 'sine', 0.05);
+            user10QuizAnswers[qIdx] = optIdx;
+
+            document.querySelectorAll(`.c10opt-${qIdx}`).forEach((btn, i) => {
+                if (i === optIdx) {
+                    btn.className = `c10opt-${qIdx} text-left p-3.5 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-900 text-18px font-bold transition w-full shadow-sm`;
+                } else {
+                    btn.className = `c10opt-${qIdx} text-left p-3.5 rounded-xl border border-slate-200 text-18px font-medium hover:bg-slate-50 transition w-full`;
+                }
+            });
+        }
+
+        function calculateFinalScore() {
+            let correctCount = 0;
+
+            comp10QuizData.forEach((qObj, idx) => {
+                const userChoice = user10QuizAnswers[idx];
+                const feedback = document.getElementById(`c10feedback-${idx}`);
+
+                if (userChoice === qObj.ans) {
+                    correctCount++;
+                    feedback.className = "mt-3 text-18px font-bold text-emerald-600 bg-emerald-50 p-3 rounded-xl border border-emerald-200 block";
+                    feedback.innerHTML = `✅ 答對了！ ${qObj.exp}`;
+                } else {
+                    feedback.className = "mt-3 text-18px font-bold text-red-600 bg-red-50 p-3 rounded-xl border border-red-200 block";
+                    feedback.innerHTML = `❌ 答錯了！正確答案是 (${String.fromCharCode(65 + qObj.ans)})。解析：${qObj.exp}`;
+                }
+            });
+
+            const totalScore = correctCount * 10;
+            document.getElementById('finalScoreDisplay').innerText = `${totalScore} / 100 分`;
+
+            const card = document.getElementById('finalScoreCard');
+            const numText = document.getElementById('scoreNumText');
+            const descText = document.getElementById('scoreDescText');
+            card.classList.remove('hidden');
+
+            numText.innerText = `${totalScore} 分`;
+
+            if (totalScore === 100) {
+                playSuccessSound();
+                confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+                descText.innerText = "太完美了！你已經完全掌握一億以內大數的所有位值與運算！大數魔法師非你莫屬！🏆";
+            } else if (totalScore >= 70) {
+                playSuccessSound();
+                descText.innerText = "表現相當優異！已經具備很好的大數概念，仔細看解析把錯題複習一下吧！🌟";
+            } else {
+                playBeep(250, 0.2);
+                descText.innerText = "再接再厲！建議回到前幾頁活動定位板與劃線法多加練習喔！💪";
+            }
+        }
+
+        function reset10Quiz() {
+            user10QuizAnswers = new Array(10).fill(null);
+            document.getElementById('finalScoreCard').classList.add('hidden');
+            document.getElementById('finalScoreDisplay').innerText = '0 / 100 分';
+            init10Questions();
+        }
+
+        /* ================= INITIALIZATION ON PAGE LOAD ================= */
+        window.onload = function() {
+            setMoneyStage(1);
+            initPlaceValueBoard();
+            initLineDrawing();
+            initComparisonQuiz();
+            loadMetroProblem(1);
+            init10Questions();
+        };
+    </script>
+</body>
+</html>

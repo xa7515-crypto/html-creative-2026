@@ -1,0 +1,2135 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>小數奇幻冒險島 - 國小四年級數學</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2357466f'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='serif'%3E%E6%96%B0%3C/text%3E%3C/svg%3E">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Zen Maru Gothic & Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            macaron: {
+              cream: '#FFF9F0',
+              pink: '#FFDEE9',
+              rose: '#FFAAA6',
+              mint: '#D4F0F0',
+              teal: '#88D8B0',
+              yellow: '#FFEEAD',
+              orange: '#FFCC99',
+              blue: '#C7E8F3',
+              purple: '#E3D7FF',
+              dark: '#2D3748'
+            }
+          },
+          fontFamily: {
+            title: ['"Zen Maru Gothic"', 'cursive', 'sans-serif'],
+            body: ['"Noto Sans TC"', '"微軟正黑體"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 全站字體與 20px 內文規定 */
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      font-size: 20px;
+      line-height: 1.6;
+      background-color: #FFF9F0;
+      color: #2D3748;
+      touch-action: manipulation;
+      overflow-x: hidden;
+    }
+
+    /* 規範修正：標題字體與題目相同（高易讀黑體），且固定為 32px */
+    .title-32 {
+      font-family: 'Noto Sans TC', '微軟正黑體', sans-serif !important;
+      font-size: 32px !important;
+      line-height: 1.3 !important;
+      font-weight: 900 !important;
+    }
+
+    /* 規範之強制 20px 內文/按鈕/題目 */
+    .text-20 {
+      font-size: 20px !important;
+      line-height: 1.5 !important;
+    }
+
+    /* 16:9 核心舞台自適應 */
+    .aspect-stage {
+      aspect-ratio: 16 / 9;
+    }
+    @media (max-width: 1024px) {
+      .aspect-stage {
+        aspect-ratio: auto;
+        min-height: auto;
+      }
+    }
+
+    /* 浮動微動態 */
+    @keyframes floatGentle {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float {
+      animation: floatGentle 3s ease-in-out infinite;
+    }
+
+    /* 翻轉卡 3D 效果 */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+    }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+
+    /* 自訂捲軸樣式 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FFF9F0;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #FFAAA6;
+      border-radius: 9999px;
+    }
+
+    /* 手寫畫布 */
+    #scratchpadCanvas {
+      touch-action: none;
+      cursor: crosshair;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between select-none">
+
+  <!-- 頂部主導航區 (支援縮小/收合模式) -->
+  <header id="mainHeader" class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-md border-b-4 border-[#FFAAA6] transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 py-2 sm:py-3 flex flex-wrap items-center justify-between gap-2">
+      <!-- 標題與署名徽章 -->
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-[#FFEEAD] border-2 border-[#FFAAA6] flex items-center justify-center text-3xl shadow-sm animate-float">
+          🍰
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs sm:text-sm font-bold bg-[#FFDEE9] text-[#E05A6F] px-2.5 py-0.5 rounded-full border border-[#FFAAA6]">
+              國小四年級數學
+            </span>
+            <span class="text-xs sm:text-sm font-bold bg-[#D4F0F0] text-[#2B7A78] px-2.5 py-0.5 rounded-full border border-[#88D8B0]">
+              作者：新趨勢老師
+            </span>
+          </div>
+          <h1 class="text-xl sm:text-2xl font-black text-[#2D3748] tracking-tight">
+            小數奇幻冒險島
+          </h1>
+        </div>
+      </div>
+
+      <!-- 右側按鈕群：導航收合切換 & 音效開關 -->
+      <div class="flex items-center gap-2">
+        <button id="soundToggleBtn" onclick="toggleSound()" class="px-3 py-2 rounded-2xl bg-[#FFEEAD] hover:bg-[#ffe58f] active:scale-95 transition border-2 border-[#FFAAA6] flex items-center gap-1.5 text-sm font-bold shadow-sm" title="開關音效">
+          <span id="soundIcon">🔊</span>
+          <span class="hidden sm:inline" id="soundText">音效開</span>
+        </button>
+
+        <button id="navToggleBtn" onclick="toggleHeaderCompact()" class="px-3 py-2 rounded-2xl bg-[#E3D7FF] hover:bg-[#d1bfff] active:scale-95 transition border-2 border-[#9F7AEA] flex items-center gap-1.5 text-sm font-bold shadow-sm" title="切換精簡/展開導航">
+          <span id="navToggleIcon">🔼</span>
+          <span id="navToggleText" class="hidden sm:inline">收攏選單</span>
+        </button>
+      </div>
+
+      <!-- 分頁標籤列 (可被收合或展開) -->
+      <nav id="navTabsContainer" class="w-full flex items-center justify-center gap-2 sm:gap-4 mt-2 sm:mt-1 pt-1 border-t border-dashed border-[#FFAAA6]/40 transition-all duration-300">
+        <button onclick="switchTab('explore')" id="tabBtn-explore" class="tab-btn active-tab flex-1 max-w-[200px] py-2.5 px-3 rounded-2xl text-center font-bold text-20 transition-all duration-200 shadow-sm border-2 flex items-center justify-center gap-2 bg-[#FFAAA6] text-white border-[#E05A6F]">
+          <span>📖</span>
+          <span>概念探索</span>
+        </button>
+        <button onclick="switchTab('lab')" id="tabBtn-lab" class="tab-btn flex-1 max-w-[200px] py-2.5 px-3 rounded-2xl text-center font-bold text-20 transition-all duration-200 shadow-sm border-2 flex items-center justify-center gap-2 bg-white text-[#2D3748] border-[#88D8B0] hover:bg-[#D4F0F0]">
+          <span>🔬</span>
+          <span>互動實驗</span>
+        </button>
+        <button onclick="switchTab('quiz')" id="tabBtn-quiz" class="tab-btn flex-1 max-w-[200px] py-2.5 px-3 rounded-2xl text-center font-bold text-20 transition-all duration-200 shadow-sm border-2 flex items-center justify-center gap-2 bg-white text-[#2D3748] border-[#FFCC99] hover:bg-[#FFEEAD]">
+          <span>🏆</span>
+          <span>即時挑戰</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 主內容工作區 -->
+  <main class="flex-grow max-w-7xl w-full mx-auto p-3 sm:p-6 flex flex-col justify-start">
+    
+    <!-- 頂部任務引導橫幅 -->
+    <div class="bg-gradient-to-r from-[#FFDEE9] via-[#FFEEAD] to-[#D4F0F0] p-4 rounded-3xl border-3 border-[#FFAAA6] shadow-sm mb-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="text-4xl filter drop-shadow">🌟</div>
+        <div>
+          <div class="text-sm font-bold text-[#E05A6F] flex items-center gap-1">
+            <span>● 課堂學習目標：</span>
+            <span>色紙分數與小數轉換、位值定位板、1cm=0.01m、直式對位加減</span>
+          </div>
+          <div class="font-bold text-[#2D3748] text-20">
+            「小數點是神奇的分界線，將整數與小碎片完美結合！」
+          </div>
+        </div>
+      </div>
+      <div class="text-xs sm:text-sm bg-white/80 backdrop-blur px-3 py-1.5 rounded-xl border border-[#FFAAA6] text-[#2D3748] font-bold whitespace-nowrap shadow-inner">
+        大螢幕專用 16:9 核心舞台模式已啟用 🖥️
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 頁籤一：概念探索 (Tab 1: Explore) -->
+    <!-- ========================================== -->
+    <section id="tabContent-explore" class="tab-content block space-y-6">
+      
+      <!-- 核心 16:9 操作舞台：色紙百格陣與定位板聯動 -->
+      <div class="bg-white rounded-3xl border-4 border-[#FFAAA6] p-4 sm:p-6 shadow-xl aspect-stage flex flex-col justify-between overflow-hidden">
+        
+        <!-- 舞台頂部引導 -->
+        <div class="flex flex-wrap items-center justify-between border-b-2 border-dashed border-[#FFAAA6] pb-3 gap-2">
+          <div>
+            <h2 class="title-32 text-[#E05A6F] flex items-center gap-2">
+              <span>🎨</span> 魔法色紙與位值探險
+            </h2>
+            <p class="text-20 text-gray-600 mt-1">
+              點擊色紙塗色，觀察「一位小數（十分位）」與「二位小數（百分位）」的奇妙變換！
+            </p>
+          </div>
+
+          <!-- 色紙模式切換鈕 -->
+          <div class="flex gap-2">
+            <button onclick="setGridMode(10)" id="btnMode10" class="px-4 py-2.5 rounded-2xl font-bold text-20 border-2 border-[#FFAAA6] bg-[#FFAAA6] text-white shadow transition-all active:scale-95 flex items-center gap-1">
+              <span>🔟</span> 平分 10 條色紙
+            </button>
+            <button onclick="setGridMode(100)" id="btnMode100" class="px-4 py-2.5 rounded-2xl font-bold text-20 border-2 border-[#88D8B0] bg-white text-[#2D3748] shadow transition-all hover:bg-[#D4F0F0] active:scale-95 flex items-center gap-1">
+              <span>💯</span> 平分 100 格色紙
+            </button>
+          </div>
+        </div>
+
+        <!-- 舞台中段：互動操作區 (左色紙點選，右數值定位板) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto items-center py-2">
+          
+          <!-- 左側色紙互動畫布區 -->
+          <div class="lg:col-span-6 flex flex-col items-center justify-center">
+            <div class="relative w-64 h-64 sm:w-80 sm:h-80 bg-orange-50 border-4 border-[#FFAAA6] rounded-2xl p-1.5 shadow-inner">
+              <div id="gridContainer" class="w-full h-full grid gap-1">
+                <!-- 動態注入色塊 -->
+              </div>
+            </div>
+            
+            <div class="mt-3 flex items-center gap-3">
+              <button onclick="fillGridRandom()" class="px-3.5 py-1.5 rounded-xl bg-[#FFEEAD] border-2 border-[#FFCC99] font-bold text-20 hover:bg-[#ffe28a] active:scale-95 shadow-sm">
+                🎲 隨機塗色
+              </button>
+              <button onclick="resetGrid()" class="px-3.5 py-1.5 rounded-xl bg-gray-100 border-2 border-gray-300 font-bold text-20 hover:bg-gray-200 active:scale-95 shadow-sm">
+                🔄 全部清空
+              </button>
+              <span class="text-20 font-bold text-gray-500">已塗色：<span id="coloredCountText" class="text-[#E05A6F] text-2xl font-black">0</span> 格</span>
+            </div>
+          </div>
+
+          <!-- 右側即時定位板與符號表示法 (小數點不單獨佔一格) -->
+          <div class="lg:col-span-6 flex flex-col gap-4">
+            
+            <!-- 數值定位板：三欄設計（個位、十分位、百分位），小數點位於個位與十分位分界處 -->
+            <div class="bg-[#FFF9F0] border-3 border-[#88D8B0] rounded-2xl p-4 shadow-sm">
+              <div class="text-center font-bold text-20 text-[#2B7A78] mb-2 flex items-center justify-center gap-2">
+                <span>📊</span> 數學位值定位板
+              </div>
+              <div class="relative rounded-xl overflow-hidden border-2 border-[#88D8B0]">
+                <!-- 表頭三欄：個位、十分位、百分位 -->
+                <div class="grid grid-cols-3 text-center border-b-2 border-[#88D8B0]">
+                  <div class="bg-[#D4F0F0] py-2 border-r-2 border-[#88D8B0] font-black text-20">個位 (1)</div>
+                  <div class="bg-[#FFDEE9] py-2 border-r-2 border-[#88D8B0] font-black text-20">十分位 (0.1)</div>
+                  <div class="bg-[#E3D7FF] py-2 font-black text-20">百分位 (0.01)</div>
+                </div>
+                
+                <!-- 數字值欄位與交界小數點標記 -->
+                <div class="relative grid grid-cols-3 text-center bg-white">
+                  <div id="pv-ones" class="py-4 border-r-2 border-[#88D8B0] text-4xl font-black text-gray-800">0</div>
+                  <div id="pv-tenths" class="py-4 border-r-2 border-[#88D8B0] text-4xl font-black text-[#E05A6F]">0</div>
+                  <div id="pv-hundredths" class="py-4 text-4xl font-black text-[#9F7AEA]">0</div>
+
+                  <!-- 浮貼於個位與十分位格線右下角的小數點指示器 (不獨立佔格) -->
+                  <div class="absolute left-1/3 bottom-3 -translate-x-1/2 flex flex-col items-center pointer-events-none z-10">
+                    <span class="w-3.5 h-3.5 bg-[#E05A6F] rounded-full shadow-md"></span>
+                    <span class="text-[11px] font-black text-[#E05A6F] bg-white/90 px-1 rounded -mt-0.5 border border-[#FFAAA6]">小數點</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 分數與小數直觀對照展示盒 -->
+            <div class="bg-white border-2 border-dashed border-[#FFAAA6] rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
+              <div class="flex items-center justify-between text-20 font-bold">
+                <span class="text-gray-600">分數表示法：</span>
+                <span id="displayFraction" class="text-2xl text-[#2B7A78] font-black">0 / 10 張色紙</span>
+              </div>
+              <div class="flex items-center justify-between text-20 font-bold border-t border-gray-100 pt-2">
+                <span class="text-gray-600">小數表示法：</span>
+                <span id="displayDecimal" class="text-3xl text-[#E05A6F] font-black">0.0 張色紙</span>
+              </div>
+              <div class="bg-[#FFEEAD]/50 p-2.5 rounded-xl text-20 text-[#2D3748] font-bold" id="displayExplanation">
+                ✨ 提示：點擊上方色紙，看看幾個 0.1 或幾個 0.01 合起來是多少！
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 舞台底部重點小叮嚀 -->
+        <div class="bg-[#D4F0F0]/60 rounded-2xl p-2.5 text-center text-20 font-bold text-[#2B7A78] border border-[#88D8B0]">
+          💡 牢記公式：1 條是 <span class="underline">0.1</span> 張（$\frac{1}{10}$）；1 小格是 <span class="underline">0.01</span> 張（$\frac{1}{100}$）；10 個 0.01 就是 0.1 唷！
+        </div>
+
+      </div>
+
+      <!-- 概念探索次區塊：長度公尺公分尺規 & 概念翻轉卡 -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- 左側：1公尺 = 100公分 互動尺規 -->
+        <div class="lg:col-span-6 bg-white rounded-3xl border-3 border-[#88D8B0] p-6 shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-3xl">📏</span>
+              <h3 class="title-32 text-[#2B7A78]">生活中的公尺與公分</h3>
+            </div>
+            <p class="text-20 text-gray-600 mb-4">
+              拖動滑桿量測長度，感受 <strong class="text-[#E05A6F]">1 公分 = 0.01 公尺</strong> 的換算！
+            </p>
+
+            <div class="bg-[#FFF9F0] border-2 border-[#88D8B0] rounded-2xl p-4 mb-4">
+              <div class="flex justify-between items-center mb-2 font-bold text-20">
+                <span>目前測量長度：</span>
+                <span id="meterSliderLabel" class="text-2xl text-[#2B7A78] font-black">35 公分 (cm)</span>
+              </div>
+              <input type="range" id="meterSlider" min="0" max="150" value="35" class="w-full h-4 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#88D8B0]" oninput="updateMeterRuler(this.value)">
+              
+              <!-- 尺規刻度視覺標記 -->
+              <div class="w-full flex justify-between text-xs font-bold text-gray-400 mt-1">
+                <span>0 cm</span>
+                <span>50 cm (0.5m)</span>
+                <span>100 cm (1m)</span>
+                <span>150 cm (1.5m)</span>
+              </div>
+            </div>
+
+            <!-- 換算公式成果框 -->
+            <div class="grid grid-cols-2 gap-3 text-center">
+              <div class="bg-[#D4F0F0] p-3 rounded-2xl border border-[#88D8B0]">
+                <div class="text-sm font-bold text-gray-600">公分 (cm)</div>
+                <div id="rulerCmText" class="text-2xl font-black text-[#2B7A78]">35 公分</div>
+              </div>
+              <div class="bg-[#FFDEE9] p-3 rounded-2xl border border-[#FFAAA6]">
+                <div class="text-sm font-bold text-gray-600">公尺 (m)</div>
+                <div id="rulerMText" class="text-2xl font-black text-[#E05A6F]">0.35 公尺</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-4 text-center text-sm font-bold text-gray-500">
+            🎯 思考題：100 公分剛好是 1.00 公尺＝1公尺！
+          </div>
+        </div>
+
+        <!-- 右側：四張概念閃示翻轉卡 (Flashcards) -->
+        <div class="lg:col-span-6 bg-white rounded-3xl border-3 border-[#FFEEAD] p-6 shadow-md flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-3xl">🃏</span>
+              <h3 class="title-32 text-[#D97706]">小數大腦翻轉卡</h3>
+            </div>
+            <span class="text-sm bg-[#FFEEAD] text-amber-800 px-3 py-1 rounded-full font-bold">點擊卡片翻面看解答</span>
+          </div>
+
+          <!-- 4 張翻轉卡網格 -->
+          <div class="grid grid-cols-2 gap-3 my-2">
+            
+            <!-- 卡片 1 -->
+            <div class="perspective-1000 h-36 cursor-pointer" onclick="flipCard(this)">
+              <div class="relative w-full h-full duration-500 transform-style-3d card-inner rounded-2xl shadow-sm border-2 border-[#FFAAA6]">
+                <div class="absolute w-full h-full bg-[#FFDEE9] rounded-2xl flex flex-col items-center justify-center p-2 text-center backface-hidden">
+                  <span class="text-2xl">🔍</span>
+                  <div class="font-bold text-20 text-[#E05A6F] mt-1">什麼是小數點？</div>
+                  <span class="text-xs text-gray-500 mt-1">點擊看解密</span>
+                </div>
+                <div class="absolute w-full h-full bg-white rounded-2xl flex flex-col items-center justify-center p-2 text-center rotate-y-180 backface-hidden">
+                  <p class="font-bold text-sm text-gray-700">分隔整數與比1還小的部分！小數點右邊第一位是十分位。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 卡片 2 -->
+            <div class="perspective-1000 h-36 cursor-pointer" onclick="flipCard(this)">
+              <div class="relative w-full h-full duration-500 transform-style-3d card-inner rounded-2xl shadow-sm border-2 border-[#88D8B0]">
+                <div class="absolute w-full h-full bg-[#D4F0F0] rounded-2xl flex flex-col items-center justify-center p-2 text-center backface-hidden">
+                  <span class="text-2xl">🌱</span>
+                  <div class="font-bold text-20 text-[#2B7A78] mt-1">0.1 是多少？</div>
+                  <span class="text-xs text-gray-500 mt-1">點擊看解密</span>
+                </div>
+                <div class="absolute w-full h-full bg-white rounded-2xl flex flex-col items-center justify-center p-2 text-center rotate-y-180 backface-hidden">
+                  <p class="font-bold text-sm text-gray-700">把「1」平分成 10 份，其中的 1 份就是十分之一（0.1）。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 卡片 3 -->
+            <div class="perspective-1000 h-36 cursor-pointer" onclick="flipCard(this)">
+              <div class="relative w-full h-full duration-500 transform-style-3d card-inner rounded-2xl shadow-sm border-2 border-[#E3D7FF]">
+                <div class="absolute w-full h-full bg-[#E3D7FF] rounded-2xl flex flex-col items-center justify-center p-2 text-center backface-hidden">
+                  <span class="text-2xl">💧</span>
+                  <div class="font-bold text-20 text-[#6B46C1] mt-1">0.01 是多少？</div>
+                  <span class="text-xs text-gray-500 mt-1">點擊看解密</span>
+                </div>
+                <div class="absolute w-full h-full bg-white rounded-2xl flex flex-col items-center justify-center p-2 text-center rotate-y-180 backface-hidden">
+                  <p class="font-bold text-sm text-gray-700">把「1」平分成 100 份，其中的 1 份就是百分之一（0.01）。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 卡片 4 -->
+            <div class="perspective-1000 h-36 cursor-pointer" onclick="flipCard(this)">
+              <div class="relative w-full h-full duration-500 transform-style-3d card-inner rounded-2xl shadow-sm border-2 border-[#FFCC99]">
+                <div class="absolute w-full h-full bg-[#FFEEAD] rounded-2xl flex flex-col items-center justify-center p-2 text-center backface-hidden">
+                  <span class="text-2xl">➕</span>
+                  <div class="font-bold text-20 text-[#D97706] mt-1">直式計算口訣？</div>
+                  <span class="text-xs text-gray-500 mt-1">點擊看解密</span>
+                </div>
+                <div class="absolute w-full h-full bg-white rounded-2xl flex flex-col items-center justify-center p-2 text-center rotate-y-180 backface-hidden">
+                  <p class="font-bold text-sm text-gray-700">小數點一定要「上下垂直對齊」，同位數相加減，不夠位數補0！</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="text-center text-xs text-gray-500">
+            ✨ 隨時點擊翻回正面複習！
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 頁籤二：互動實驗 (Tab 2: Lab) -->
+    <!-- ========================================== -->
+    <section id="tabContent-lab" class="tab-content hidden space-y-6">
+      
+      <!-- 實驗一：小數數線放大鏡 (支援直接拖曳與點擊自由移動) -->
+      <div class="bg-white rounded-3xl border-4 border-[#88D8B0] p-4 sm:p-6 shadow-xl aspect-stage flex flex-col justify-between">
+        
+        <div>
+          <div class="flex items-center justify-between border-b-2 border-dashed border-[#88D8B0] pb-3">
+            <div>
+              <h2 class="title-32 text-[#2B7A78] flex items-center gap-2">
+                <span>🐸</span> 小數跳跳蛙與魔法數線
+              </h2>
+              <p class="text-20 text-gray-600 mt-1">
+                👉 <strong>可以直接用手指或滑鼠拖曳青蛙</strong>，也可以點擊數線任何位置自由跳躍！
+              </p>
+            </div>
+            <div class="bg-[#D4F0F0] px-4 py-2 rounded-2xl border-2 border-[#88D8B0] text-center shrink-0">
+              <span class="text-sm font-bold text-gray-600">目前青蛙停在</span>
+              <div id="frogValueBadge" class="text-3xl font-black text-[#2B7A78]">0.50</div>
+            </div>
+          </div>
+
+          <!-- 數線舞台視覺圖 (SVG 自適應繪製 + 自由拖曳軌道) -->
+          <div class="my-6 relative bg-sky-50 rounded-2xl p-4 border-2 border-sky-200 select-none" id="numberLineTrackArea">
+            <!-- 數線 SVG 繪製容器 (支援直接點擊數線) -->
+            <div class="relative w-full h-28 flex items-center cursor-pointer" id="numberLineInteractiveTrack">
+              <svg id="numberLineSvg" class="w-full h-full overflow-visible pointer-events-none">
+                <!-- 橫軸主幹 (5% 到 95%) -->
+                <line x1="5%" y1="50" x2="95%" y2="50" stroke="#4A5568" stroke-width="4" stroke-linecap="round"/>
+                <!-- 箭頭 -->
+                <polygon points="96%,50 94%,43 94%,57" fill="#4A5568"/>
+              </svg>
+
+              <!-- 青蛙動態指針 (可直接用滑鼠/手指按住拖拉) -->
+              <div id="frogMarker" class="absolute top-0 -translate-x-1/2 flex flex-col items-center cursor-grab active:cursor-grabbing transition-transform duration-75 group" style="left: 50%; touch-action: none;">
+                <div class="text-4xl filter drop-shadow group-active:scale-125 transition-transform animate-pulse">🐸</div>
+                <div class="w-3.5 h-3.5 bg-[#E05A6F] rotate-45 -mt-1 shadow border border-white"></div>
+                <span class="bg-[#2B7A78] text-white text-xs px-2 py-0.5 rounded-full font-black mt-1 shadow-md whitespace-nowrap">
+                  拖曳我
+                </span>
+              </div>
+            </div>
+
+            <!-- 控制滑桿輔助控制 -->
+            <div class="mt-2 px-4">
+              <input type="range" id="numberLineSlider" min="0" max="100" value="50" step="1" class="w-full h-4 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#2B7A78]" oninput="updateFrogPosition(this.value)">
+              <div class="flex justify-between text-sm font-black text-gray-600 mt-2 px-1">
+                <span>0.0 (起點)</span>
+                <span>0.25</span>
+                <span>0.5 (中點)</span>
+                <span>0.75</span>
+                <span>1.0 (終點)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 數線探索微測驗互動按鈕 -->
+        <div class="bg-[#FFF9F0] p-4 rounded-2xl border-2 border-[#FFEEAD] flex flex-wrap items-center justify-between gap-3">
+          <div class="font-bold text-20 text-[#2D3748]">
+            🎯 蛙蛙目標跳躍任務：挑戰讓蛙蛙精確停在以下位置！
+          </div>
+          <div class="flex gap-2">
+            <button onclick="setFrogTarget(0.2)" class="px-3.5 py-1.5 rounded-xl bg-white border border-[#FFAAA6] text-20 font-bold hover:bg-[#FFDEE9] active:scale-95 shadow-sm">跳到 0.2</button>
+            <button onclick="setFrogTarget(0.65)" class="px-3.5 py-1.5 rounded-xl bg-white border border-[#88D8B0] text-20 font-bold hover:bg-[#D4F0F0] active:scale-95 shadow-sm">跳到 0.65</button>
+            <button onclick="setFrogTarget(0.9)" class="px-3.5 py-1.5 rounded-xl bg-white border border-[#E3D7FF] text-20 font-bold hover:bg-[#E3D7FF] active:scale-95 shadow-sm">跳到 0.9</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 實驗二與三：小數天平剪刀石頭布 PK 賽 & 直式對位加減計算台 -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- 左側：小數天平 剪刀石頭布 雙人對抗 PK 賽 (附自訂倒數計時器) -->
+        <div class="lg:col-span-6 bg-white rounded-3xl border-3 border-[#FFCC99] p-6 shadow-md flex flex-col justify-between">
+          <div>
+            <!-- 標題與計時控制列 -->
+            <div class="flex flex-wrap items-center justify-between mb-2 gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-3xl">⚖️</span>
+                <h3 class="title-32 text-[#D97706]">小數猜拳天平 PK 賽</h3>
+              </div>
+              
+              <!-- 自訂倒數計時器元件 -->
+              <div class="flex items-center gap-1.5 bg-[#FFEEAD] px-3 py-1.5 rounded-2xl border border-[#FFCC99] flex-wrap">
+                <span class="text-base">⏳</span>
+                <input type="number" id="customTimerInput" min="5" max="300" value="30" class="w-14 px-1 py-0.5 text-center font-black text-xl text-amber-900 bg-white border border-amber-300 rounded-lg shadow-inner" title="點擊可自行設定秒數" onchange="setCustomTime(this.value)">
+                <span class="text-xs font-bold text-gray-600">秒</span>
+                <button onclick="toggleGameTimer()" id="timerCtrlBtn" class="px-2.5 py-1 bg-amber-600 text-white rounded-lg text-xs font-bold hover:bg-amber-700 active:scale-95 shadow-sm">
+                  開始
+                </button>
+                <button onclick="resetGameTimer()" class="px-2 py-1 bg-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-300 active:scale-95">
+                  重置
+                </button>
+              </div>
+            </div>
+
+            <p class="text-20 text-gray-600 mb-2">
+              🎯 支援<strong>「線上按鍵對決」</strong>或<strong>「現場兩人真實猜拳」</strong>手動加減小數，觀察天平傾斜！
+            </p>
+
+            <!-- 模式切換與輸家規則 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-orange-50 p-2.5 rounded-xl border border-orange-200 mb-3 text-sm font-bold text-gray-700">
+              <div class="flex items-center gap-1.5">
+                <span>遊戲模式：</span>
+                <button onclick="setRpsInputMode('screen')" id="modeBtnScreen" class="px-2.5 py-1 rounded-lg bg-[#FFAAA6] text-white font-bold shadow-sm">線上按鍵</button>
+                <button onclick="setRpsInputMode('manual')" id="modeBtnManual" class="px-2.5 py-1 rounded-lg bg-white border border-gray-300 text-gray-700 font-bold hover:bg-gray-100">現場猜拳手動加減</button>
+              </div>
+              <div class="flex items-center gap-1.5 justify-start sm:justify-end">
+                <span>輸家加分：</span>
+                <button onclick="setLoserAddMode(0.01)" id="loserModeBtn001" class="px-2 py-1 rounded-lg bg-[#FFAAA6] text-white font-bold shadow-sm">0.01</button>
+                <button onclick="setLoserAddMode(0.05)" id="loserModeBtn005" class="px-2 py-1 rounded-lg bg-white border border-gray-300 text-gray-700 font-bold hover:bg-gray-100">0.05</button>
+              </div>
+            </div>
+
+            <!-- 天平圖形化模擬 (SVG) -->
+            <div class="h-44 bg-[#FFF9F0] rounded-2xl border-2 border-orange-100 flex items-center justify-center relative overflow-hidden p-2">
+              <svg id="balanceSvg" class="w-full h-full max-w-[400px]" viewBox="0 0 300 150">
+                <!-- 底座支撐 -->
+                <polygon points="150,90 135,140 165,140" fill="#718096" stroke="#4A5568" stroke-width="2"/>
+                <circle cx="150" cy="90" r="6" fill="#E53E3E"/>
+                
+                <!-- 橫桿 (動態旋轉 group) -->
+                <g id="balanceBeam" transform="rotate(0 150 90)" class="transition-transform duration-700 ease-out">
+                  <line x1="30" y1="90" x2="270" y2="90" stroke="#4A5568" stroke-width="6" stroke-linecap="round"/>
+                  
+                  <!-- 左秤盤吊線與秤盤 -->
+                  <line x1="45" y1="90" x2="35" y2="120" stroke="#A0AEC0" stroke-width="2"/>
+                  <line x1="45" y1="90" x2="55" y2="120" stroke="#A0AEC0" stroke-width="2"/>
+                  <path d="M 25 120 Q 45 135 65 120 Z" fill="#FFAAA6"/>
+                  
+                  <!-- 右秤盤吊線與秤盤 -->
+                  <line x1="255" y1="90" x2="245" y2="120" stroke="#A0AEC0" stroke-width="2"/>
+                  <line x1="255" y1="90" x2="265" y2="120" stroke="#A0AEC0" stroke-width="2"/>
+                  <path d="M 235 120 Q 255 135 275 120 Z" fill="#88D8B0"/>
+                </g>
+              </svg>
+            </div>
+
+            <!-- 兩側玩家操作盤 (整合線上出拳與現場手動加減) -->
+            <div class="grid grid-cols-2 gap-3 mt-3 text-center">
+              
+              <!-- 玩家 A (左方) -->
+              <div class="bg-[#FFDEE9]/80 p-3 rounded-2xl border-2 border-[#FFAAA6] flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-black text-[#E05A6F]">玩家 A (粉紅隊)</span>
+                  <span id="playerAScoreText" class="text-2xl font-black text-[#E05A6F]">0.00</span>
+                </div>
+                
+                <!-- 線上出拳區 -->
+                <div id="playerAOnScreenArea">
+                  <div class="my-1.5 text-4xl" id="playerAHandsPreview">✊</div>
+                  <div class="flex justify-center gap-1.5">
+                    <button onclick="playRPSRound('A', 'rock')" class="p-2 bg-white rounded-xl shadow border border-[#FFAAA6] hover:bg-pink-100 text-xl active:scale-90" title="石頭">✊</button>
+                    <button onclick="playRPSRound('A', 'scissors')" class="p-2 bg-white rounded-xl shadow border border-[#FFAAA6] hover:bg-pink-100 text-xl active:scale-90" title="剪刀">✌️</button>
+                    <button onclick="playRPSRound('A', 'paper')" class="p-2 bg-white rounded-xl shadow border border-[#FFAAA6] hover:bg-pink-100 text-xl active:scale-90" title="布">🖐️</button>
+                  </div>
+                </div>
+
+                <!-- 現場真實猜拳手動加減區 -->
+                <div id="playerAManualArea" class="hidden mt-2 pt-2 border-t border-pink-200 space-y-1">
+                  <div class="text-xs font-bold text-[#E05A6F]">現場猜拳快速加減：</div>
+                  <div class="grid grid-cols-3 gap-1">
+                    <button onclick="adjustManualScore('A', 0.1)" class="py-1 bg-white border border-[#FFAAA6] rounded-lg text-xs font-black text-[#E05A6F] hover:bg-pink-50 active:scale-95">＋0.1</button>
+                    <button onclick="adjustManualScore('A', 0.05)" class="py-1 bg-white border border-[#FFAAA6] rounded-lg text-xs font-black text-[#E05A6F] hover:bg-pink-50 active:scale-95">＋0.05</button>
+                    <button onclick="adjustManualScore('A', 0.01)" class="py-1 bg-white border border-[#FFAAA6] rounded-lg text-xs font-black text-[#E05A6F] hover:bg-pink-50 active:scale-95">＋0.01</button>
+                  </div>
+                  <div class="grid grid-cols-3 gap-1">
+                    <button onclick="adjustManualScore('A', -0.1)" class="py-0.5 bg-gray-100 border border-gray-300 rounded text-[11px] font-bold text-gray-600 hover:bg-gray-200 active:scale-95">－0.1</button>
+                    <button onclick="adjustManualScore('A', -0.05)" class="py-0.5 bg-gray-100 border border-gray-300 rounded text-[11px] font-bold text-gray-600 hover:bg-gray-200 active:scale-95">－0.05</button>
+                    <button onclick="adjustManualScore('A', -0.01)" class="py-0.5 bg-gray-100 border border-gray-300 rounded text-[11px] font-bold text-gray-600 hover:bg-gray-200 active:scale-95">－0.01</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 玩家 B (右方) -->
+              <div class="bg-[#D4F0F0]/80 p-3 rounded-2xl border-2 border-[#88D8B0] flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-black text-[#2B7A78]">玩家 B (粉綠隊)</span>
+                  <span id="playerBScoreText" class="text-2xl font-black text-[#2B7A78]">0.00</span>
+                </div>
+
+                <!-- 線上出拳區 -->
+                <div id="playerBOnScreenArea">
+                  <div class="my-1.5 text-4xl" id="playerBHandsPreview">✌️</div>
+                  <div class="flex justify-center gap-1.5">
+                    <button onclick="playRPSRound('B', 'rock')" class="p-2 bg-white rounded-xl shadow border border-[#88D8B0] hover:bg-teal-100 text-xl active:scale-90" title="石頭">✊</button>
+                    <button onclick="playRPSRound('B', 'scissors')" class="p-2 bg-white rounded-xl shadow border border-[#88D8B0] hover:bg-teal-100 text-xl active:scale-90" title="剪刀">✌️</button>
+                    <button onclick="playRPSRound('B', 'paper')" class="p-2 bg-white rounded-xl shadow border border-[#88D8B0] hover:bg-teal-100 text-xl active:scale-90" title="布">🖐️</button>
+                  </div>
+                </div>
+
+                <!-- 現場真實猜拳手動加減區 -->
+                <div id="playerBManualArea" class="hidden mt-2 pt-2 border-t border-teal-200 space-y-1">
+                  <div class="text-xs font-bold text-[#2B7A78]">現場猜拳快速加減：</div>
+                  <div class="grid grid-cols-3 gap-1">
+                    <button onclick="adjustManualScore('B', 0.1)" class="py-1 bg-white border border-[#88D8B0] rounded-lg text-xs font-black text-[#2B7A78] hover:bg-teal-50 active:scale-95">＋0.1</button>
+                    <button onclick="adjustManualScore('B', 0.05)" class="py-1 bg-white border border-[#88D8B0] rounded-lg text-xs font-black text-[#2B7A78] hover:bg-teal-50 active:scale-95">＋0.05</button>
+                    <button onclick="adjustManualScore('B', 0.01)" class="py-1 bg-white border border-[#88D8B0] rounded-lg text-xs font-black text-[#2B7A78] hover:bg-teal-50 active:scale-95">＋0.01</button>
+                  </div>
+                  <div class="grid grid-cols-3 gap-1">
+                    <button onclick="adjustManualScore('B', -0.1)" class="py-0.5 bg-gray-100 border border-gray-300 rounded text-[11px] font-bold text-gray-600 hover:bg-gray-200 active:scale-95">－0.1</button>
+                    <button onclick="adjustManualScore('B', -0.05)" class="py-0.5 bg-gray-100 border border-gray-300 rounded text-[11px] font-bold text-gray-600 hover:bg-gray-200 active:scale-95">－0.05</button>
+                    <button onclick="adjustManualScore('B', -0.01)" class="py-0.5 bg-gray-100 border border-gray-300 rounded text-[11px] font-bold text-gray-600 hover:bg-gray-200 active:scale-95">－0.01</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 猜拳判定與天平狀態說明 -->
+          <div class="mt-3">
+            <div id="rpsRoundFeedback" class="p-2.5 bg-amber-50 border-2 border-[#FFEEAD] rounded-2xl text-center text-20 font-bold text-[#D97706] mb-2">
+              點擊出拳或現場真實猜拳手動加小數！獲勝者加 0.1，輸家加 0.01 或 0.05！
+            </div>
+            <div class="flex gap-2">
+              <button onclick="autoRPSClash()" class="flex-1 py-2 bg-[#FFEEAD] text-amber-900 border-2 border-[#FFCC99] rounded-xl font-bold text-sm hover:bg-[#ffe07d] active:scale-95 shadow-sm">
+                🎲 隨機自動大對決一次
+              </button>
+              <button onclick="resetRPSGame()" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-200 active:scale-95 border">
+                歸零重新開始
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右側：生活情境直式對位板（支援換數字練習，內建借位題與一位小數加二位小數題型） -->
+        <div class="lg:col-span-6 bg-white rounded-3xl border-3 border-[#FFAAA6] p-6 shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-3xl">🧃</span>
+                <h3 class="title-32 text-[#E05A6F]">生活情境直式對位板</h3>
+              </div>
+              <button onclick="changeScenarioProblem()" class="px-3.5 py-1.5 bg-[#FFEEAD] border-2 border-[#FFCC99] rounded-xl font-bold text-sm text-amber-900 hover:bg-[#ffe380] active:scale-95 shadow-sm flex items-center gap-1">
+                <span>🔄</span> 換題目／換數字練習
+              </button>
+            </div>
+            
+            <!-- 當前情境題號徽章與情境描述 -->
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+              <span id="scenarioIndexBadge" class="bg-[#FFDEE9] text-[#E05A6F] px-2.5 py-0.5 rounded-full text-xs font-black">
+                情境 1 / 6
+              </span>
+              <span id="scenarioCategoryText" class="text-xs font-bold text-gray-500">
+                果汁容量問題
+              </span>
+              <span id="scenarioTypeBadge" class="bg-[#D4F0F0] text-[#2B7A78] px-2 py-0.5 rounded-full text-xs font-black">
+                含借位／不同位數對齊
+              </span>
+            </div>
+
+            <p id="scenarioDescription" class="text-20 text-gray-700 mb-3 bg-[#FFF9F0] p-3 rounded-2xl border border-orange-100">
+              小兔買了 1.6 公升柳橙汁和 2.45 公升蘋果汁，一共是多少公升？
+            </p>
+
+            <!-- 直式計算對齊卡片 (包含補零提示與借位記號) -->
+            <div class="bg-gray-50 border-3 border-dashed border-[#FFAAA6] rounded-2xl p-4 font-mono flex flex-col items-center">
+              <div class="w-64 text-right pr-4 space-y-1">
+                <!-- 輔助借位/進位行 -->
+                <div class="text-sm tracking-widest text-[#E05A6F] font-bold h-5 flex justify-end gap-3 pr-2" id="vertBorrowRow">
+                  <span class="text-xs text-blue-600 bg-blue-100 px-1 rounded">進位＋1</span>
+                </div>
+                <!-- 第一個數 -->
+                <div class="text-3xl tracking-widest font-black text-gray-800" id="vertNum1">
+                  1.60
+                </div>
+                <!-- 運算子與第二個數 -->
+                <div class="text-3xl tracking-widest font-black text-gray-800 flex justify-between items-center border-b-4 border-gray-800 pb-1">
+                  <span class="text-2xl text-[#E05A6F]" id="vertOperator">＋</span>
+                  <span id="vertNum2">2.45</span>
+                </div>
+                <!-- 計算結果 -->
+                <div class="text-3xl tracking-widest font-black text-[#E05A6F] pt-1" id="vertAnswer">
+                  4.05
+                </div>
+              </div>
+            </div>
+            
+            <!-- 對齊與借位提示機制 -->
+            <div id="vertHintNotice" class="mt-3 p-2.5 bg-[#FFDEE9]/60 rounded-xl text-sm font-bold text-[#E05A6F] flex items-center gap-2">
+              <span>📌</span>
+              <span id="vertHintText">一位小數 1.6 可以在百分位補「0」寫成 1.60，上下垂直對齊計算！</span>
+            </div>
+          </div>
+
+          <!-- 運算示範切換 -->
+          <div class="mt-4 flex gap-2">
+            <button onclick="stepVerticalCalc('add')" id="btnOpAdd" class="flex-1 py-2 rounded-xl bg-[#FFAAA6] text-white font-bold text-20 hover:bg-[#e28b87] active:scale-95 transition shadow">
+              示範加法（合起來）
+            </button>
+            <button onclick="stepVerticalCalc('sub')" id="btnOpSub" class="flex-1 py-2 rounded-xl bg-white border-2 border-[#88D8B0] text-[#2B7A78] font-bold text-20 hover:bg-[#D4F0F0] active:scale-95 transition shadow">
+              示範減法（相差／借位）
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 實驗次區塊：排序小挑戰 (Sorting / Ordering - 內建 6 組題庫) -->
+      <div class="bg-white rounded-3xl border-3 border-[#E3D7FF] p-6 shadow-md">
+        <div class="flex flex-wrap items-center justify-between mb-4 gap-2">
+          <div class="flex items-center gap-2">
+            <span class="text-3xl">🏆</span>
+            <div>
+              <h3 class="title-32 text-[#6B46C1]">小數星光排排隊（從小到大排列）</h3>
+              <p class="text-20 text-gray-600">請依序點擊下方的小數卡片，將它們由「最小」排列到「最大」！</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="sortRoundBadge" class="text-xs font-black bg-[#E3D7FF] text-[#6B46C1] px-2.5 py-1 rounded-full">
+              第 1 組題庫
+            </span>
+            <button onclick="resetSortGame()" class="px-4 py-2 bg-[#E3D7FF] text-[#6B46C1] border-2 border-[#9F7AEA] rounded-2xl font-bold text-20 hover:bg-[#d8c7ff] active:scale-95 shadow-sm">
+              🔄 換一題重新出題（5+組）
+            </button>
+          </div>
+        </div>
+
+        <!-- 排序放置槽與可選卡片 -->
+        <div class="space-y-4">
+          <!-- 目標排序展示列 -->
+          <div class="bg-[#FFF9F0] border-2 border-dashed border-[#9F7AEA] p-4 rounded-2xl min-h-[90px] flex items-center justify-center gap-3 flex-wrap" id="sortDropzone">
+            <span class="text-gray-400 font-bold" id="sortPlaceholder">請點擊下方卡片依序放入此處...</span>
+          </div>
+
+          <!-- 待選小數卡片 -->
+          <div class="flex items-center justify-center gap-3 flex-wrap" id="sortCardPool">
+            <!-- 動態生成小數卡片 -->
+          </div>
+
+          <!-- 排序回饋狀態 -->
+          <div id="sortFeedback" class="text-center font-bold text-20 min-h-[30px] text-gray-500">
+            請點選第一張最小的數！
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 頁籤三：即時挑戰 (Tab 3: Quiz - 精準完整10題) -->
+    <!-- ========================================== -->
+    <section id="tabContent-quiz" class="tab-content hidden space-y-6">
+      
+      <!-- 測驗進度與計分面板 -->
+      <div class="bg-white rounded-3xl border-4 border-[#FFAAA6] p-4 sm:p-6 shadow-xl aspect-stage flex flex-col justify-between">
+        
+        <!-- 頂部題號進度與得分 -->
+        <div class="flex items-center justify-between border-b-2 border-dashed border-[#FFAAA6] pb-3">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">🎯</span>
+            <div>
+              <h2 class="title-32 text-[#E05A6F]">
+                小數勇者 10 關大挑戰
+              </h2>
+              <div class="text-sm font-bold text-gray-500 flex items-center gap-2">
+                <span>第 <span id="currentQuestionNum" class="text-[#E05A6F] text-lg font-black">1</span> / 10 題</span>
+                <span class="text-gray-300">|</span>
+                <span id="quizDifficultyBadge" class="bg-[#FFEEAD] text-amber-900 px-2 py-0.5 rounded-full text-xs">基礎概念</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 得分牌 -->
+          <div class="flex items-center gap-2">
+            <div class="bg-[#D4F0F0] px-4 py-2 rounded-2xl border-2 border-[#88D8B0] text-center">
+              <span class="text-xs font-bold text-gray-500">目前分數</span>
+              <div id="quizScoreText" class="text-2xl sm:text-3xl font-black text-[#2B7A78]">0 分</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 題目內容與選項區 -->
+        <div id="quizQuestionBox" class="my-auto py-4">
+          <!-- 題目情境與內文 -->
+          <div class="bg-[#FFF9F0] border-2 border-[#FFAAA6] p-4 sm:p-5 rounded-2xl shadow-inner mb-4">
+            <div id="questionText" class="title-32 text-[#2D3748] leading-snug">
+              載入題目中...
+            </div>
+            <div id="questionSubtext" class="text-20 text-gray-600 mt-2 font-medium">
+              
+            </div>
+          </div>
+
+          <!-- 4 個選項按鈕 (保證 > 48px 觸控友善) -->
+          <div id="quizOptionsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <!-- 動態插入選項 -->
+          </div>
+        </div>
+
+        <!-- 底部詳解解析叮嚀 (答題後即時展現) -->
+        <div id="quizFeedbackBox" class="hidden p-4 rounded-2xl border-2 transition-all">
+          <div class="flex items-start gap-3">
+            <span id="quizFeedbackIcon" class="text-3xl">💡</span>
+            <div class="flex-grow">
+              <div id="quizFeedbackTitle" class="font-black text-20">觀念解析小叮嚀</div>
+              <div id="quizFeedbackExplain" class="text-20 text-gray-700 mt-1">詳解說明文字</div>
+            </div>
+            <button id="btnNextQuestion" onclick="goToNextQuestion()" class="px-5 py-2.5 rounded-2xl bg-[#FFAAA6] text-white font-black text-20 hover:bg-[#e28b87] active:scale-95 shadow transition whitespace-nowrap">
+              下一題 ➔
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 測驗完成總結算視窗 (預設隱藏) -->
+      <div id="quizSummaryModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl border-4 border-[#FFAAA6] max-w-lg w-full p-6 sm:p-8 text-center shadow-2xl relative animate-float">
+          <div class="text-6xl mb-2" id="summaryEmoji">👑</div>
+          <h3 class="title-32 text-[#E05A6F] mb-1">冒險挑戰完成！</h3>
+          <p class="text-20 text-gray-600 mb-4" id="summarySubtitle">你已經完成了全部 10 題小數修煉</p>
+          
+          <!-- 得分與評價卡 -->
+          <div class="bg-[#FFF9F0] border-2 border-[#FFEEAD] rounded-2xl p-4 mb-6">
+            <div class="text-sm font-bold text-gray-500">最終獲得成績</div>
+            <div class="text-5xl font-black text-[#2B7A78] my-2" id="summaryFinalScore">100 分</div>
+            <div class="text-20 font-bold text-[#E05A6F]" id="summaryTitleBadge">獲得稱號：小數大魔法師 🌟</div>
+          </div>
+
+          <div class="flex gap-3">
+            <button onclick="restartQuiz()" class="flex-1 py-3 rounded-2xl bg-[#FFAAA6] hover:bg-[#e28b87] text-white font-black text-20 shadow-md active:scale-95 transition">
+              🔄 再次挑戰測驗
+            </button>
+            <button onclick="closeSummaryModal()" class="py-3 px-5 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-20 shadow-sm active:scale-95 transition">
+              關閉
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 課堂必備功能：懸浮草稿計算紙 (Canvas Scratchpad) -->
+  <!-- ========================================== -->
+  
+  <!-- 懸浮召喚按鈕 (右下角常駐) -->
+  <button id="openScratchpadBtn" onclick="toggleScratchpad()" class="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-[#FFAAA6] to-[#FF8B94] text-white p-4 rounded-full shadow-2xl border-3 border-white hover:scale-105 active:scale-95 transition-all flex items-center gap-2 group" title="打開草稿紙手寫計算">
+    <span class="text-2xl group-hover:rotate-12 transition-transform">📝</span>
+    <span class="font-black text-lg pr-1">計算草稿板</span>
+  </button>
+
+  <!-- 手寫草稿紙側滑 / 彈出面板 -->
+  <div id="scratchpadPanel" class="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-white/95 backdrop-blur-md shadow-2xl border-l-4 border-[#FFAAA6] flex flex-col justify-between transition-transform duration-300 translate-x-full">
+    
+    <!-- 頂部工具列 -->
+    <div class="p-4 border-b-2 border-dashed border-[#FFAAA6] flex items-center justify-between bg-[#FFF9F0]">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">✍</span>
+        <h4 class="font-black text-xl text-[#2D3748]">隨手計算草稿紙</h4>
+      </div>
+      <button onclick="toggleScratchpad()" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center font-bold text-gray-600 active:scale-90">
+        ✕
+      </button>
+    </div>
+
+    <!-- 手寫 Canvas 核心畫布 -->
+    <div class="flex-grow relative bg-[#FAFAFA] overflow-hidden" id="scratchpadContainer">
+      <!-- 格線背景輔助對齊 -->
+      <div class="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none opacity-40"></div>
+      <canvas id="scratchpadCanvas" class="w-full h-full relative z-10"></canvas>
+    </div>
+
+    <!-- 底部畫筆調色盤與控制項 -->
+    <div class="p-3 bg-white border-t-2 border-gray-200 space-y-2">
+      <!-- 顏色選擇 -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button onclick="setPenColor('#2D3748')" class="w-7 h-7 rounded-full bg-[#2D3748] border-2 border-white shadow active:scale-90" title="黑色鉛筆"></button>
+          <button onclick="setPenColor('#E05A6F')" class="w-7 h-7 rounded-full bg-[#E05A6F] border-2 border-white shadow active:scale-90" title="紅筆批註"></button>
+          <button onclick="setPenColor('#2B7A78')" class="w-7 h-7 rounded-full bg-[#2B7A78] border-2 border-white shadow active:scale-90" title="綠筆對位"></button>
+          <button onclick="setPenColor('#4A90E2')" class="w-7 h-7 rounded-full bg-[#4A90E2] border-2 border-white shadow active:scale-90" title="藍筆計算"></button>
+          <button onclick="setEraser()" id="eraserBtn" class="px-2.5 py-1 rounded-xl bg-gray-100 hover:bg-gray-200 border text-xs font-bold text-gray-700 flex items-center gap-1 active:scale-95" title="橡皮擦">
+            <span>🧹</span> 橡皮擦
+          </button>
+        </div>
+
+        <!-- 筆刷粗細 -->
+        <div class="flex items-center gap-1 text-xs font-bold text-gray-500">
+          <span>粗細</span>
+          <input type="range" id="brushSize" min="2" max="14" value="4" class="w-20 accent-[#FFAAA6]" oninput="changeBrushSize(this.value)">
+        </div>
+      </div>
+
+      <!-- 操作按鈕 -->
+      <div class="flex gap-2 pt-1">
+        <button onclick="clearScratchpad()" class="flex-1 py-2 rounded-xl bg-gray-100 hover:bg-red-50 text-red-500 border border-red-200 font-bold text-sm active:scale-95 transition flex items-center justify-center gap-1">
+          <span>🗑️</span> 一鍵清空
+        </button>
+        <button onclick="toggleScratchpad()" class="flex-1 py-2 rounded-xl bg-[#FFAAA6] hover:bg-[#e28b87] text-white font-bold text-sm active:scale-95 transition">
+          收起草稿板
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 頁尾署名與課堂宣告 -->
+  <footer class="mt-8 bg-white border-t-2 border-[#FFAAA6]/40 py-4 px-4 text-center text-sm font-bold text-gray-500">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🎒</span>
+        <span>國小四年級數學互動學習教室・單元：小數</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="bg-[#FFDEE9] text-[#E05A6F] px-3 py-1 rounded-full text-xs font-black border border-[#FFAAA6]">
+          課堂教學設計：新趨勢老師
+        </span>
+        <span class="text-gray-400">© 全功能無外嵌開箱即用</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* =========================================================
+       1. Web Audio API 音效合成引擎 (無外部檔案依賴)
+       ========================================================= */
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+
+        const now = ctx.currentTime;
+        if (type === 'click') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } else if (type === 'correct') {
+          const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+            gain.gain.setValueAtTime(0.15, now + idx * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.08);
+            osc.stop(now + idx * 0.08 + 0.25);
+          });
+        } else if (type === 'wrong') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(150, now + 0.25);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'fanfare') {
+          const chords = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+          chords.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+            gain.gain.setValueAtTime(0.18, now + idx * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.4);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.07);
+            osc.stop(now + idx * 0.07 + 0.4);
+          });
+        }
+      } catch (err) {
+        console.warn('音效播放異常:', err);
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('soundIcon');
+      const text = document.getElementById('soundText');
+      if (soundEnabled) {
+        icon.textContent = '🔊';
+        text.textContent = '音效開';
+        playSound('click');
+      } else {
+        icon.textContent = '🔇';
+        text.textContent = '音效關';
+      }
+    }
+
+    /* =========================================================
+       2. 分頁標籤切換與導航列縮小模式
+       ========================================================= */
+    let currentTab = 'explore';
+    let isHeaderCompact = false;
+
+    function switchTab(tabId) {
+      currentTab = tabId;
+      playSound('click');
+
+      const tabs = ['explore', 'lab', 'quiz'];
+      tabs.forEach((t) => {
+        const btn = document.getElementById(`tabBtn-${t}`);
+        const content = document.getElementById(`tabContent-${t}`);
+
+        if (t === tabId) {
+          content.classList.remove('hidden');
+          content.classList.add('block');
+          btn.className = "tab-btn active-tab flex-1 max-w-[200px] py-2.5 px-3 rounded-2xl text-center font-bold text-20 transition-all duration-200 shadow-sm border-2 flex items-center justify-center gap-2 bg-[#FFAAA6] text-white border-[#E05A6F]";
+        } else {
+          content.classList.remove('block');
+          content.classList.add('hidden');
+          btn.className = "tab-btn flex-1 max-w-[200px] py-2.5 px-3 rounded-2xl text-center font-bold text-20 transition-all duration-200 shadow-sm border-2 flex items-center justify-center gap-2 bg-white text-[#2D3748] border-gray-300 hover:bg-gray-100";
+        }
+      });
+    }
+
+    function toggleHeaderCompact() {
+      isHeaderCompact = !isHeaderCompact;
+      playSound('click');
+      const navContainer = document.getElementById('navTabsContainer');
+      const icon = document.getElementById('navToggleIcon');
+      const text = document.getElementById('navToggleText');
+
+      if (isHeaderCompact) {
+        navContainer.classList.add('hidden');
+        icon.textContent = '🔽';
+        text.textContent = '展開選單';
+      } else {
+        navContainer.classList.remove('hidden');
+        icon.textContent = '🔼';
+        text.textContent = '收攏選單';
+      }
+    }
+
+    /* =========================================================
+       3. 魔法色紙百格陣與位值定位板聯動
+       ========================================================= */
+    let gridMode = 10; // 10 條 或 100 格
+    let gridState = new Array(100).fill(false);
+
+    function setGridMode(mode) {
+      gridMode = mode;
+      playSound('click');
+      const b10 = document.getElementById('btnMode10');
+      const b100 = document.getElementById('btnMode100');
+
+      if (mode === 10) {
+        b10.className = "px-4 py-2.5 rounded-2xl font-bold text-20 border-2 border-[#FFAAA6] bg-[#FFAAA6] text-white shadow transition-all active:scale-95 flex items-center gap-1";
+        b100.className = "px-4 py-2.5 rounded-2xl font-bold text-20 border-2 border-[#88D8B0] bg-white text-[#2D3748] shadow transition-all hover:bg-[#D4F0F0] active:scale-95 flex items-center gap-1";
+      } else {
+        b100.className = "px-4 py-2.5 rounded-2xl font-bold text-20 border-2 border-[#88D8B0] bg-[#88D8B0] text-white shadow transition-all active:scale-95 flex items-center gap-1";
+        b10.className = "px-4 py-2.5 rounded-2xl font-bold text-20 border-2 border-[#FFAAA6] bg-white text-[#2D3748] shadow transition-all hover:bg-[#FFDEE9] active:scale-95 flex items-center gap-1";
+      }
+
+      resetGrid();
+    }
+
+    function renderGrid() {
+      const container = document.getElementById('gridContainer');
+      container.innerHTML = '';
+
+      if (gridMode === 10) {
+        container.className = "w-full h-full grid grid-cols-10 gap-1";
+        for (let i = 0; i < 10; i++) {
+          const col = document.createElement('div');
+          col.className = `w-full h-full rounded-md border-2 border-[#FFAAA6] cursor-pointer transition-all duration-200 ${
+            gridState[i] ? 'bg-[#FFAAA6] shadow-md' : 'bg-white hover:bg-pink-100'
+          }`;
+          col.onclick = () => toggleGridCell(i);
+          container.appendChild(col);
+        }
+      } else {
+        container.className = "w-full h-full grid grid-cols-10 grid-rows-10 gap-0.5";
+        for (let i = 0; i < 100; i++) {
+          const cell = document.createElement('div');
+          cell.className = `w-full h-full rounded-sm border border-[#FFAAA6]/70 cursor-pointer transition-all duration-150 ${
+            gridState[i] ? 'bg-[#FFAAA6]' : 'bg-white hover:bg-pink-100'
+          }`;
+          cell.onclick = () => toggleGridCell(i);
+          container.appendChild(cell);
+        }
+      }
+
+      updateGridDisplay();
+    }
+
+    function toggleGridCell(idx) {
+      playSound('click');
+      gridState[idx] = !gridState[idx];
+      renderGrid();
+    }
+
+    function fillGridRandom() {
+      playSound('click');
+      const maxCount = gridMode === 10 ? 10 : 100;
+      const targetCount = Math.floor(Math.random() * maxCount) + 1;
+      gridState.fill(false);
+      for (let i = 0; i < targetCount; i++) {
+        gridState[i] = true;
+      }
+      renderGrid();
+    }
+
+    function resetGrid() {
+      gridState.fill(false);
+      renderGrid();
+    }
+
+    function updateGridDisplay() {
+      const activeCount = gridMode === 10
+        ? gridState.slice(0, 10).filter(Boolean).length
+        : gridState.slice(0, 100).filter(Boolean).length;
+
+      document.getElementById('coloredCountText').textContent = activeCount;
+
+      const fracEl = document.getElementById('displayFraction');
+      const decEl = document.getElementById('displayDecimal');
+      const expEl = document.getElementById('displayExplanation');
+
+      const onesEl = document.getElementById('pv-ones');
+      const tenthsEl = document.getElementById('pv-tenths');
+      const hundredthsEl = document.getElementById('pv-hundredths');
+
+      if (gridMode === 10) {
+        fracEl.textContent = `${activeCount} / 10 張色紙`;
+        const val = (activeCount * 0.1).toFixed(1);
+        decEl.textContent = `${val} 張色紙`;
+
+        onesEl.textContent = activeCount === 10 ? '1' : '0';
+        tenthsEl.textContent = activeCount === 10 ? '0' : `${activeCount}`;
+        hundredthsEl.textContent = '0';
+
+        expEl.textContent = `✨ 塗了 ${activeCount} 條色紙，就是 ${activeCount} 個 0.1，記作 ${val}！`;
+      } else {
+        fracEl.textContent = `${activeCount} / 100 張色紙`;
+        const val = (activeCount * 0.01).toFixed(2);
+        decEl.textContent = `${val} 張色紙`;
+
+        const tenths = Math.floor(activeCount / 10);
+        const hundredths = activeCount % 10;
+
+        onesEl.textContent = activeCount === 100 ? '1' : '0';
+        tenthsEl.textContent = activeCount === 100 ? '0' : `${tenths}`;
+        hundredthsEl.textContent = activeCount === 100 ? '0' : `${hundredths}`;
+
+        expEl.textContent = `✨ 塗了 ${activeCount} 格色紙，是由 ${tenths} 個 0.1 和 ${hundredths} 個 0.01 合起來，記作 ${val}！`;
+      }
+    }
+
+    /* =========================================================
+       4. 公尺公分尺規換算與閃示卡翻轉
+       ========================================================= */
+    function updateMeterRuler(val) {
+      const cm = parseInt(val, 10);
+      const m = (cm / 100).toFixed(2);
+
+      document.getElementById('meterSliderLabel').textContent = `${cm} 公分 (cm)`;
+      document.getElementById('rulerCmText').textContent = `${cm} 公分`;
+      document.getElementById('rulerMText').textContent = `${m} 公尺`;
+    }
+
+    function flipCard(cardWrapper) {
+      playSound('click');
+      const inner = cardWrapper.querySelector('.card-inner');
+      inner.classList.toggle('rotate-y-180');
+    }
+
+    /* =========================================================
+       5. 蛙蛙數線互動：支援直接拖曳與點擊自由跳躍
+       ========================================================= */
+    let frogVal = 0.50;
+
+    function renderNumberLine() {
+      const svg = document.getElementById('numberLineSvg');
+      // 清理舊刻度線（保留主軸線和箭頭）
+      const oldTicks = svg.querySelectorAll('.dynamic-tick');
+      oldTicks.forEach(t => t.remove());
+
+      // 繪製 0.0 到 1.0 的 10 大格，每格又有 10 小格
+      // 5% 到 95% 總寬度為 90%
+      for (let i = 0; i <= 100; i++) {
+        const pct = 5 + (i / 100) * 90;
+        const isMajor = i % 10 === 0;
+        const isMid = i % 5 === 0 && !isMajor;
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', `${pct}%`);
+        line.setAttribute('x2', `${pct}%`);
+        line.setAttribute('class', 'dynamic-tick');
+
+        if (isMajor) {
+          line.setAttribute('y1', '35');
+          line.setAttribute('y2', '65');
+          line.setAttribute('stroke', '#2D3748');
+          line.setAttribute('stroke-width', '2.5');
+
+          const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          text.setAttribute('x', `${pct}%`);
+          text.setAttribute('y', '85');
+          text.setAttribute('text-anchor', 'middle');
+          text.setAttribute('fill', '#4A5568');
+          text.setAttribute('font-size', '14');
+          text.setAttribute('font-weight', 'bold');
+          text.setAttribute('class', 'dynamic-tick');
+          text.textContent = (i / 100).toFixed(1);
+          svg.appendChild(text);
+        } else if (isMid) {
+          line.setAttribute('y1', '40');
+          line.setAttribute('y2', '60');
+          line.setAttribute('stroke', '#718096');
+          line.setAttribute('stroke-width', '1.5');
+        } else {
+          line.setAttribute('y1', '45');
+          line.setAttribute('y2', '55');
+          line.setAttribute('stroke', '#A0AEC0');
+          line.setAttribute('stroke-width', '1');
+        }
+        svg.appendChild(line);
+      }
+    }
+
+    function updateFrogPosition(val) {
+      frogVal = parseFloat((val / 100).toFixed(2));
+      document.getElementById('frogValueBadge').textContent = frogVal.toFixed(2);
+      document.getElementById('numberLineSlider').value = val;
+
+      // 5% 到 95%
+      const pct = 5 + (val / 100) * 90;
+      const marker = document.getElementById('frogMarker');
+      marker.style.left = `${pct}%`;
+    }
+
+    function setFrogTarget(targetVal) {
+      playSound('correct');
+      const val = Math.round(targetVal * 100);
+      updateFrogPosition(val);
+    }
+
+    function initDraggableFrog() {
+      const trackArea = document.getElementById('numberLineTrackArea');
+      const frogMarker = document.getElementById('frogMarker');
+      let isDragging = false;
+
+      function calcValueFromPointer(clientX) {
+        const rect = trackArea.getBoundingClientRect();
+        // 考慮內側 5% 到 95%
+        const leftBoundary = rect.left + rect.width * 0.05;
+        const rightBoundary = rect.left + rect.width * 0.95;
+        const usableWidth = rightBoundary - leftBoundary;
+
+        let clampedX = Math.max(leftBoundary, Math.min(rightBoundary, clientX));
+        let ratio = (clampedX - leftBoundary) / usableWidth;
+        let intVal = Math.round(ratio * 100);
+        intVal = Math.max(0, Math.min(100, intVal));
+        return intVal;
+      }
+
+      frogMarker.addEventListener('pointerdown', (e) => {
+        isDragging = true;
+        frogMarker.setPointerCapture(e.pointerId);
+        playSound('click');
+        e.stopPropagation();
+      });
+
+      trackArea.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('#numberLineSlider')) return;
+        isDragging = true;
+        const val = calcValueFromPointer(e.clientX);
+        updateFrogPosition(val);
+        playSound('click');
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        const val = calcValueFromPointer(e.clientX);
+        updateFrogPosition(val);
+      });
+
+      window.addEventListener('pointerup', () => {
+        if (isDragging) {
+          isDragging = false;
+        }
+      });
+      window.addEventListener('pointercancel', () => {
+        isDragging = false;
+      });
+    }
+
+    /* =========================================================
+       6. 剪刀石頭布天平 PK 賽與自訂倒數計時器
+       ========================================================= */
+    let playerAScore = 0.00;
+    let playerBScore = 0.00;
+    let loserAddAmount = 0.01; // 輸家加 0.01 或 0.05
+    let gameTimerInterval = null;
+    let configuredGameSeconds = 30; // 允許自訂秒數
+    let gameTimeLeft = 30;
+    let isTimerRunning = false;
+    let rpsMode = 'screen'; // 'screen' 或 'manual' (現場真實猜拳)
+
+    const handSymbols = {
+      rock: '✊',
+      scissors: '✌️',
+      paper: '🖐️'
+    };
+
+    function setCustomTime(val) {
+      let sec = parseInt(val, 10);
+      if (isNaN(sec) || sec <= 0) sec = 30;
+      configuredGameSeconds = sec;
+      if (!isTimerRunning) {
+        gameTimeLeft = sec;
+        document.getElementById('customTimerInput').value = sec;
+      }
+    }
+
+    function setRpsInputMode(mode) {
+      rpsMode = mode;
+      playSound('click');
+      const btnModeScreen = document.getElementById('modeBtnScreen');
+      const btnModeManual = document.getElementById('modeBtnManual');
+      const playerAScreenArea = document.getElementById('playerAOnScreenArea');
+      const playerBScreenArea = document.getElementById('playerBOnScreenArea');
+      const playerAManualArea = document.getElementById('playerAManualArea');
+      const playerBManualArea = document.getElementById('playerBManualArea');
+
+      if (mode === 'screen') {
+        btnModeScreen.className = "px-2.5 py-1 rounded-lg bg-[#FFAAA6] text-white font-bold shadow-sm";
+        btnModeManual.className = "px-2.5 py-1 rounded-lg bg-white border border-gray-300 text-gray-700 font-bold hover:bg-gray-100";
+        playerAScreenArea.classList.remove('hidden');
+        playerBScreenArea.classList.remove('hidden');
+        playerAManualArea.classList.add('hidden');
+        playerBManualArea.classList.add('hidden');
+        document.getElementById('rpsRoundFeedback').innerHTML = '點擊出拳對決！贏家＋0.1，輸家＋0.01 或 0.05！';
+      } else {
+        btnModeManual.className = "px-2.5 py-1 rounded-lg bg-[#FFAAA6] text-white font-bold shadow-sm";
+        btnModeScreen.className = "px-2.5 py-1 rounded-lg bg-white border border-gray-300 text-gray-700 font-bold hover:bg-gray-100";
+        playerAScreenArea.classList.add('hidden');
+        playerBScreenArea.classList.add('hidden');
+        playerAManualArea.classList.remove('hidden');
+        playerBManualArea.classList.remove('hidden');
+        document.getElementById('rpsRoundFeedback').innerHTML = '現場兩人猜拳！勝者手動點擊 ＋0.1，敗者點擊 ＋0.01 或 ＋0.05！';
+      }
+    }
+
+    function adjustManualScore(player, delta) {
+      playSound('click');
+      if (player === 'A') {
+        playerAScore = Math.max(0, parseFloat((playerAScore + delta).toFixed(2)));
+      } else {
+        playerBScore = Math.max(0, parseFloat((playerBScore + delta).toFixed(2)));
+      }
+      updateBalanceScores();
+
+      const sign = delta > 0 ? `＋${delta}` : `－${Math.abs(delta)}`;
+      document.getElementById('rpsRoundFeedback').innerHTML = `手動調整：玩家 ${player} ${sign}！觀察天平傾斜角度！`;
+    }
+
+    function setLoserAddMode(amount) {
+      loserAddAmount = amount;
+      playSound('click');
+      const b1 = document.getElementById('loserModeBtn001');
+      const b2 = document.getElementById('loserModeBtn005');
+
+      if (amount === 0.01) {
+        b1.className = "px-2 py-1 rounded-lg bg-[#FFAAA6] text-white font-bold shadow-sm";
+        b2.className = "px-2 py-1 rounded-lg bg-white border border-gray-300 text-gray-700 font-bold hover:bg-gray-100";
+      } else {
+        b2.className = "px-2 py-1 rounded-lg bg-[#FFAAA6] text-white font-bold shadow-sm";
+        b1.className = "px-2 py-1 rounded-lg bg-white border border-gray-300 text-gray-700 font-bold hover:bg-gray-100";
+      }
+    }
+
+    function toggleGameTimer() {
+      const btn = document.getElementById('timerCtrlBtn');
+      const inputEl = document.getElementById('customTimerInput');
+
+      if (isTimerRunning) {
+        clearInterval(gameTimerInterval);
+        isTimerRunning = false;
+        btn.textContent = '繼續';
+        btn.className = "px-2.5 py-1 bg-green-600 text-white rounded-lg text-xs font-bold hover:bg-green-700 active:scale-95";
+        inputEl.disabled = false;
+      } else {
+        if (gameTimeLeft <= 0) {
+          gameTimeLeft = configuredGameSeconds;
+        }
+        isTimerRunning = true;
+        inputEl.disabled = true;
+        btn.textContent = '暫停';
+        btn.className = "px-2.5 py-1 bg-red-500 text-white rounded-lg text-xs font-bold hover:bg-red-600 active:scale-95";
+        
+        gameTimerInterval = setInterval(() => {
+          gameTimeLeft--;
+          inputEl.value = gameTimeLeft;
+          if (gameTimeLeft <= 0) {
+            clearInterval(gameTimerInterval);
+            isTimerRunning = false;
+            btn.textContent = '時間到';
+            inputEl.disabled = false;
+            playSound('fanfare');
+            announceRPSWinner();
+          }
+        }, 1000);
+      }
+      playSound('click');
+    }
+
+    function resetGameTimer() {
+      clearInterval(gameTimerInterval);
+      isTimerRunning = false;
+      gameTimeLeft = configuredGameSeconds;
+      const inputEl = document.getElementById('customTimerInput');
+      inputEl.value = configuredGameSeconds;
+      inputEl.disabled = false;
+      const btn = document.getElementById('timerCtrlBtn');
+      btn.textContent = '開始';
+      btn.className = "px-2.5 py-1 bg-amber-600 text-white rounded-lg text-xs font-bold hover:bg-amber-700 active:scale-95 shadow-sm";
+      playSound('click');
+    }
+
+    function announceRPSWinner() {
+      const fb = document.getElementById('rpsRoundFeedback');
+      if (playerAScore > playerBScore) {
+        fb.innerHTML = `🏆 時間到！<strong>玩家 A（粉紅隊 ${playerAScore.toFixed(2)}）＞ 玩家 B（${playerBScore.toFixed(2)}）</strong> 天平向 A 傾斜獲勝！`;
+      } else if (playerBScore > playerAScore) {
+        fb.innerHTML = `🏆 時間到！<strong>玩家 B（粉綠隊 ${playerBScore.toFixed(2)}）＞ 玩家 A（${playerAScore.toFixed(2)}）</strong> 天平向 B 傾斜獲勝！`;
+      } else {
+        fb.innerHTML = `🤝 時間到！雙方都是 <strong>${playerAScore.toFixed(2)}</strong>，天平完全平衡！`;
+      }
+    }
+
+    function resolveRPS(handA, handB) {
+      document.getElementById('playerAHandsPreview').textContent = handSymbols[handA];
+      document.getElementById('playerBHandsPreview').textContent = handSymbols[handB];
+
+      const fb = document.getElementById('rpsRoundFeedback');
+
+      if (handA === handB) {
+        playSound('click');
+        fb.innerHTML = `🤝 雙方都出 ${handSymbols[handA]}，平手！各加 0.01！`;
+        playerAScore = parseFloat((playerAScore + 0.01).toFixed(2));
+        playerBScore = parseFloat((playerBScore + 0.01).toFixed(2));
+      } else if (
+        (handA === 'rock' && handB === 'scissors') ||
+        (handA === 'scissors' && handB === 'paper') ||
+        (handA === 'paper' && handB === 'rock')
+      ) {
+        playSound('correct');
+        playerAScore = parseFloat((playerAScore + 0.1).toFixed(2));
+        playerBScore = parseFloat((playerBScore + loserAddAmount).toFixed(2));
+        fb.innerHTML = `🎉 <strong>玩家 A 獲勝！</strong>＋0.1；玩家 B 輸了＋${loserAddAmount}！`;
+      } else {
+        playSound('correct');
+        playerBScore = parseFloat((playerBScore + 0.1).toFixed(2));
+        playerAScore = parseFloat((playerAScore + loserAddAmount).toFixed(2));
+        fb.innerHTML = `🎉 <strong>玩家 B 獲勝！</strong>＋0.1；玩家 A 輸了＋${loserAddAmount}！`;
+      }
+
+      updateBalanceScores();
+    }
+
+    function playRPSRound(player, hand) {
+      const hands = ['rock', 'scissors', 'paper'];
+      if (player === 'A') {
+        const randomB = hands[Math.floor(Math.random() * hands.length)];
+        resolveRPS(hand, randomB);
+      } else {
+        const randomA = hands[Math.floor(Math.random() * hands.length)];
+        resolveRPS(randomA, hand);
+      }
+    }
+
+    function autoRPSClash() {
+      const hands = ['rock', 'scissors', 'paper'];
+      const a = hands[Math.floor(Math.random() * hands.length)];
+      const b = hands[Math.floor(Math.random() * hands.length)];
+      resolveRPS(a, b);
+    }
+
+    function updateBalanceScores() {
+      document.getElementById('playerAScoreText').textContent = playerAScore.toFixed(2);
+      document.getElementById('playerBScoreText').textContent = playerBScore.toFixed(2);
+
+      const beam = document.getElementById('balanceBeam');
+      const diff = playerAScore - playerBScore;
+
+      let angle = diff * 35;
+      angle = Math.max(-18, Math.min(18, angle));
+      beam.setAttribute('transform', `rotate(${angle} 150 90)`);
+    }
+
+    function resetRPSGame() {
+      playSound('click');
+      playerAScore = 0.00;
+      playerBScore = 0.00;
+      updateBalanceScores();
+      resetGameTimer();
+      document.getElementById('rpsRoundFeedback').innerHTML = '天平已歸零！點擊出拳或現場真實猜拳手動加減！';
+      document.getElementById('playerAHandsPreview').textContent = '✊';
+      document.getElementById('playerBHandsPreview').textContent = '✌️';
+    }
+
+    /* =========================================================
+       7. 直式計算示範：支援換題目／換數字
+       包含【一位小數＋二位小數】與【含有借位的減法題目】
+       ========================================================= */
+    const scenarioPool = [
+      {
+        category: "果汁容量問題",
+        typeTag: "一位小數＋二位小數（補0對位）",
+        unit: "公升",
+        num1: 1.6,       // 一位小數
+        num2: 2.45,      // 二位小數
+        borrowHint: "【借位步驟】百分位 0－5 不夠，向十分位借 1 當作 10！十分位剩下 1，再向個位借 1！",
+        addHint: "【對齊訣竅】1.6 只有一位小數，在百分位補「0」寫成 1.60，與 2.45 對齊後再計算！",
+        descAdd: "小兔買了 1.6 公升柳橙汁和 2.45 公升蘋果汁，一共是多少公升？",
+        descSub: "大瓶果汁原本有 3.2 公升，倒出 1.45 公升後，還剩下多少公升？",
+        subNum1: 3.2,    // 3.20 - 1.45 借位減法
+        subNum2: 1.45
+      },
+      {
+        category: "動物體重測量",
+        typeTag: "借位減法（整數/一位借二位）",
+        unit: "公斤",
+        num1: 3.8,       // 一位小數
+        num2: 0.95,      // 二位小數
+        borrowHint: "【借位步驟】5.00－2.38：百分位 0－8 不夠，十位、個位一路向左借位！",
+        addHint: "【對齊訣竅】小熊 3.8 公斤補 0 變成 3.80，加上背包 0.95 公斤，十分位滿十進位！",
+        descAdd: "小熊體重 3.8 公斤，背上 0.95 公斤的書包，全部一共是多少公斤？",
+        descSub: "大熊貓原有 5.0 公斤竹筍，吃掉了 2.38 公斤，還剩下多少公斤？",
+        subNum1: 5.0,    // 5.00 - 2.38 跨位連續借位
+        subNum2: 2.38
+      },
+      {
+        category: "美勞彩帶長度",
+        typeTag: "一位小數＋二位小數（連續進位）",
+        unit: "公尺",
+        num1: 2.5,
+        num2: 1.85,
+        borrowHint: "【借位步驟】4.10－2.85：0 減 5 不夠，向十分位借 1 變 10；十分位 0 減 8 又不夠，再向個位借 1！",
+        addHint: "【對齊訣竅】紅彩帶 2.5 公尺補 0 成 2.50，加上 1.85 公尺，直式小數點垂直對齊！",
+        descAdd: "美勞課用了紅彩帶 2.5 公尺和藍彩帶 1.85 公尺，兩條接起來共有多少公尺？",
+        descSub: "紅彩帶全長 4.1 公尺，剪下 2.85 公尺做裝飾，還剩下多少公尺彩帶？",
+        subNum1: 4.1,    // 4.10 - 2.85 連續借位
+        subNum2: 2.85
+      },
+      {
+        category: "跑道跑步距離",
+        typeTag: "一位小數＋二位小數（換算應用）",
+        unit: "公里",
+        num1: 1.7,
+        num2: 0.65,
+        borrowHint: "【借位步驟】3.00－1.42：3.0 補 0 變 3.00，百分位向十分位與個位借 1！",
+        addHint: "【對齊訣竅】小明跑 1.7 公里（1.70），小華跑 0.65 公里，小數點對齊相加！",
+        descAdd: "體育課小明跑了 1.7 公里，小華跑了 0.65 公里，兩人一共跑了多少公里？",
+        descSub: "操場一圈目標 3.0 公里，小明跑了 1.42 公里，還要再跑多少公里才能抵達？",
+        subNum1: 3.0,
+        subNum2: 1.42
+      },
+      {
+        category: "大水壺裝水容量",
+        typeTag: "借位減法（整數小數連續退位）",
+        unit: "公升",
+        num1: 4.2,
+        num2: 1.95,
+        borrowHint: "【借位步驟】6.10－3.75：百分位 0 向十分位借 1 當 10，十分位 0 再向個位借 1 當 10！",
+        addHint: "【對齊訣竅】水壺有 4.20 公升，再加 1.95 公升，十分位 2+9=11 記得進位到個位！",
+        descAdd: "大水壺原本有 4.2 公升水，又倒入 1.95 公升，現在一共有多少公升水？",
+        descSub: "水壺原有 6.1 公升水，大家喝了 3.75 公升，水壺裡還剩下多少公升水？",
+        subNum1: 6.1,
+        subNum2: 3.75
+      },
+      {
+        category: "甜點烘焙麵粉重量",
+        typeTag: "一位小數＋二位小數（含借位與進位）",
+        unit: "公斤",
+        num1: 3.5,
+        num2: 2.78,
+        borrowHint: "【借位步驟】5.30－1.85：百分位 0 借位變 10，十分位 2 再向個位借 1 變 12－8＝4！",
+        addHint: "【對齊訣竅】低筋麵粉 3.5 公斤記為 3.50 公斤，和 2.78 公斤對齊後再相加！",
+        descAdd: "烘焙教室用了 3.5 公斤低筋麵粉和 2.78 公斤高筋麵粉，一共用了多少公斤麵粉？",
+        descSub: "原有 5.3 公斤麵粉，做鬆餅用去了 1.85 公斤，還剩下多少公斤麵粉？",
+        subNum1: 5.3,
+        subNum2: 1.85
+      }
+    ];
+
+    let currentScenarioIdx = 0;
+    let currentOp = 'add';
+
+    function changeScenarioProblem() {
+      playSound('click');
+      currentScenarioIdx = (currentScenarioIdx + 1) % scenarioPool.length;
+      updateScenarioDisplay();
+    }
+
+    function updateScenarioDisplay() {
+      const data = scenarioPool[currentScenarioIdx];
+      document.getElementById('scenarioIndexBadge').textContent = `情境 ${currentScenarioIdx + 1} / ${scenarioPool.length}`;
+      document.getElementById('scenarioCategoryText').textContent = data.category;
+      document.getElementById('scenarioTypeBadge').textContent = data.typeTag;
+
+      const desc = document.getElementById('scenarioDescription');
+      const opEl = document.getElementById('vertOperator');
+      const n1El = document.getElementById('vertNum1');
+      const n2El = document.getElementById('vertNum2');
+      const ansEl = document.getElementById('vertAnswer');
+      const hintText = document.getElementById('vertHintText');
+      const borrowRow = document.getElementById('vertBorrowRow');
+
+      const bAdd = document.getElementById('btnOpAdd');
+      const bSub = document.getElementById('btnOpSub');
+
+      if (currentOp === 'add') {
+        desc.textContent = data.descAdd;
+        opEl.textContent = '＋';
+        n1El.textContent = data.num1.toFixed(2);
+        n2El.textContent = data.num2.toFixed(2);
+        ansEl.textContent = (data.num1 + data.num2).toFixed(2);
+        hintText.textContent = data.addHint;
+        borrowRow.innerHTML = '<span class="text-xs text-blue-600 bg-blue-100 px-1 rounded">進位＋1</span>';
+
+        bAdd.className = "flex-1 py-2 rounded-xl bg-[#FFAAA6] text-white font-bold text-20 hover:bg-[#e28b87] active:scale-95 transition shadow";
+        bSub.className = "flex-1 py-2 rounded-xl bg-white border-2 border-[#88D8B0] text-[#2B7A78] font-bold text-20 hover:bg-[#D4F0F0] active:scale-95 transition shadow";
+      } else {
+        desc.textContent = data.descSub;
+        opEl.textContent = '－';
+        n1El.textContent = data.subNum1.toFixed(2);
+        n2El.textContent = data.subNum2.toFixed(2);
+        ansEl.textContent = (data.subNum1 - data.subNum2).toFixed(2);
+        hintText.textContent = data.borrowHint;
+        borrowRow.innerHTML = '<span class="text-xs text-red-500 bg-red-100 px-1 rounded">退位・借10</span>';
+
+        bSub.className = "flex-1 py-2 rounded-xl bg-[#88D8B0] text-white font-bold text-20 hover:bg-[#6ec297] active:scale-95 transition shadow";
+        bAdd.className = "flex-1 py-2 rounded-xl bg-white border-2 border-[#FFAAA6] text-[#E05A6F] font-bold text-20 hover:bg-[#FFDEE9] active:scale-95 transition shadow";
+      }
+    }
+
+    function stepVerticalCalc(op) {
+      currentOp = op;
+      playSound('click');
+      updateScenarioDisplay();
+    }
+
+    /* =========================================================
+       8. 排序小遊戲：內建 6 組完整題庫（至少 5 題以上）
+       ========================================================= */
+    const sortQuestionBank = [
+      [0.08, 0.3, 0.55, 0.9],
+      [0.15, 0.4, 0.72, 1.05],
+      [0.05, 0.25, 0.7, 1.1],
+      [0.12, 0.45, 0.6, 0.85],
+      [0.02, 0.19, 0.5, 0.98],
+      [0.34, 0.65, 0.8, 1.25]
+    ];
+
+    let currentSortRound = 0;
+    let sortTargetList = [];
+    let sortCurrentPick = [];
+
+    function resetSortGame() {
+      playSound('click');
+      currentSortRound = (currentSortRound + 1) % sortQuestionBank.length;
+      document.getElementById('sortRoundBadge').textContent = `第 ${currentSortRound + 1} / ${sortQuestionBank.length} 組題庫`;
+
+      sortTargetList = [...sortQuestionBank[currentSortRound]].sort((a, b) => a - b);
+      sortCurrentPick = [];
+
+      const dropzone = document.getElementById('sortDropzone');
+      dropzone.innerHTML = '<span class="text-gray-400 font-bold" id="sortPlaceholder">請點擊下方卡片依序放入此處...</span>';
+      
+      const pool = document.getElementById('sortCardPool');
+      pool.innerHTML = '';
+
+      const shuffled = [...sortTargetList].sort(() => Math.random() - 0.5);
+      shuffled.forEach((val) => {
+        const btn = document.createElement('button');
+        btn.className = "px-4 py-3 bg-[#FFEEAD] border-2 border-[#FFCC99] rounded-2xl font-black text-2xl text-amber-900 shadow hover:bg-[#ffe380] active:scale-90 transition";
+        btn.textContent = val;
+        btn.onclick = () => pickSortCard(val, btn);
+        pool.appendChild(btn);
+      });
+
+      document.getElementById('sortFeedback').textContent = '請先點選最小的小數！';
+      document.getElementById('sortFeedback').className = 'text-center font-bold text-20 text-gray-500';
+    }
+
+    function pickSortCard(val, btnEl) {
+      const expected = sortTargetList[sortCurrentPick.length];
+      if (val === expected) {
+        playSound('correct');
+        sortCurrentPick.push(val);
+        btnEl.remove();
+
+        const dropzone = document.getElementById('sortDropzone');
+        const ph = document.getElementById('sortPlaceholder');
+        if (ph) ph.remove();
+
+        const card = document.createElement('div');
+        card.className = "px-4 py-2 bg-[#D4F0F0] border-2 border-[#88D8B0] rounded-2xl font-black text-2xl text-[#2B7A78] animate-float";
+        card.textContent = val;
+        dropzone.appendChild(card);
+
+        if (sortCurrentPick.length === sortTargetList.length) {
+          playSound('fanfare');
+          const fb = document.getElementById('sortFeedback');
+          fb.textContent = '🎉 太棒了！順序完全正確！你已經掌握小數大小順序！';
+          fb.className = 'text-center font-bold text-20 text-green-600';
+        } else {
+          document.getElementById('sortFeedback').textContent = '答對了！請繼續點選下一個較大的數！';
+        }
+      } else {
+        playSound('wrong');
+        const fb = document.getElementById('sortFeedback');
+        fb.textContent = `💡 加油！${val} 不是目前最小的數喔，先比較整數與十分位！`;
+        fb.className = 'text-center font-bold text-20 text-red-500';
+      }
+    }
+
+    /* =========================================================
+       9. 終點成效檢核：10 題互動小測驗 (完整 10 題)
+       ========================================================= */
+    const quizQuestions = [
+      {
+        question: "一張正方形色紙平分成 10 條，其中的 3 條用小數怎麼表示？",
+        subtext: "【概念：一位小數與十分之一】",
+        options: ["0.03 張", "0.3 張", "3.0 張", "0.13 張"],
+        answer: 1,
+        explain: "平分成 10 份，每一份是 0.1，3 份就是 3 個 0.1，所以是 0.3 張。"
+      },
+      {
+        question: "一張大方格紙平分成 100 格，小明塗了 25 格，是幾張色紙？",
+        subtext: "【概念：二位小數與百分之一】",
+        options: ["2.5 張", "0.025 張", "0.25 張", "25 張"],
+        answer: 2,
+        explain: "平分成 100 格，1 格是 0.01（1/100），25 格就是 25 個 0.01，合起來記作 0.25 張。"
+      },
+      {
+        question: "在數值定位板上，「5 個 1、2 個 0.1 和 8 個 0.01」合起來是多少？",
+        subtext: "【概念：數位定位板組合】",
+        options: ["5.28", "5.82", "52.8", "0.528"],
+        answer: 0,
+        explain: "個位是 5，十分位是 2，百分位是 8，依序寫下來就是 5.28。"
+      },
+      {
+        question: "跳遠比賽中，小智跳了 1 公尺 45 公分，相當於多少公尺？",
+        subtext: "【概念：長度單位換算 1cm = 0.01m】",
+        options: ["14.5 公尺", "1.45 公尺", "1.045 公尺", "145 公尺"],
+        answer: 1,
+        explain: "因為 1 公分＝0.01 公尺，45 公分＝0.45 公尺，加上 1 公尺等於 1.45 公尺。"
+      },
+      {
+        question: "請比較大小：0.6 和 0.58，哪一個數比較大？",
+        subtext: "【概念：小數的大小比較】",
+        options: ["0.58 比較大", "0.6 比較大", "一樣大", "無法比較"],
+        answer: 1,
+        explain: "先比整數都是 0；再比十分位，0.6 的十分位是 6，0.58 的十分位是 5，因為 6 > 5，所以 0.6 比較大（0.6 = 0.60 > 0.58）。"
+      },
+      {
+        question: "一瓶鮮奶有 1.35 公升，小貓喝了 0.2 公升後，還剩下多少公升？",
+        subtext: "【生活應用：容量減法與直式對位】",
+        options: ["1.15 公升", "1.33 公升", "0.15 公升", "1.13 公升"],
+        answer: 0,
+        explain: "直式小數點對齊：1.35 － 0.20 ＝ 1.15 公升。記得 0.2 可以在百分位補 0 對齊計算。"
+      },
+      {
+        question: "小華體重 32.4 公斤，小英比小華重 2.85 公斤，小英體重是多少公斤？",
+        subtext: "【生活應用：體重加法運算】",
+        options: ["34.25 公斤", "35.25 公斤", "34.89 公斤", "35.85 公斤"],
+        answer: 1,
+        explain: "列式：32.40 ＋ 2.85。十分位 4+8=12 進位 1，個位 2+2+1=5，十位是 3，合起來是 35.25 公斤。"
+      },
+      {
+        question: "在小數數線上，0.7 和 0.8 之間剛好平分成 10 小格，其中第 4 小格代表多少？",
+        subtext: "【概念：數線細分格與二位小數】",
+        options: ["0.74", "0.47", "0.04", "0.84"],
+        answer: 0,
+        explain: "0.7 到 0.8 每一小格代表 0.01，從 0.7 往右數 4 小格就是 0.7 ＋ 0.04 ＝ 0.74。"
+      },
+      {
+        question: "「4 個 0.1 和 60 個 0.01」合起來是多少？",
+        subtext: "【進階概念：等值化聚思考】",
+        options: ["0.46", "0.64", "1.0", "1.4"],
+        answer: 2,
+        explain: "4 個 0.1 是 0.4；60 個 0.01 就是 0.60。0.4 ＋ 0.6 ＝ 1.0（剛好等於整數 1）！"
+      },
+      {
+        question: "做小數加減直式時，最重要且絕對不能忘記的關鍵步驟是什麼？",
+        subtext: "【核心素養：計算方法統整】",
+        options: ["由左往右算", "把數字靠右對齊", "小數點一定要上下對齊", "小數點可以隨意放置"],
+        answer: 2,
+        explain: "小數加減的靈魂就是「小數點上下垂直對齊」，這樣個位對個位、十分位對十分位，位值才不會錯亂！"
+      }
+    ];
+
+    let currentQIndex = 0;
+    let quizScore = 0;
+    let answeredCurrent = false;
+
+    function renderCurrentQuestion() {
+      answeredCurrent = false;
+      const q = quizQuestions[currentQIndex];
+      
+      document.getElementById('currentQuestionNum').textContent = currentQIndex + 1;
+      document.getElementById('questionText').textContent = q.question;
+      document.getElementById('questionSubtext').textContent = q.subtext;
+
+      const badge = document.getElementById('quizDifficultyBadge');
+      if (currentQIndex < 3) badge.textContent = "入門基礎";
+      else if (currentQIndex < 7) badge.textContent = "生活情境運算";
+      else badge.textContent = "高階概念挑戰";
+
+      const container = document.getElementById('quizOptionsContainer');
+      container.innerHTML = '';
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full p-4 rounded-2xl bg-white border-2 border-gray-200 text-left font-bold text-20 hover:border-[#FFAAA6] hover:bg-[#FFF9F0] active:scale-[0.98] transition shadow-sm flex items-center gap-3";
+        btn.innerHTML = `<span class="w-8 h-8 rounded-full bg-[#FFDEE9] text-[#E05A6F] flex items-center justify-center font-black text-sm shrink-0">${['A','B','C','D'][idx]}</span><span>${optText}</span>`;
+        btn.onclick = () => selectQuizAnswer(idx, btn);
+        container.appendChild(btn);
+      });
+
+      const feedbackBox = document.getElementById('quizFeedbackBox');
+      feedbackBox.classList.add('hidden');
+    }
+
+    function selectQuizAnswer(selectedIdx, btnElement) {
+      if (answeredCurrent) return;
+      answeredCurrent = true;
+
+      const q = quizQuestions[currentQIndex];
+      const isCorrect = selectedIdx === q.answer;
+      const feedbackBox = document.getElementById('quizFeedbackBox');
+      const feedbackIcon = document.getElementById('quizFeedbackIcon');
+      const feedbackTitle = document.getElementById('quizFeedbackTitle');
+      const feedbackExplain = document.getElementById('quizFeedbackExplain');
+
+      const allButtons = document.querySelectorAll('#quizOptionsContainer button');
+      allButtons.forEach((b, idx) => {
+        b.disabled = true;
+        if (idx === q.answer) {
+          b.classList.remove('bg-white', 'border-gray-200');
+          b.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+        } else if (idx === selectedIdx && !isCorrect) {
+          b.classList.remove('bg-white', 'border-gray-200');
+          b.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
+        }
+      });
+
+      if (isCorrect) {
+        playSound('correct');
+        quizScore += 10;
+        document.getElementById('quizScoreText').textContent = `${quizScore} 分`;
+        feedbackBox.className = "p-4 rounded-2xl border-2 bg-green-50 border-green-300 block";
+        feedbackIcon.textContent = "🎉";
+        feedbackTitle.textContent = "太厲害了，回答正確！";
+        feedbackTitle.className = "font-black text-20 text-green-700";
+      } else {
+        playSound('wrong');
+        feedbackBox.className = "p-4 rounded-2xl border-2 bg-amber-50 border-amber-300 block";
+        feedbackIcon.textContent = "💡";
+        feedbackTitle.textContent = "差一點點，觀念小解析：";
+        feedbackTitle.className = "font-black text-20 text-amber-800";
+      }
+
+      feedbackExplain.textContent = q.explain;
+
+      const nextBtn = document.getElementById('btnNextQuestion');
+      if (currentQIndex === quizQuestions.length - 1) {
+        nextBtn.textContent = "查看測驗成績 🏆";
+      } else {
+        nextBtn.textContent = "下一題 ➔";
+      }
+    }
+
+    function goToNextQuestion() {
+      playSound('click');
+      if (currentQIndex < quizQuestions.length - 1) {
+        currentQIndex++;
+        renderCurrentQuestion();
+      } else {
+        showQuizSummary();
+      }
+    }
+
+    function showQuizSummary() {
+      playSound('fanfare');
+      const modal = document.getElementById('quizSummaryModal');
+      modal.classList.remove('hidden');
+
+      document.getElementById('summaryFinalScore').textContent = `${quizScore} 分`;
+      const titleBadge = document.getElementById('summaryTitleBadge');
+      const emoji = document.getElementById('summaryEmoji');
+
+      if (quizScore === 100) {
+        emoji.textContent = "👑";
+        titleBadge.textContent = "獲得榮譽：小數神境界・滿分大滿貫！";
+      } else if (quizScore >= 80) {
+        emoji.textContent = "🌟";
+        titleBadge.textContent = "獲得榮譽：小數冒險大師・實力非凡！";
+      } else if (quizScore >= 60) {
+        emoji.textContent = "🌱";
+        titleBadge.textContent = "獲得榮譽：小數探索先鋒・漸入佳境！";
+      } else {
+        emoji.textContent = "💪";
+        titleBadge.textContent = "獲得榮譽：小數見習勇者・再接再厲！";
+      }
+    }
+
+    function restartQuiz() {
+      playSound('click');
+      currentQIndex = 0;
+      quizScore = 0;
+      document.getElementById('quizScoreText').textContent = "0 分";
+      closeSummaryModal();
+      renderCurrentQuestion();
+    }
+
+    function closeSummaryModal() {
+      document.getElementById('quizSummaryModal').classList.add('hidden');
+    }
+
+    /* =========================================================
+       10. 懸浮草稿計算紙畫布核心 (HTML5 Canvas)
+       ========================================================= */
+    let canvas, ctx;
+    let isDrawing = false;
+    let penColor = '#2D3748';
+    let penSize = 4;
+    let isEraserMode = false;
+    let scratchpadOpen = false;
+
+    function initScratchpad() {
+      canvas = document.getElementById('scratchpadCanvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+
+      resizeScratchpad();
+      window.addEventListener('resize', resizeScratchpad);
+
+      canvas.addEventListener('pointerdown', startDraw);
+      canvas.addEventListener('pointermove', drawing);
+      canvas.addEventListener('pointerup', stopDraw);
+      canvas.addEventListener('pointercancel', stopDraw);
+    }
+
+    function resizeScratchpad() {
+      if (!canvas) return;
+      const container = document.getElementById('scratchpadContainer');
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        if (canvas.width > 0 && canvas.height > 0) {
+          tempCtx.drawImage(canvas, 0, 0);
+        }
+
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+
+        if (tempCanvas.width > 0 && tempCanvas.height > 0) {
+          ctx.drawImage(tempCanvas, 0, 0);
+        }
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      }
+    }
+
+    function toggleScratchpad() {
+      playSound('click');
+      scratchpadOpen = !scratchpadOpen;
+      const panel = document.getElementById('scratchpadPanel');
+      if (scratchpadOpen) {
+        panel.classList.remove('translate-x-full');
+        setTimeout(resizeScratchpad, 310);
+      } else {
+        panel.classList.add('translate-x-full');
+      }
+    }
+
+    function startDraw(e) {
+      isDrawing = true;
+      ctx.beginPath();
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      ctx.moveTo(x, y);
+    }
+
+    function drawing(e) {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (isEraserMode) {
+        ctx.strokeStyle = '#FAFAFA';
+        ctx.lineWidth = penSize * 3;
+      } else {
+        ctx.strokeStyle = penColor;
+        ctx.lineWidth = penSize;
+      }
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+
+    function stopDraw() {
+      if (isDrawing) {
+        ctx.closePath();
+        isDrawing = false;
+      }
+    }
+
+    function setPenColor(color) {
+      isEraserMode = false;
+      penColor = color;
+      playSound('click');
+      document.getElementById('eraserBtn').classList.remove('bg-orange-200');
+    }
+
+    function setEraser() {
+      isEraserMode = true;
+      playSound('click');
+      document.getElementById('eraserBtn').classList.add('bg-orange-200');
+    }
+
+    function changeBrushSize(val) {
+      penSize = parseInt(val, 10);
+    }
+
+    function clearScratchpad() {
+      playSound('click');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    /* =========================================================
+       11. 頁面啟動總裝載
+       ========================================================= */
+    window.onload = function() {
+      // 1. 初始化探索頁色紙百格與定位板
+      renderGrid();
+
+      // 2. 初始化數線刻度與自由拖曳蛙蛙
+      renderNumberLine();
+      updateFrogPosition(50);
+      initDraggableFrog();
+
+      // 3. 初始化猜拳天平PK賽
+      resetRPSGame();
+
+      // 4. 初始化生活應用題直式情境
+      updateScenarioDisplay();
+
+      // 5. 初始化排序遊戲
+      resetSortGame();
+
+      // 6. 初始化 10 題測驗第 1 題
+      renderCurrentQuestion();
+
+      // 7. 初始化懸浮草稿計算紙
+      initScratchpad();
+    };
+  </script>
+</body>
+</html>

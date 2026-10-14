@@ -1,0 +1,2434 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>魔法角度冒險王國 - 國小四年級互動數學樂園</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2357466f'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='serif'%3E%E6%96%B0%3C/text%3E%3C/svg%3E">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts for Cute Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Noto+Sans+TC:wght@400;600;800;900&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      font-size: 18px;
+    }
+    .font-cute {
+      font-family: 'Mochiy Pop One', 'Noto Sans TC', cursive;
+    }
+    .font-number {
+      font-family: 'Quicksand', 'Noto Sans TC', sans-serif;
+    }
+    .bubble-btn {
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
+    }
+    .bubble-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+    }
+    .card-cute {
+      border: 4px solid #475569;
+      box-shadow: 0 8px 0 rgba(71, 85, 105, 0.18);
+    }
+    .active-tab {
+      background-color: #FFFFFF !important;
+      color: #0F172A !important;
+      border-color: #0F172A !important;
+      box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.1) !important;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #FBBF24;
+      border-radius: 9999px;
+    }
+    .touch-none {
+      touch-action: none;
+    }
+    /* 16:9 Cinema / Maximum Screen Real-Estate Mode */
+    body.cinema-mode {
+      height: 100vh !important;
+      max-height: 100vh !important;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-start !important;
+    }
+    body.cinema-mode header,
+    body.cinema-mode footer,
+    body.cinema-mode .stage-tip-banner,
+    body.cinema-mode .compact-tip-bar {
+      display: none !important;
+    }
+    body.cinema-mode .cinema-floating-bar {
+      display: flex !important;
+      position: static !important;
+      transform: none !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      border-radius: 0 !important;
+      border-top: none !important;
+      border-left: none !important;
+      border-right: none !important;
+      border-bottom: 3px solid #d97706 !important;
+      padding: 4px 16px !important;
+      height: 44px !important;
+      flex-shrink: 0 !important;
+      z-index: 40 !important;
+      justify-content: center !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+    }
+    body.cinema-mode main {
+      max-width: 100vw !important;
+      width: 100vw !important;
+      height: calc(100vh - 44px) !important;
+      max-height: calc(100vh - 44px) !important;
+      padding: 6px 14px 10px !important;
+      flex: 1 !important;
+      min-height: 0 !important;
+      overflow: hidden !important;
+    }
+    body.cinema-mode .card-cute {
+      height: 100% !important;
+      max-height: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      padding: 8px 14px !important;
+      overflow-y: auto !important;
+      margin-bottom: 0 !important;
+    }
+    body.cinema-mode .canvas-cinema-container {
+      height: calc(100vh - 145px) !important;
+      max-height: calc(100vh - 145px) !important;
+      min-height: 260px !important;
+    }
+    body.cinema-mode .workspace-flex-cinema {
+      flex: 1 !important;
+      min-height: 0 !important;
+    }
+  </style>
+</head>
+<body class="bg-amber-50 text-slate-800 min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+  <!-- Floating Cinema Bar (Visible ONLY when Header is Collapsed) -->
+  <div id="cinema-floating-bar" class="cinema-floating-bar hidden w-full bg-amber-400 border-b-2 border-amber-600 px-3 py-1 items-center justify-center gap-1.5 transition-all">
+    <button onclick="prevTab()" class="bubble-btn bg-white hover:bg-amber-50 text-slate-800 px-2.5 py-1 rounded-xl font-bold text-xs sm:text-sm border border-slate-300">
+      ◀ 上一關
+    </button>
+    <select id="cinema-stage-select" onchange="switchTab(this.value)" class="bg-amber-100 border-2 border-amber-500 font-black text-xs sm:text-sm text-amber-950 px-2.5 py-1 rounded-xl focus:outline-none cursor-pointer">
+      <option value="tab-compare">1. 比較角</option>
+      <option value="tab-teach">2. 認識量角器</option>
+      <option value="tab-measure">3. 量測挑戰</option>
+      <option value="tab-draw">4. 畫角度</option>
+      <option value="tab-classify">5. 角度分類</option>
+      <option value="tab-rotate">6. 旋轉角出題機</option>
+      <option value="tab-triangle-calc">7. 三角板與計算</option>
+      <option value="tab-quiz">🏆 終極評量</option>
+    </select>
+    <button onclick="nextTab()" class="bubble-btn bg-white hover:bg-amber-50 text-slate-800 px-2.5 py-1 rounded-xl font-bold text-xs sm:text-sm border border-slate-300">
+      下一關 ▶
+    </button>
+    <div class="h-4 w-[1px] bg-amber-600/60 mx-1"></div>
+    <button onclick="toggleAudio()" id="cinema-sound-btn" class="bubble-btn bg-white px-2 py-1 rounded-xl text-xs sm:text-sm border border-slate-300">
+      🔊
+    </button>
+    <button onclick="toggleScratchpad()" class="bubble-btn bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-2.5 py-1 rounded-xl text-xs sm:text-sm border border-emerald-700 shadow">
+      📝 草稿板
+    </button>
+    <button onclick="toggleCinemaMode()" class="bubble-btn bg-amber-700 hover:bg-amber-800 text-white font-black px-3 py-1 rounded-xl text-xs sm:text-sm border border-amber-950 flex items-center gap-1 shadow">
+      <span>🔽 展開完整選單</span>
+    </button>
+  </div>
+
+  <!-- Top Navigation Header -->
+  <header id="main-header" class="bg-amber-400 border-b-4 border-amber-600 px-3 sm:px-4 py-2.5 sticky top-0 z-40 shadow-md transition-all">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl sm:text-3xl animate-bounce">📐</span>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-black text-amber-950 font-cute tracking-wider header-brand-title">
+            魔法角度冒險王國
+          </h1>
+          <span class="text-xs sm:text-sm font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full header-sub-badge">國小四年級數學互動樂園</span>
+        </div>
+      </div>
+
+      <!-- Stage Selector Tabs -->
+      <div class="flex items-center gap-1.5 overflow-x-auto py-1 max-w-full">
+        <button onclick="switchTab('tab-compare')" class="nav-tab bubble-btn px-3 py-1.5 rounded-xl font-bold text-sm sm:text-base bg-white text-slate-800 border-2 border-slate-700 active-tab" data-tab="tab-compare">
+          1. 比較角
+        </button>
+        <button onclick="switchTab('tab-teach')" class="nav-tab bubble-btn px-3 py-1.5 rounded-xl font-bold text-sm sm:text-base bg-amber-100 text-slate-700 border-2 border-slate-700" data-tab="tab-teach">
+          2. 認識量角器
+        </button>
+        <button onclick="switchTab('tab-measure')" class="nav-tab bubble-btn px-3 py-1.5 rounded-xl font-bold text-sm sm:text-base bg-amber-100 text-slate-700 border-2 border-slate-700" data-tab="tab-measure">
+          3. 量測挑戰
+        </button>
+        <button onclick="switchTab('tab-draw')" class="nav-tab bubble-btn px-3 py-1.5 rounded-xl font-bold text-sm sm:text-base bg-amber-100 text-slate-700 border-2 border-slate-700" data-tab="tab-draw">
+          4. 畫角度
+        </button>
+        <button onclick="switchTab('tab-classify')" class="nav-tab bubble-btn px-3 py-1.5 rounded-xl font-bold text-sm sm:text-base bg-amber-100 text-slate-700 border-2 border-slate-700" data-tab="tab-classify">
+          5. 角度分類
+        </button>
+        <button onclick="switchTab('tab-rotate')" class="nav-tab bubble-btn px-3 py-1.5 rounded-xl font-bold text-sm sm:text-base bg-amber-100 text-slate-700 border-2 border-slate-700" data-tab="tab-rotate">
+          6. 旋轉角出題機
+        </button>
+        <button onclick="switchTab('tab-triangle-calc')" class="nav-tab bubble-btn px-3 py-1.5 rounded-xl font-bold text-sm sm:text-base bg-amber-100 text-slate-700 border-2 border-slate-700" data-tab="tab-triangle-calc">
+          7. 三角板與計算
+        </button>
+        <button onclick="switchTab('tab-quiz')" class="nav-tab bubble-btn px-3 py-1.5 rounded-xl font-bold text-sm sm:text-base bg-rose-400 text-white border-2 border-rose-700" data-tab="tab-quiz">
+          🏆 終極評量
+        </button>
+      </div>
+
+      <!-- Sound, Scratchpad, and Compact Mode Buttons -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- 16:9 Cinema / Focus Toggle Button -->
+        <button id="toggle-cinema-btn" onclick="toggleCinemaMode()" class="bubble-btn bg-amber-900 hover:bg-amber-950 text-white font-black px-3 py-1.5 rounded-xl border-2 border-amber-950 text-xs sm:text-sm flex items-center gap-1.5 shadow" title="收合全部選單與標題列，以16:9最大化視窗完整學習">
+          <span>🖥️</span> <span>16:9 最大畫面 (收合選單)</span>
+        </button>
+        <button id="sound-btn" onclick="toggleAudio()" class="bubble-btn bg-white px-2.5 py-1.5 rounded-xl border-2 border-slate-700 text-lg" title="聲音開關">
+          🔊
+        </button>
+        <button onclick="toggleScratchpad()" class="bubble-btn bg-emerald-400 text-emerald-950 font-bold px-3 py-1.5 rounded-xl border-2 border-emerald-700 text-sm sm:text-base flex items-center gap-1 shadow">
+          📝 <span>草稿板</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Container -->
+  <main class="max-w-6xl w-full mx-auto p-3 sm:p-5 flex-1 flex flex-col justify-start transition-all">
+
+    <!-- 1. COMPARE ANGLES -->
+    <section id="tab-compare" class="tab-content block space-y-4">
+      <div class="bg-white rounded-3xl p-4 sm:p-6 card-cute border-indigo-400">
+        <!-- Stage Intro Banner -->
+        <div class="stage-tip-banner flex items-center justify-between gap-3 mb-3 border-b border-indigo-100 pb-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-indigo-100 text-indigo-700 text-2xl p-2 rounded-2xl">🧐</span>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-indigo-950 font-cute">第 1 關：哪個角比較大？（破除邊長迷思）</h2>
+              <p class="text-slate-600 text-base sm:text-lg">動動手指把「藍色角甲」拖曳疊到「橘色角乙」上比比看！誰張開的角度大呢？</p>
+            </div>
+          </div>
+          <button onclick="toggleCinemaMode()" class="shrink-0 bubble-btn text-xs text-indigo-700 bg-indigo-50 border border-indigo-300 px-2.5 py-1.5 rounded-xl font-bold hover:bg-indigo-100 hidden sm:block">
+            🖥️ 16:9 最大畫面
+          </button>
+        </div>
+
+        <div class="bg-indigo-50/70 rounded-2xl p-3 border-2 border-indigo-200 flex flex-col lg:flex-row items-center gap-4 workspace-flex-cinema">
+          <!-- Comparison Canvas Area -->
+          <div class="relative w-full lg:w-2/3 h-[350px] canvas-cinema-container bg-white rounded-2xl border-2 border-indigo-300 shadow-inner overflow-hidden flex items-center justify-center">
+            <svg id="compare-svg" class="w-full h-full touch-none select-none" viewBox="0 0 600 350">
+              <!-- Fixed Angle B (Orange): 60 deg, shorter arm -->
+              <g id="angle-b-group" transform="translate(180, 250)">
+                <path d="M 0,0 L 150,0 M 0,0 L 75,-129.9" stroke="#EA580C" stroke-width="8" stroke-linecap="round"/>
+                <path d="M 50,0 A 50 50 0 0 0 25,-43.3" fill="none" stroke="#F97316" stroke-width="5" stroke-dasharray="6,4"/>
+                <circle cx="0" cy="0" r="8" fill="#C2410C"/>
+                <text x="55" y="-18" fill="#C2410C" font-size="20" font-weight="bold">角 乙</text>
+                <text x="50" y="30" fill="#EA580C" font-size="16">（邊比較短）</text>
+              </g>
+
+              <!-- Draggable Angle A (Blue): 45 deg, longer arm -->
+              <g id="angle-a-group" transform="translate(380, 250)" class="cursor-move">
+                <path d="M 0,0 L 220,0 M 0,0 L 155.5,-155.5" stroke="#2563EB" stroke-width="8" stroke-linecap="round"/>
+                <path d="M 60,0 A 60 60 0 0 0 42.4,-42.4" fill="none" stroke="#3B82F6" stroke-width="5"/>
+                <circle cx="0" cy="0" r="10" fill="#1D4ED8"/>
+                <text x="70" y="-15" fill="#1D4ED8" font-size="20" font-weight="bold">角 甲</text>
+                <text x="50" y="30" fill="#2563EB" font-size="16">（邊很長～拉我疊合！）</text>
+              </g>
+            </svg>
+            <div class="absolute top-3 left-3 bg-amber-100/90 text-amber-950 px-3 py-1 rounded-xl text-sm font-bold border border-amber-300">
+              💡 提示：按住角甲的頂點，拖過去與角乙疊合！
+            </div>
+            <button onclick="resetCompare()" class="bubble-btn absolute bottom-3 right-3 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-xl text-sm font-bold border border-slate-300">
+              🔄 復原位置
+            </button>
+          </div>
+
+          <!-- Question Interaction Panel -->
+          <div class="w-full lg:w-1/3 flex flex-col space-y-3">
+            <div class="bg-white p-4 rounded-2xl border-2 border-indigo-200 shadow-sm">
+              <h3 class="font-bold text-indigo-900 text-lg mb-2">🤔 疊合後看一看，誰的開口大？</h3>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="checkCompareGuess('A')" class="bubble-btn p-3 bg-blue-100 text-blue-900 font-bold rounded-xl border-2 border-blue-400 text-base">
+                  角甲比較大<br><span class="text-xs font-normal">（邊看起來比較長）</span>
+                </button>
+                <button onclick="checkCompareGuess('B')" class="bubble-btn p-3 bg-orange-100 text-orange-900 font-bold rounded-xl border-2 border-orange-400 text-base">
+                  角乙比較大<br><span class="text-xs font-normal">（張開的角度更大）</span>
+                </button>
+              </div>
+            </div>
+
+            <div id="compare-feedback" class="bg-amber-100 p-4 rounded-2xl border-2 border-amber-300 hidden">
+              <p id="compare-feedback-text" class="text-amber-950 font-bold text-base leading-relaxed"></p>
+              <button onclick="switchTab('tab-teach')" class="mt-3 w-full bubble-btn bg-amber-500 hover:bg-amber-600 text-white font-black py-2.5 rounded-xl border-2 border-amber-700 flex items-center justify-center gap-2">
+                認識度量工具「量角器」 ➔
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. PROTRACTOR TEACHING -->
+    <section id="tab-teach" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-3xl p-4 sm:p-6 card-cute border-teal-400">
+        <!-- Stage Intro Banner (Collapsible) -->
+        <div class="stage-tip-banner flex items-center justify-between gap-3 mb-3 border-b border-teal-100 pb-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-teal-100 text-teal-700 text-2xl p-2 rounded-2xl">📐</span>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-teal-950 font-cute">第 2 關：認識好幫手「量角器」</h2>
+              <p class="text-slate-600 text-base sm:text-lg">量角器刻度完整不省略（每一小格為 1 度）。點選下方按鈕，認識四大構造：</p>
+            </div>
+          </div>
+          <button onclick="toggleTipsMode()" class="shrink-0 bubble-btn text-xs text-teal-700 bg-teal-50 border border-teal-300 px-2.5 py-1.5 rounded-xl font-bold hover:bg-teal-100 hidden sm:block">
+            🔼 收合提示
+          </button>
+        </div>
+
+        <!-- Slim Mini Bar when collapsed -->
+        <div class="compact-tip-bar hidden items-center justify-between bg-teal-50 px-3 py-1.5 rounded-xl border border-teal-200 mb-2">
+          <span class="text-sm font-black text-teal-900 font-cute">第 2 關：認識量角器構造（中心點、基準線、內外圈）</span>
+          <button onclick="toggleTipsMode()" class="text-xs text-teal-700 underline font-bold">展開完整解說 🔽</button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+          <!-- Protractor Viewer SVG -->
+          <div class="lg:col-span-2 bg-slate-50 p-3 rounded-2xl border-2 border-teal-200 flex flex-col items-center">
+            <svg id="teach-protractor-svg" class="w-full max-w-[540px] h-[300px]" viewBox="0 0 540 300">
+              <!-- Body semi-circle -->
+              <path d="M 30,260 A 240,240 0 0,1 510,260 Z" fill="#E0F2FE" stroke="#0284C7" stroke-width="4" fill-opacity="0.6"/>
+              <path d="M 170,260 A 100,100 0 0,1 370,260 Z" fill="#FFFFFF" stroke="#38BDF8" stroke-width="2"/>
+              
+              <!-- Center Point highlight -->
+              <g id="highlight-center">
+                <circle cx="270" cy="260" r="14" fill="#EF4444" fill-opacity="0.25" class="animate-ping"/>
+                <circle cx="270" cy="260" r="7" fill="#EF4444"/>
+                <line x1="270" y1="245" x2="270" y2="275" stroke="#EF4444" stroke-width="2"/>
+                <line x1="255" y1="260" x2="285" y2="260" stroke="#EF4444" stroke-width="2"/>
+              </g>
+
+              <!-- Baseline 0-deg line highlight -->
+              <g id="highlight-baseline">
+                <line x1="30" y1="260" x2="510" y2="260" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+                <rect x="25" y="245" width="40" height="30" rx="5" fill="#FEF3C7" stroke="#F59E0B"/>
+                <text x="33" y="266" fill="#B45309" font-weight="bold" font-size="15">0° (外)</text>
+                <rect x="475" y="245" width="40" height="30" rx="5" fill="#FEF3C7" stroke="#F59E0B"/>
+                <text x="483" y="266" fill="#B45309" font-weight="bold" font-size="15">0° (內)</text>
+              </g>
+
+              <!-- Scale Marks Container -->
+              <g id="teach-protractor-ticks"></g>
+
+              <!-- Outer / Inner scale highlight ring -->
+              <path id="highlight-outer" d="M 50,260 A 220,220 0 0,1 490,260" fill="none" stroke="#8B5CF6" stroke-width="14" stroke-opacity="0.35" class="hidden"/>
+              <path id="highlight-inner" d="M 90,260 A 180,180 0 0,1 450,260" fill="none" stroke="#10B981" stroke-width="14" stroke-opacity="0.35" class="hidden"/>
+            </svg>
+
+            <!-- 3 Easy Steps Banner -->
+            <div class="w-full mt-2 bg-teal-50 border-2 border-teal-300 rounded-xl p-2.5 text-base font-bold text-teal-950 flex flex-wrap justify-around gap-2">
+              <span>🎯 <b>步驟一：</b>頂點對齊中心點</span>
+              <span>📏 <b>步驟二：</b>一邊對齊0度線</span>
+              <span>👀 <b>步驟三：</b>從0開始讀另一邊</span>
+            </div>
+          </div>
+
+          <!-- Features Explanations -->
+          <div class="space-y-2.5 flex flex-col">
+            <button onclick="highlightFeature('center')" class="bubble-btn w-full p-3 bg-red-50 hover:bg-red-100 text-red-950 border-2 border-red-400 rounded-2xl text-left font-bold flex items-start gap-2.5">
+              <span class="text-2xl">🎯</span>
+              <div>
+                <div class="text-lg text-red-800 font-black">1. 中心點</div>
+                <div class="text-sm font-normal text-slate-600">測量時務必精準疊在角的「頂點」上。</div>
+              </div>
+            </button>
+
+            <button onclick="highlightFeature('baseline')" class="bubble-btn w-full p-3 bg-amber-50 hover:bg-amber-100 text-amber-950 border-2 border-amber-400 rounded-2xl text-left font-bold flex items-start gap-2.5">
+              <span class="text-2xl">➖</span>
+              <div>
+                <div class="text-lg text-amber-800 font-black">2. 0度基準線</div>
+                <div class="text-sm font-normal text-slate-600">底部直線，必須與角的一條邊完全重疊。</div>
+              </div>
+            </button>
+
+            <button onclick="highlightFeature('outer')" class="bubble-btn w-full p-3 bg-purple-50 hover:bg-purple-100 text-purple-950 border-2 border-purple-400 rounded-2xl text-left font-bold flex items-start gap-2.5">
+              <span class="text-2xl">🟣</span>
+              <div>
+                <div class="text-lg text-purple-800 font-black">3. 外圈刻度 (左邊 0° 起算)</div>
+                <div class="text-sm font-normal text-slate-600">角的開口向左時，從左邊 0 度順時針讀外圈紫色數字。</div>
+              </div>
+            </button>
+
+            <button onclick="highlightFeature('inner')" class="bubble-btn w-full p-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-950 border-2 border-emerald-400 rounded-2xl text-left font-bold flex items-start gap-2.5">
+              <span class="text-2xl">🟢</span>
+              <div>
+                <div class="text-lg text-emerald-800 font-black">4. 內圈刻度 (右邊 0° 起算)</div>
+                <div class="text-sm font-normal text-slate-600">角的開口向右時，從右邊 0 度逆時針讀內圈綠色數字。</div>
+              </div>
+            </button>
+
+            <button onclick="switchTab('tab-measure')" class="w-full mt-1 bubble-btn bg-teal-600 hover:bg-teal-700 text-white font-black py-2.5 rounded-2xl border-2 border-teal-800 text-center text-lg">
+              動手量 5 題大挑戰 ➔
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. MEASURE CHALLENGE -->
+    <section id="tab-measure" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-3xl p-4 sm:p-6 card-cute border-blue-400">
+        <!-- Stage Intro Banner -->
+        <div class="stage-tip-banner flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-blue-100 pb-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-blue-100 text-blue-700 text-2xl p-2 rounded-2xl">🎯</span>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-blue-950 font-cute">第 3 關：角度量測大挑戰（共 5 題）</h2>
+              <p class="text-slate-600 text-base sm:text-lg">移動並旋轉半透明量角器（每小格 1 度，中間鏤空透光），精確量出角的度數！</p>
+            </div>
+          </div>
+          <button onclick="toggleCinemaMode()" class="shrink-0 bubble-btn text-xs text-blue-700 bg-blue-50 border border-blue-300 px-2.5 py-1.5 rounded-xl font-bold hover:bg-blue-100 hidden sm:block">
+            🖥️ 16:9 最大畫面
+          </button>
+        </div>
+
+        <!-- Header bar with dots (Always visible) -->
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <span class="text-base font-black text-blue-950 font-cute">角度量測挑戰</span>
+          <div class="flex items-center gap-1.5 ml-auto" id="measure-progress-dots">
+            <span class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm bg-blue-600 text-white border-2 border-blue-800">1</span>
+            <span class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm bg-slate-200 text-slate-700 border-2 border-slate-400">2</span>
+            <span class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm bg-slate-200 text-slate-700 border-2 border-slate-400">3</span>
+            <span class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm bg-slate-200 text-slate-700 border-2 border-slate-400">4</span>
+            <span class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm bg-slate-200 text-slate-700 border-2 border-slate-400">5</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-100 rounded-2xl p-3 sm:p-4 border-2 border-blue-200 flex flex-col lg:flex-row items-center gap-4 workspace-flex-cinema">
+          <!-- Canvas Area -->
+          <div class="relative w-full lg:w-2/3 h-[420px] canvas-cinema-container bg-white rounded-2xl border-2 border-blue-300 shadow-inner overflow-hidden flex items-center justify-center">
+            <svg id="measure-svg" class="w-full h-full touch-none select-none" viewBox="0 0 600 420">
+              <!-- Target Dynamic Angle -->
+              <g id="measure-target-angle"></g>
+
+              <!-- Draggable & Rotatable Protractor (Crystal clear Body with Center Cutout) -->
+              <g id="draggable-protractor" transform="translate(200, 340) rotate(0)" class="cursor-move">
+                <!-- Semi-transparent outer body -->
+                <path d="M -210,0 A 210,210 0 0,1 210,0 Z" fill="rgba(224, 242, 254, 0.45)" stroke="#0284C7" stroke-width="2.5"/>
+                <!-- Fully transparent hollow inner semi-circle for crystal clear view of vertex -->
+                <path d="M -90,0 A 90,90 0 0,1 90,0 Z" fill="rgba(255, 255, 255, 0.2)" stroke="#0284C7" stroke-width="1.8" stroke-dasharray="4,3"/>
+                <line x1="-210" y1="0" x2="210" y2="0" stroke="#0369A1" stroke-width="2.5"/>
+                
+                <!-- Precision Red Crosshair & Vertex Hole -->
+                <line x1="0" y1="-20" x2="0" y2="20" stroke="#DC2626" stroke-width="2"/>
+                <line x1="-20" y1="0" x2="20" y2="0" stroke="#DC2626" stroke-width="2"/>
+                <circle cx="0" cy="0" r="5" fill="none" stroke="#DC2626" stroke-width="2"/>
+                <circle cx="0" cy="0" r="1.5" fill="#DC2626"/>
+
+                <!-- Ticks rendered via JS (1 deg, 5 deg, 10 deg dual scales) -->
+                <g id="measure-prot-ticks"></g>
+                <!-- Rotation Handle Knob -->
+                <g id="protractor-rot-handle" transform="translate(0, -225)" class="cursor-grab">
+                  <circle cx="0" cy="0" r="16" fill="#F59E0B" stroke="#B45309" stroke-width="2.5"/>
+                  <text x="-8" y="6" font-size="16">🔄</text>
+                </g>
+              </g>
+            </svg>
+
+            <!-- Floating Control Buttons -->
+            <div class="absolute bottom-3 left-3 flex items-center gap-2">
+              <button onclick="autoAlignProtractor()" class="bubble-btn bg-sky-500 hover:bg-sky-600 text-white px-3.5 py-1.5 rounded-xl text-sm font-black shadow border-2 border-sky-700 flex items-center gap-1">
+                <span>✨</span> 魔法自動對齊
+              </button>
+              <button onclick="resetMeasureProtractor()" class="bubble-btn bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-xl text-sm font-bold shadow">
+                🔄 重置量角器
+              </button>
+            </div>
+            
+            <div id="align-hint-badge" class="absolute top-3 left-3 bg-emerald-100 text-emerald-950 px-3 py-1 rounded-xl text-xs font-bold border border-emerald-300 shadow hidden">
+              ✨ 已自動對齊角的頂點與 0 度基準線！
+            </div>
+
+            <div class="absolute top-3 right-3 bg-blue-50/90 text-blue-900 px-3 py-1 rounded-xl text-xs font-bold border border-blue-200">
+              💡 提示：按住橘色 🔄 可旋轉量角器
+            </div>
+          </div>
+
+          <!-- Measurement Input & Feedback -->
+          <div class="w-full lg:w-1/3 flex flex-col space-y-3">
+            <div class="bg-white p-4 rounded-2xl border-2 border-blue-200 shadow-sm space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-bold bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full" id="measure-q-number">第 1 / 5 題</span>
+                <span class="text-sm font-bold text-slate-500" id="measure-q-type">銳角量測</span>
+              </div>
+              
+              <h3 class="font-bold text-slate-800 text-lg" id="measure-q-prompt">
+                請用量角器量量看，這個角是幾度？
+              </h3>
+
+              <div class="space-y-1.5">
+                <label class="text-sm font-bold text-slate-600">你的測量結果：</label>
+                <div class="flex items-center gap-2">
+                  <input type="number" id="measure-user-input" class="font-number w-full text-center text-3xl font-black bg-slate-50 border-4 border-blue-300 rounded-2xl py-2 text-blue-950 focus:outline-none focus:border-blue-500" placeholder="?" min="0" max="180">
+                  <span class="text-2xl font-black text-slate-700">度 (°)</span>
+                </div>
+              </div>
+
+              <button onclick="checkMeasureAnswer()" class="w-full bubble-btn bg-blue-500 hover:bg-blue-600 text-white font-black py-3 rounded-2xl border-2 border-blue-700 text-lg">
+                送出檢查 🚀
+              </button>
+            </div>
+
+            <div id="measure-feedback" class="p-3.5 rounded-2xl border-2 hidden text-base font-bold"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. DRAW ANGLE -->
+    <section id="tab-draw" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-3xl p-4 sm:p-6 card-cute border-emerald-400">
+        <!-- Stage Intro Banner -->
+        <div class="stage-tip-banner flex items-center justify-between gap-3 mb-2 border-b border-emerald-100 pb-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-emerald-100 text-emerald-700 text-2xl p-2 rounded-2xl">✏️</span>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-emerald-950 font-cute">第 4 關：我是繪角小神童</h2>
+              <p class="text-slate-600 text-base sm:text-lg">先選定起筆刻度（內圈或外圈），再拉動黃色指針畫出指定度數！</p>
+            </div>
+          </div>
+          <button onclick="toggleCinemaMode()" class="shrink-0 bubble-btn text-xs text-emerald-700 bg-emerald-50 border border-emerald-300 px-2.5 py-1.5 rounded-xl font-bold hover:bg-emerald-100 hidden sm:block">
+            🖥️ 16:9 最大畫面
+          </button>
+        </div>
+
+        <!-- Scale Mode Toggle Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-3 bg-emerald-100/70 p-2 rounded-2xl border-2 border-emerald-300 mb-1">
+          <span class="font-bold text-emerald-900 text-base">選擇起筆基準線與刻度：</span>
+          <button id="draw-mode-inner-btn" onclick="setDrawScaleMode('inner')" class="bubble-btn px-4 py-2 rounded-xl font-black text-base bg-emerald-600 text-white border-2 border-emerald-800">
+            🟢 右起 0°（內圈，逆時針）
+          </button>
+          <button id="draw-mode-outer-btn" onclick="setDrawScaleMode('outer')" class="bubble-btn px-4 py-2 rounded-xl font-bold text-base bg-white text-purple-900 border-2 border-purple-400">
+            🟣 左起 0°（外圈，順時針）
+          </button>
+        </div>
+
+        <div class="bg-emerald-50/60 rounded-2xl p-3 border-2 border-emerald-200 flex flex-col lg:flex-row items-center gap-4 workspace-flex-cinema">
+          <!-- Drawing SVG Workspace -->
+          <div class="relative w-full lg:w-2/3 h-[400px] canvas-cinema-container bg-white rounded-2xl border-2 border-emerald-300 shadow-inner overflow-hidden flex items-center justify-center">
+            <svg id="draw-svg" class="w-full h-full touch-none select-none" viewBox="0 0 600 400">
+              <!-- Static Protractor Background -->
+              <g id="draw-static-protractor" transform="translate(300, 320)"></g>
+
+              <!-- Dynamic Angle Fan Arc -->
+              <path id="draw-angle-fan" fill="rgba(16, 185, 129, 0.25)" stroke="#10B981" stroke-width="2"/>
+
+              <!-- Fixed Baseline Ray -->
+              <line id="draw-fixed-ray" x1="300" y1="320" x2="500" y2="320" stroke="#059669" stroke-width="6" stroke-linecap="round"/>
+              <circle cx="300" cy="320" r="8" fill="#047857"/>
+
+              <!-- Movable Ray Line & Handle Knob -->
+              <line id="draw-moving-ray" x1="300" y1="320" x2="440" y2="180" stroke="#047857" stroke-width="6" stroke-linecap="round"/>
+              <g id="draw-arm-handle" transform="translate(440, 180)" class="cursor-pointer">
+                <circle cx="0" cy="0" r="16" fill="#FBBF24" stroke="#D97706" stroke-width="3"/>
+                <circle cx="0" cy="0" r="6" fill="#D97706"/>
+              </g>
+
+              <!-- Degree Display on Canvas -->
+              <text id="draw-current-degree-label" x="300" y="270" text-anchor="middle" font-size="28" font-weight="900" fill="#065F46" class="font-number">45°</text>
+            </svg>
+            <div class="absolute top-3 left-3 bg-emerald-100 text-emerald-950 font-bold px-3 py-1 rounded-xl text-sm border border-emerald-300">
+              拖動黃色圓點 🟡 調整角度
+            </div>
+          </div>
+
+          <!-- Drawing Mission Panel -->
+          <div class="w-full lg:w-1/3 flex flex-col space-y-3">
+            <div class="bg-white p-4 rounded-2xl border-2 border-emerald-200 shadow-sm space-y-3">
+              <div class="bg-amber-100 border-2 border-amber-300 p-3.5 rounded-2xl text-center">
+                <span class="text-sm font-bold text-amber-800">🎯 本題目標繪製：</span>
+                <div class="text-4xl font-black text-amber-950 font-number my-1" id="draw-target-degree">65°</div>
+                <span class="text-xs font-bold text-amber-700" id="draw-target-hint">（銳角：小於 90 度）</span>
+              </div>
+
+              <div class="flex justify-between items-center text-sm font-semibold text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                <span id="draw-scale-info">目前報讀（內圈，右起）：</span>
+                <span id="draw-current-disp" class="text-xl font-black text-emerald-700 font-number">45°</span>
+              </div>
+
+              <button onclick="checkDrawMatch()" class="w-full bubble-btn bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3 rounded-2xl border-2 border-emerald-700 text-lg">
+                確認畫好了！🎨
+              </button>
+
+              <button onclick="nextDrawChallenge()" class="w-full bubble-btn bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-2xl border border-slate-300 text-base">
+                🎲 換一個隨機角度挑戰
+              </button>
+            </div>
+
+            <div id="draw-feedback" class="p-3 rounded-2xl border-2 hidden text-base font-bold"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. CLASSIFY ANGLES -->
+    <section id="tab-classify" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-3xl p-4 sm:p-6 card-cute border-purple-400">
+        <!-- Stage Intro Banner (Collapsible) -->
+        <div class="stage-tip-banner flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-purple-100 pb-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-purple-100 text-purple-700 text-2xl p-2 rounded-2xl">🧺</span>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-purple-950 font-cute">第 5 關：角度家族大分類（圖形量感建立）</h2>
+              <p class="text-slate-600 text-base sm:text-lg">觀察卡片上的「角度幾何圖形與度數」，分類到正確的家（銳角、直角、鈍角）！</p>
+            </div>
+          </div>
+          <button onclick="toggleTipsMode()" class="shrink-0 bubble-btn text-xs text-purple-700 bg-purple-50 border border-purple-300 px-2.5 py-1.5 rounded-xl font-bold hover:bg-purple-100 hidden sm:block">
+            🔼 收合提示
+          </button>
+        </div>
+
+        <!-- Action bar -->
+        <div class="flex items-center justify-between mb-2">
+          <div class="compact-tip-bar hidden items-center gap-2">
+            <span class="text-sm font-black text-purple-900 font-cute">第 5 關：幾何圖形分類</span>
+            <button onclick="toggleTipsMode()" class="text-xs text-purple-700 underline font-bold">展開解說 🔽</button>
+          </div>
+          <button onclick="initClassifyGame()" class="bubble-btn bg-purple-100 text-purple-800 border-2 border-purple-300 px-3 py-1 rounded-xl font-bold text-sm ml-auto">
+            🔄 重新洗牌
+          </button>
+        </div>
+
+        <!-- 3 Bins -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Acute Bin -->
+          <div id="bin-acute" onclick="assignSelectedCard('acute')" class="bg-sky-50 border-4 border-dashed border-sky-300 hover:border-sky-500 rounded-2xl p-3 min-h-[160px] flex flex-col items-center transition cursor-pointer">
+            <div class="font-bold text-sky-900 flex items-center gap-1.5 mb-1 text-lg">
+              <span>🐣</span> 銳角（小於 90°）
+            </div>
+            <div class="bin-cards flex flex-wrap gap-2 justify-center w-full mt-2" id="bin-acute-cards"></div>
+          </div>
+
+          <!-- Right Bin -->
+          <div id="bin-right" onclick="assignSelectedCard('right')" class="bg-emerald-50 border-4 border-dashed border-emerald-300 hover:border-emerald-500 rounded-2xl p-3 min-h-[160px] flex flex-col items-center transition cursor-pointer">
+            <div class="font-bold text-emerald-900 flex items-center gap-1.5 mb-1 text-lg">
+              <span>📐</span> 直角（剛好等於 90°）
+            </div>
+            <div class="bin-cards flex flex-wrap gap-2 justify-center w-full mt-2" id="bin-right-cards"></div>
+          </div>
+
+          <!-- Obtuse Bin -->
+          <div id="bin-obtuse" onclick="assignSelectedCard('obtuse')" class="bg-amber-50 border-4 border-dashed border-amber-300 hover:border-amber-500 rounded-2xl p-3 min-h-[160px] flex flex-col items-center transition cursor-pointer">
+            <div class="font-bold text-amber-900 flex items-center gap-1.5 mb-1 text-lg">
+              <span>🦛</span> 鈍角（大於 90° 小於 180°）
+            </div>
+            <div class="bin-cards flex flex-wrap gap-2 justify-center w-full mt-2" id="bin-obtuse-cards"></div>
+          </div>
+        </div>
+
+        <!-- Pending Cards Pool with Graphic Geometric SVGs -->
+        <div class="bg-purple-50 p-4 rounded-2xl border-2 border-purple-200">
+          <div class="text-sm font-bold text-purple-900 mb-2 flex items-center justify-between">
+            <span>👇 待分類的角度圖形卡片（先點選一張卡片，再點選上方對應的籃子）：</span>
+            <span id="classify-remaining" class="text-purple-700">剩餘 8 張</span>
+          </div>
+          <div id="classify-cards-pool" class="flex flex-wrap gap-3 justify-center min-h-[100px] items-center">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. ROTATION ANGLE WITH CLOCK SENTENCE MAKER -->
+    <section id="tab-rotate" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-3xl p-4 sm:p-6 card-cute border-pink-400">
+        <!-- Stage Intro Banner (Collapsible) -->
+        <div class="stage-tip-banner flex items-center justify-between gap-3 mb-3 border-b border-pink-100 pb-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-pink-100 text-pink-700 text-2xl p-2 rounded-2xl">🎡</span>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-pink-950 font-cute">第 6 關：旋轉角與時鐘出題機</h2>
+              <p class="text-slate-600 text-base sm:text-lg">認識旋轉角、順時針與逆時針，發現「鐘面一大格是 30°」，並用萬用句式互動出題！</p>
+            </div>
+          </div>
+          <button onclick="toggleTipsMode()" class="shrink-0 bubble-btn text-xs text-pink-700 bg-pink-50 border border-pink-300 px-2.5 py-1.5 rounded-xl font-bold hover:bg-pink-100 hidden sm:block">
+            🔼 收合提示
+          </button>
+        </div>
+
+        <!-- Slim Mini Bar when collapsed -->
+        <div class="compact-tip-bar hidden items-center justify-between bg-pink-50 px-3 py-1.5 rounded-xl border border-pink-200 mb-2">
+          <span class="text-sm font-black text-pink-900 font-cute">第 6 關：時鐘旋轉角出題機（1大格＝30°）</span>
+          <button onclick="toggleTipsMode()" class="text-xs text-pink-700 underline font-bold">展開概念方塊 🔽</button>
+        </div>
+
+        <!-- Concept Banner (Collapsible) -->
+        <div class="stage-tip-banner grid grid-cols-1 md:grid-cols-3 gap-3 bg-pink-100/60 p-3 rounded-2xl border border-pink-300 text-base font-semibold text-pink-950 mb-3">
+          <div class="bg-white p-2.5 rounded-xl border border-pink-200">
+            🌀 <b>什麼是旋轉角？</b><br><span class="text-slate-600 font-normal">一條射線繞著它的端點轉動所形成的角。</span>
+          </div>
+          <div class="bg-white p-2.5 rounded-xl border border-pink-200">
+            🧭 <b>方向性</b><br><span class="text-slate-600 font-normal">順時針（與時針同行）與逆時針（反方向）。</span>
+          </div>
+          <div class="bg-white p-2.5 rounded-xl border border-pink-200">
+            📏 <b>關鍵數值</b><br><span class="text-slate-600 font-normal">一整圈 360° ÷ 12 大格 = <b>每大格 30°</b></span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start bg-pink-50/60 p-4 rounded-2xl border-2 border-pink-200">
+          <!-- Interactive Clock / Dial SVG with 1 to 12 Numbers -->
+          <div class="lg:col-span-6 relative h-[380px] bg-white rounded-2xl border-2 border-pink-300 shadow-inner flex items-center justify-center overflow-hidden">
+            <svg id="rotate-dial-svg" class="w-full h-full touch-none select-none" viewBox="0 0 400 400">
+              <circle cx="200" cy="200" r="160" fill="#FFF1F2" stroke="#F43F5E" stroke-width="4"/>
+              
+              <!-- 12 Hours marks & numbers -->
+              <g id="clock-marks-container"></g>
+
+              <!-- Rotation Sweep Sector -->
+              <path id="rotate-sector" fill="rgba(244, 63, 94, 0.25)" stroke="#F43F5E" stroke-width="2"/>
+
+              <!-- Fixed Start Ray -->
+              <line id="rotate-start-ray" x1="200" y1="200" x2="200" y2="70" stroke="#FDA4AF" stroke-width="5" stroke-linecap="round" stroke-dasharray="6,4"/>
+
+              <!-- Moving Arm Pointer -->
+              <line id="rotate-moving-arm" x1="200" y1="200" x2="200" y2="70" stroke="#BE123C" stroke-width="6" stroke-linecap="round"/>
+              <circle cx="200" cy="200" r="9" fill="#9F1239"/>
+            </svg>
+
+            <div class="absolute bottom-2 left-3 bg-pink-100 text-pink-900 px-3 py-0.5 rounded-xl text-xs font-bold border border-pink-300">
+              💡 鐘面 1~12 刻度動態演示
+            </div>
+          </div>
+
+          <!-- Universal Sentence Generator & Interactive Calculator -->
+          <div class="lg:col-span-6 space-y-3 flex flex-col">
+            <div class="bg-white p-4 rounded-2xl border-2 border-pink-300 shadow-sm space-y-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">✍️</span>
+                <h3 class="font-black text-rose-950 text-lg">萬用句式：時鐘旋轉出題與計算</h3>
+              </div>
+
+              <!-- Dropdown Sentence Block -->
+              <div class="bg-rose-50 p-3.5 rounded-2xl border border-rose-200 text-lg font-bold text-slate-800 leading-loose">
+                鐘面上的指針從
+                <select id="rot-select-start" onchange="onRotateSentenceChanged()" class="bg-white border-2 border-pink-400 rounded-xl px-2 py-1 font-bold text-pink-900 focus:outline-none">
+                </select>
+                開始，沿著
+                <select id="rot-select-dir" onchange="onRotateSentenceChanged()" class="bg-white border-2 border-pink-400 rounded-xl px-2 py-1 font-bold text-pink-900 focus:outline-none">
+                  <option value="cw">順時針</option>
+                  <option value="ccw">逆時針</option>
+                </select>
+                方向轉到
+                <select id="rot-select-end" onchange="onRotateSentenceChanged()" class="bg-white border-2 border-pink-400 rounded-xl px-2 py-1 font-bold text-pink-900 focus:outline-none">
+                </select>
+                ，共轉了幾度？
+              </div>
+
+              <!-- Preset Examples -->
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="text-xs font-bold text-slate-500">經典範例：</span>
+                <button onclick="setRotatePreset(9, 'cw', 12)" class="bubble-btn px-2.5 py-1 bg-pink-100 text-pink-900 text-xs font-bold rounded-lg border border-pink-300">
+                  從 9 順時針到 12
+                </button>
+                <button onclick="setRotatePreset(12, 'cw', 6)" class="bubble-btn px-2.5 py-1 bg-pink-100 text-pink-900 text-xs font-bold rounded-lg border border-pink-300">
+                  從 12 順時針到 6
+                </button>
+                <button onclick="setRotatePreset(2, 'cw', 5)" class="bubble-btn px-2.5 py-1 bg-pink-100 text-pink-900 text-xs font-bold rounded-lg border border-pink-300">
+                  從 2 順時針到 5
+                </button>
+              </div>
+
+              <!-- Dynamic Step Calculation Box with Answer Mask -->
+              <div class="relative overflow-hidden rounded-xl border border-amber-300 bg-amber-50 p-3 space-y-1.5 min-h-[145px]">
+                <div class="flex justify-between items-center text-base font-bold text-amber-950">
+                  <span>轉動大格數：<b id="calc-step-count" class="text-xl text-amber-700 font-number">3</b> 大格</span>
+                  <span>算式：<span id="calc-formula-text" class="text-base text-amber-900 font-number">3 × 30° = 90°</span></span>
+                </div>
+                <div class="text-center bg-white p-2 rounded-xl border border-amber-200 relative">
+                  <span class="text-sm font-bold text-slate-600">旋轉角總度數：</span>
+                  <div class="text-3xl font-black text-rose-600 font-number" id="calc-result-deg">90°</div>
+                  <div class="text-sm font-bold text-rose-800" id="calc-angle-category">直角（1/4 圈）</div>
+                  <button onclick="hideRotateAnswer()" id="remask-btn" class="hidden absolute top-2 right-2 text-xs font-bold text-slate-500 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 px-2 py-1 rounded-lg">
+                    🔒 重新遮蔽
+                  </button>
+                </div>
+
+                <!-- Answer Overlay Mask -->
+                <div id="rotate-answer-mask" class="absolute inset-0 bg-amber-100/95 backdrop-blur-sm flex flex-col items-center justify-center p-3 text-center transition-all z-10">
+                  <div class="text-sm font-bold text-amber-950 mb-2 flex items-center gap-1">
+                    <span>🤔</span> <span>先在心裡或草稿板算算看轉了幾度？</span>
+                  </div>
+                  <button type="button" onclick="revealRotateAnswer()" class="bubble-btn px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-xl border-2 border-amber-700 shadow text-base flex items-center gap-1.5">
+                    <span>👁️</span> <span>公布答案與算式</span>
+                  </button>
+                </div>
+              </div>
+
+              <button onclick="animateClockRotation()" class="w-full bubble-btn bg-pink-500 hover:bg-pink-600 text-white font-black py-2.5 rounded-xl border-2 border-pink-700 text-base">
+                🎬 播放時鐘指針旋轉動畫
+              </button>
+            </div>
+
+            <button onclick="switchTab('tab-triangle-calc')" class="w-full bubble-btn bg-indigo-500 hover:bg-indigo-600 text-white font-black py-2.5 rounded-2xl border-2 border-indigo-700 text-center text-lg">
+              下一關：三角板與角度計算 ➔
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. SET SQUARES AND ANGLE ADDITION CALCULATION -->
+    <section id="tab-triangle-calc" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-3xl p-4 sm:p-6 card-cute border-indigo-400">
+        <!-- Stage Intro Banner (Collapsible) -->
+        <div class="stage-tip-banner flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-indigo-100 pb-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-indigo-100 text-indigo-700 text-2xl p-2 rounded-2xl">📐</span>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-indigo-950 font-cute">第 7 關：三角板探索與角度合成計算</h2>
+              <p class="text-slate-600 text-base sm:text-lg">認識常用的兩副三角板，並透過圖形相加了解「角 1 + 角 2 = 合成角」！</p>
+            </div>
+          </div>
+          <button onclick="toggleTipsMode()" class="shrink-0 bubble-btn text-xs text-indigo-700 bg-indigo-50 border border-indigo-300 px-2.5 py-1.5 rounded-xl font-bold hover:bg-indigo-100 hidden sm:block">
+            🔼 收合提示
+          </button>
+        </div>
+
+        <!-- Mode header bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="compact-tip-bar hidden items-center gap-2">
+            <span class="text-sm font-black text-indigo-900 font-cute">第 7 關：三角板與角度加法</span>
+            <button onclick="toggleTipsMode()" class="text-xs text-indigo-700 underline font-bold">展開解說 🔽</button>
+          </div>
+          <!-- Sub-mode switcher -->
+          <div class="flex items-center gap-2 bg-indigo-50 p-1 rounded-2xl border border-indigo-200 ml-auto">
+            <button id="tri-submode-explore-btn" onclick="setTriSubMode('explore')" class="bubble-btn px-3 py-1.5 rounded-xl text-sm font-bold bg-indigo-600 text-white">
+              1. 認識可拖曳三角板
+            </button>
+            <button id="tri-submode-combine-btn" onclick="setTriSubMode('combine')" class="bubble-btn px-3 py-1.5 rounded-xl text-sm font-bold bg-white text-indigo-900 border border-indigo-300">
+              2. 角1 + 角2 合成計算
+            </button>
+          </div>
+        </div>
+
+        <!-- Mode A: Set Squares Explorer (Draggable / Rotatable) -->
+        <div id="tri-panel-explore" class="space-y-4">
+          <div class="stage-tip-banner grid grid-cols-1 md:grid-cols-2 gap-3 bg-indigo-50/70 p-3 rounded-2xl border border-indigo-200 text-sm font-semibold text-indigo-950">
+            <div class="bg-white p-3 rounded-xl border border-indigo-200 flex items-center gap-2.5">
+              <span class="text-2xl">🟡</span>
+              <div>
+                <b class="text-amber-800 text-base">等腰直角三角板</b><br>
+                三個角分別為：<b>45°、45°、90° (直角)</b>
+              </div>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-indigo-200 flex items-center gap-2.5">
+              <span class="text-2xl">🔵</span>
+              <div>
+                <b class="text-sky-800 text-base">特殊直角三角板 (30-60-90)</b><br>
+                三個角分別為：<b>30°、60°、90° (直角)</b>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative w-full h-[400px] bg-slate-50 rounded-2xl border-2 border-indigo-300 shadow-inner overflow-hidden flex items-center justify-center">
+            <svg id="set-squares-svg" class="w-full h-full touch-none select-none" viewBox="0 0 600 400">
+              <defs>
+                <pattern id="grid-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E2E8F0" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+
+              <!-- Triangle 1: Isosceles 45-45-90 (Yellow) -->
+              <g id="tri-isosceles-group" transform="translate(140, 220) rotate(0)" class="cursor-move">
+                <polygon points="0,0 160,0 0,-160" fill="rgba(251, 191, 36, 0.65)" stroke="#D97706" stroke-width="3" stroke-linejoin="round"/>
+                <polygon points="25,-25 100,-25 25,-100" fill="rgba(255, 255, 255, 0.85)" stroke="#D97706" stroke-width="1.5"/>
+                <rect x="0" y="-18" width="18" height="18" fill="none" stroke="#B45309" stroke-width="2"/>
+                <text x="12" y="-5" font-size="12" font-weight="900" fill="#78350F">90°</text>
+                <text x="115" y="-10" font-size="13" font-weight="900" fill="#78350F">45°</text>
+                <text x="8" y="-125" font-size="13" font-weight="900" fill="#78350F">45°</text>
+                <g id="tri-iso-rot" transform="translate(80, -80)" class="cursor-grab">
+                  <circle cx="0" cy="0" r="14" fill="#F59E0B" stroke="#B45309" stroke-width="2"/>
+                  <text x="-7" y="5" font-size="12">🔄</text>
+                </g>
+              </g>
+
+              <!-- Triangle 2: 30-60-90 (Cyan/Blue) -->
+              <g id="tri-special-group" transform="translate(380, 240) rotate(0)" class="cursor-move">
+                <polygon points="0,0 110,0 0,-190.5" fill="rgba(56, 189, 248, 0.65)" stroke="#0284C7" stroke-width="3" stroke-linejoin="round"/>
+                <polygon points="20,-25 70,-25 20,-115" fill="rgba(255, 255, 255, 0.85)" stroke="#0284C7" stroke-width="1.5"/>
+                <rect x="0" y="-18" width="18" height="18" fill="none" stroke="#0369A1" stroke-width="2"/>
+                <text x="12" y="-5" font-size="12" font-weight="900" fill="#0C4A6E">90°</text>
+                <text x="75" y="-10" font-size="14" font-weight="900" fill="#0C4A6E">60°</text>
+                <text x="8" y="-155" font-size="14" font-weight="900" fill="#0C4A6E">30°</text>
+                <g id="tri-spec-rot" transform="translate(50, -95)" class="cursor-grab">
+                  <circle cx="0" cy="0" r="14" fill="#0284C7" stroke="#0369A1" stroke-width="2"/>
+                  <text x="-7" y="5" font-size="12">🔄</text>
+                </g>
+              </g>
+            </svg>
+
+            <div class="absolute top-3 left-3 bg-white/90 text-indigo-950 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold border border-indigo-200 shadow-sm">
+              💡 試著拖曳三角板移動、按住 🔄 旋轉，將它們拼拼看能組合出哪些角度！
+            </div>
+            <button onclick="resetTrianglesPosition()" class="bubble-btn absolute bottom-3 right-3 bg-white text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300">
+              🔄 重置三角板位置
+            </button>
+          </div>
+        </div>
+
+        <!-- Mode B: Angle Addition (Angle 1 + Angle 2) -->
+        <div id="tri-panel-combine" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-4 items-start bg-indigo-50/50 p-4 rounded-2xl border-2 border-indigo-200">
+          <!-- Dynamic Combining Angles SVG Display -->
+          <div class="lg:col-span-6 relative h-[380px] bg-white rounded-2xl border-2 border-indigo-300 shadow-inner flex items-center justify-center overflow-hidden">
+            <svg id="calc-combine-svg" class="w-full h-full select-none" viewBox="0 0 420 380">
+              <g id="calc-svg-fan-layer"></g>
+              <!-- Center Vertex -->
+              <circle cx="210" cy="270" r="7" fill="#1E293B"/>
+              <text x="210" y="295" font-size="15" font-weight="bold" fill="#1E293B" text-anchor="middle">頂點</text>
+            </svg>
+            <div class="absolute top-3 left-3 bg-indigo-100 text-indigo-900 px-3 py-1 rounded-xl text-xs font-bold border border-indigo-300">
+              圖形合成視圖（共用同一頂點與一條邊）
+            </div>
+          </div>
+
+          <!-- Controls & Questions -->
+          <div class="lg:col-span-6 space-y-3 flex flex-col">
+            <div class="bg-white p-4 rounded-2xl border-2 border-indigo-200 shadow-sm space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-bold bg-indigo-100 text-indigo-900 px-3 py-1 rounded-full">角度加法探索</span>
+                <span class="text-sm font-semibold text-slate-500">拉動滑桿改變角度</span>
+              </div>
+
+              <!-- Angle 1 Slider -->
+              <div class="space-y-1 bg-amber-50 p-3 rounded-xl border border-amber-200">
+                <div class="flex justify-between items-center text-sm font-bold text-amber-950">
+                  <span>🟧 角 1 (橘色)：</span>
+                  <span id="label-deg1" class="text-lg font-black text-amber-600 font-number">45°</span>
+                </div>
+                <input type="range" id="slider-deg1" min="10" max="90" step="5" value="45" oninput="updateAngleCombine()" class="w-full accent-amber-500 cursor-pointer">
+              </div>
+
+              <!-- Angle 2 Slider -->
+              <div class="space-y-1 bg-blue-50 p-3 rounded-xl border border-blue-200">
+                <div class="flex justify-between items-center text-sm font-bold text-blue-950">
+                  <span>🟦 角 2 (藍色)：</span>
+                  <span id="label-deg2" class="text-lg font-black text-blue-600 font-number">30°</span>
+                </div>
+                <input type="range" id="slider-deg2" min="10" max="90" step="5" value="30" oninput="updateAngleCombine()" class="w-full accent-blue-500 cursor-pointer">
+              </div>
+
+              <!-- Combination Formula Box -->
+              <div class="bg-emerald-50 p-3.5 rounded-xl border-2 border-emerald-300 text-center space-y-1">
+                <span class="text-sm font-bold text-emerald-900">✨ 兩角緊密拼在一起，合成角算式：</span>
+                <div class="text-2xl sm:text-3xl font-black text-emerald-700 font-number" id="combine-formula-disp">
+                  45° + 30° = 75°
+                </div>
+                <div class="text-sm font-bold text-emerald-800" id="combine-type-disp">
+                  75° 是銳角（小於 90°）
+                </div>
+              </div>
+
+              <!-- Classic Triangle Combos Quick Buttons -->
+              <div class="space-y-1">
+                <span class="text-xs font-bold text-slate-500">四年級常見三角板拼角速選：</span>
+                <div class="flex flex-wrap gap-1.5">
+                  <button onclick="setCombinePreset(45, 45)" class="bubble-btn px-2.5 py-1 bg-slate-100 text-slate-800 text-xs font-bold rounded-lg border border-slate-300">
+                    45° + 45° = 90°
+                  </button>
+                  <button onclick="setCombinePreset(45, 30)" class="bubble-btn px-2.5 py-1 bg-slate-100 text-slate-800 text-xs font-bold rounded-lg border border-slate-300">
+                    45° + 30° = 75°
+                  </button>
+                  <button onclick="setCombinePreset(45, 60)" class="bubble-btn px-2.5 py-1 bg-slate-100 text-slate-800 text-xs font-bold rounded-lg border border-slate-300">
+                    45° + 60° = 105°
+                  </button>
+                  <button onclick="setCombinePreset(45, 90)" class="bubble-btn px-2.5 py-1 bg-slate-100 text-slate-800 text-xs font-bold rounded-lg border border-slate-300">
+                    45° + 90° = 135°
+                  </button>
+                  <button onclick="setCombinePreset(60, 90)" class="bubble-btn px-2.5 py-1 bg-slate-100 text-slate-800 text-xs font-bold rounded-lg border border-slate-300">
+                    60° + 90° = 150°
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <button onclick="switchTab('tab-quiz')" class="w-full bubble-btn bg-rose-500 hover:bg-rose-600 text-white font-black py-2.5 rounded-2xl border-2 border-rose-700 text-center text-lg">
+              完成全部觀念！前往 12 題終極評量 ➔
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. FINAL 12-QUESTION QUIZ -->
+    <section id="tab-quiz" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-3xl p-4 sm:p-6 card-cute border-rose-400">
+        <!-- Stage Intro Banner (Collapsible) -->
+        <div class="stage-tip-banner flex flex-wrap items-center justify-between gap-3 mb-3 border-b border-rose-100 pb-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-rose-100 text-rose-700 text-2xl p-2 rounded-2xl">🏆</span>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-rose-950 font-cute">終極評量：12題全能素養測驗</h2>
+              <p class="text-slate-600 text-base sm:text-lg">由淺入深，檢驗你的角度大師實力！遇到計算可開啟草稿板喔！</p>
+            </div>
+          </div>
+          <button onclick="toggleTipsMode()" class="shrink-0 bubble-btn text-xs text-rose-700 bg-rose-50 border border-rose-300 px-2.5 py-1.5 rounded-xl font-bold hover:bg-rose-100 hidden sm:block">
+            🔼 收合提示
+          </button>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="compact-tip-bar hidden items-center gap-2">
+            <span class="text-sm font-black text-rose-900 font-cute">終極評量（共12題）</span>
+            <button onclick="toggleTipsMode()" class="text-xs text-rose-700 underline font-bold">展開解說 🔽</button>
+          </div>
+          <!-- Score Indicator -->
+          <div class="bg-amber-100 border-2 border-amber-400 px-4 py-1.5 rounded-2xl flex items-center gap-2 ml-auto">
+            <span class="text-sm font-bold text-amber-900">目前答對：</span>
+            <span id="quiz-score-badge" class="text-2xl font-black text-amber-700 font-number">0 / 12</span>
+          </div>
+        </div>
+
+        <div id="quiz-card-container" class="bg-rose-50/50 p-4 sm:p-6 rounded-2xl border-2 border-rose-200">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Scratchpad Floating Canvas Modal -->
+  <div id="scratchpad-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-3">
+    <div class="bg-white rounded-3xl w-full max-w-2xl border-4 border-emerald-500 shadow-2xl overflow-hidden flex flex-col">
+      <!-- Header -->
+      <div class="bg-emerald-400 px-4 py-3 border-b-2 border-emerald-600 flex items-center justify-between text-emerald-950">
+        <div class="flex items-center gap-2 font-black text-lg">
+          <span>📝</span> 隨手塗鴉與計算草稿板
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="clearScratchpad()" class="bubble-btn bg-white text-emerald-900 text-xs font-bold px-3 py-1 rounded-xl border border-emerald-600">
+            🧹 清空
+          </button>
+          <button onclick="toggleScratchpad()" class="bubble-btn bg-emerald-800 text-white text-xs font-bold px-3 py-1 rounded-xl">
+            ✕ 關閉
+          </button>
+        </div>
+      </div>
+      <!-- Canvas -->
+      <div class="p-2 bg-slate-50 flex-1">
+        <canvas id="scratch-canvas" class="w-full h-80 bg-white rounded-2xl border-2 border-dashed border-emerald-300 touch-none cursor-crosshair"></canvas>
+      </div>
+      <div class="px-4 py-2 bg-emerald-50 text-xs text-emerald-800 font-semibold flex justify-between">
+        <span>💡 支援手指/觸控筆書寫計算算式與畫圖輔助思考</span>
+        <span>色筆：深藍色</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-amber-100 border-t-2 border-amber-300 py-3 px-4 text-center text-sm text-amber-900 font-bold">
+    🌟 國小四年級數學：角度、量角器與旋轉角 | 互動教學網頁小幫手 🌟
+  </footer>
+
+  <script>
+    /* Audio Tone Synthesizer */
+    let soundEnabled = true;
+    const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    let isCinemaMode = false;
+    const allTabIds = [
+      'tab-compare', 
+      'tab-teach', 
+      'tab-measure', 
+      'tab-draw', 
+      'tab-classify', 
+      'tab-rotate', 
+      'tab-triangle-calc', 
+      'tab-quiz'
+    ];
+
+    /* 16:9 Cinema Fullscreen Mode Toggle */
+    function toggleCinemaMode() {
+      isCinemaMode = !isCinemaMode;
+      document.body.classList.toggle('cinema-mode', isCinemaMode);
+
+      const toggleBtn = document.getElementById('toggle-cinema-btn');
+      if (toggleBtn) {
+        toggleBtn.innerHTML = isCinemaMode 
+          ? '<span>🔽</span> <span>展開選單列</span>' 
+          : '<span>🖥️</span> <span>16:9 最大畫面 (收合選單)</span>';
+      }
+
+      const cinemaSelect = document.getElementById('cinema-stage-select');
+      const activeTab = document.querySelector('.tab-content:not(.hidden)');
+      if (cinemaSelect && activeTab) {
+        cinemaSelect.value = activeTab.id;
+      }
+      playTone(560, 0.08);
+    }
+
+    function toggleTipsMode() {
+      document.body.classList.toggle('tips-collapsed');
+      const isCollapsed = document.body.classList.contains('tips-collapsed');
+      document.querySelectorAll('.stage-tip-banner').forEach(el => {
+        el.style.display = isCollapsed ? 'none' : '';
+      });
+      document.querySelectorAll('.compact-tip-bar').forEach(el => {
+        el.style.display = isCollapsed ? 'flex' : 'none';
+      });
+      playTone(500, 0.05);
+    }
+
+    function prevTab() {
+      const currentTab = document.querySelector('.tab-content:not(.hidden)');
+      const currentId = currentTab ? currentTab.id : allTabIds[0];
+      const idx = allTabIds.indexOf(currentId);
+      const prevIdx = (idx - 1 + allTabIds.length) % allTabIds.length;
+      switchTab(allTabIds[prevIdx]);
+    }
+
+    function nextTab() {
+      const currentTab = document.querySelector('.tab-content:not(.hidden)');
+      const currentId = currentTab ? currentTab.id : allTabIds[0];
+      const idx = allTabIds.indexOf(currentId);
+      const nextIdx = (idx + 1) % allTabIds.length;
+      switchTab(allTabIds[nextIdx]);
+    }
+
+    function playTone(freq, duration, type = 'sine') {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new AudioCtxClass();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playSuccessSound() {
+      playTone(523.25, 0.1);
+      setTimeout(() => playTone(659.25, 0.1), 100);
+      setTimeout(() => playTone(783.99, 0.2), 200);
+    }
+
+    function playErrorSound() {
+      playTone(220, 0.15, 'triangle');
+      setTimeout(() => playTone(180, 0.2, 'triangle'), 120);
+    }
+
+    function toggleAudio() {
+      soundEnabled = !soundEnabled;
+      const soundText = soundEnabled ? '🔊' : '🔇';
+      document.getElementById('sound-btn').textContent = soundText;
+      const cinemaSound = document.getElementById('cinema-sound-btn');
+      if (cinemaSound) cinemaSound.textContent = soundText;
+    }
+
+    /* Tab Switching Logic */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      const activeEl = document.getElementById(tabId);
+      if (activeEl) activeEl.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        if (btn.getAttribute('data-tab') === tabId) {
+          btn.classList.add('bg-white', 'active-tab');
+          btn.classList.remove('bg-amber-100', 'bg-rose-400', 'text-white');
+        } else {
+          btn.classList.remove('bg-white', 'active-tab');
+          if (btn.getAttribute('data-tab') === 'tab-quiz') {
+            btn.classList.add('bg-rose-400', 'text-white');
+          } else {
+            btn.classList.add('bg-amber-100');
+          }
+        }
+      });
+
+      const cinemaSelect = document.getElementById('cinema-stage-select');
+      if (cinemaSelect) {
+        cinemaSelect.value = tabId;
+      }
+      playTone(440, 0.05);
+
+      if (tabId === 'tab-teach') renderFullProtractorTicks('teach-protractor-ticks', 270, 260, 240);
+      if (tabId === 'tab-measure') loadMeasureQuestion(measureCurrentIdx);
+      if (tabId === 'tab-draw') initDrawProtractor();
+      if (tabId === 'tab-classify') initClassifyGame();
+      if (tabId === 'tab-rotate') initRotateDial();
+      if (tabId === 'tab-triangle-calc') initTriangleCalcStage();
+      if (tabId === 'tab-quiz') loadQuizQuestion(quizCurrentIdx);
+    }
+
+    /* Helper: SVG Coordinate Transformation */
+    function getSvgCoords(e, svgEl) {
+      const pt = svgEl.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      return pt.matrixTransform(svgEl.getScreenCTM().inverse());
+    }
+
+    /* Full Scale Generator:
+       - Outer scale: Left (deg=180) is 0°, Right (deg=0) is 180°
+       - Inner scale: Right (deg=0) is 0°, Left (deg=180) is 180°
+    */
+    function renderFullProtractorTicks(containerId, cx, cy, r) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = '';
+
+      let html = '';
+      for (let deg = 0; deg <= 180; deg++) {
+        const rad = deg * Math.PI / 180;
+        let tickLen = 5;
+        let strokeW = 0.5;
+        let strokeColor = '#94A3B8';
+
+        if (deg % 10 === 0) {
+          tickLen = 14;
+          strokeW = 1.4;
+          strokeColor = '#0369A1';
+        } else if (deg % 5 === 0) {
+          tickLen = 9;
+          strokeW = 1.0;
+          strokeColor = '#0284C7';
+        }
+
+        const x1 = cx + (r - 6) * Math.cos(rad);
+        const y1 = cy - (r - 6) * Math.sin(rad);
+        const x2 = cx + (r - 6 - tickLen) * Math.cos(rad);
+        const y2 = cy - (r - 6 - tickLen) * Math.sin(rad);
+
+        html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${strokeColor}" stroke-width="${strokeW}"/>`;
+
+        if (deg % 10 === 0) {
+          const outerDeg = 180 - deg;
+          const txOuter = cx + (r - 28) * Math.cos(rad);
+          const tyOuter = cy - (r - 28) * Math.sin(rad) + 3.5;
+          html += `<text x="${txOuter}" y="${tyOuter}" fill="#7C3AED" font-size="9" font-weight="bold" font-family="Quicksand, sans-serif" text-anchor="middle">${outerDeg}</text>`;
+
+          const innerDeg = deg;
+          const txInner = cx + (r - 46) * Math.cos(rad);
+          const tyInner = cy - (r - 46) * Math.sin(rad) + 3.5;
+          html += `<text x="${txInner}" y="${tyInner}" fill="#047857" font-size="9" font-weight="bold" font-family="Quicksand, sans-serif" text-anchor="middle">${innerDeg}</text>`;
+        }
+      }
+      container.innerHTML = html;
+    }
+
+    /* Stage 1: Compare Angles Drag Logic */
+    let angleAPos = { x: 380, y: 250 };
+    let isDraggingAngleA = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    const compareSvg = document.getElementById('compare-svg');
+    const angleAGroup = document.getElementById('angle-a-group');
+
+    if (angleAGroup) {
+      angleAGroup.addEventListener('pointerdown', (e) => {
+        isDraggingAngleA = true;
+        const pt = getSvgCoords(e, compareSvg);
+        dragStartX = pt.x - angleAPos.x;
+        dragStartY = pt.y - angleAPos.y;
+        angleAGroup.setPointerCapture(e.pointerId);
+      });
+    }
+
+    window.addEventListener('pointermove', (e) => {
+      if (isDraggingAngleA && angleAGroup) {
+        const pt = getSvgCoords(e, compareSvg);
+        angleAPos.x = pt.x - dragStartX;
+        angleAPos.y = pt.y - dragStartY;
+        angleAGroup.setAttribute('transform', `translate(${angleAPos.x}, ${angleAPos.y})`);
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      if (isDraggingAngleA) {
+        isDraggingAngleA = false;
+        const dist = Math.hypot(angleAPos.x - 180, angleAPos.y - 250);
+        if (dist < 45) {
+          angleAPos = { x: 180, y: 250 };
+          angleAGroup.setAttribute('transform', `translate(180, 250)`);
+          playTone(587.33, 0.1);
+        }
+      }
+    });
+
+    function resetCompare() {
+      angleAPos = { x: 380, y: 250 };
+      if (angleAGroup) angleAGroup.setAttribute('transform', `translate(380, 250)`);
+      document.getElementById('compare-feedback').classList.add('hidden');
+    }
+
+    function checkCompareGuess(choice) {
+      const fb = document.getElementById('compare-feedback');
+      const fbt = document.getElementById('compare-feedback-text');
+      fb.classList.remove('hidden');
+
+      if (choice === 'A') {
+        playErrorSound();
+        fbt.innerHTML = `❌ <b>差一點點喔！</b><br>雖然「角甲」的兩條邊畫得很長，但把頂點疊合後會發現：「角乙」張開的幅度其實比「角甲」還要大喔！<br><span class="text-rose-700">★ 記住：角的大小只看「張開的程度」，跟「邊的長短」無關！</span>`;
+      } else {
+        playSuccessSound();
+        confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+        fbt.innerHTML = `🎉 <b>太厲害了！完全正確！</b><br>角乙張開了 60 度，角甲只有 45 度！所以角乙比較大。<br>單純用眼睛看容易被邊長騙倒，所以我們需要標準工具——<b>「量角器」</b>！`;
+      }
+    }
+
+    /* Stage 2: Feature Highlighting */
+    function highlightFeature(feat) {
+      playTone(600, 0.08);
+      document.getElementById('highlight-outer').classList.add('hidden');
+      document.getElementById('highlight-inner').classList.add('hidden');
+
+      if (feat === 'outer') document.getElementById('highlight-outer').classList.remove('hidden');
+      if (feat === 'inner') document.getElementById('highlight-inner').classList.remove('hidden');
+    }
+
+    /* Stage 3: Measure Challenge Engine */
+    const measureQuestions = [
+      { 
+        id: 1, 
+        angle: 50, 
+        baseAngle: 0, 
+        vertex: { x: 300, y: 270 }, 
+        armLen: 170, 
+        alignRot: 0,
+        type: '銳角量測 (開口向右)', 
+        hint: '開口向右，頂點對齊中心點，從右邊 0 度（內圈）開始讀到 50°！' 
+      },
+      { 
+        id: 2, 
+        angle: 90, 
+        baseAngle: 0, 
+        vertex: { x: 300, y: 270 }, 
+        armLen: 170, 
+        alignRot: 0,
+        type: '直角量測', 
+        hint: '兩條邊互相垂直，從 0 度讀到 90 度，剛好是直角！' 
+      },
+      { 
+        id: 3, 
+        angle: 135, 
+        baseAngle: 0, 
+        vertex: { x: 300, y: 270 }, 
+        armLen: 170, 
+        alignRot: 0,
+        type: '鈍角量測 (開口向右)', 
+        hint: '張開比直角大，看內圈綠色數字，剛好在 130 和 140 中間（135°）。' 
+      },
+      { 
+        id: 4, 
+        angle: 65, 
+        baseAngle: 180, 
+        vertex: { x: 300, y: 270 }, 
+        armLen: 170, 
+        alignRot: 0,
+        type: '銳角量測 (開口向左)', 
+        hint: '角的一邊在左側 0 度線，要從左邊 0 度（外圈紫色刻度）開始往上讀到 65° 喔！' 
+      },
+      { 
+        id: 5, 
+        angle: 110, 
+        baseAngle: 25, 
+        vertex: { x: 300, y: 270 }, 
+        armLen: 170, 
+        alignRot: -25,
+        type: '傾斜角度挑戰', 
+        hint: '角的底邊稍微傾斜（25°），按住上方橘色 🔄 旋轉量角器，讓底線與角的一邊完全重疊！' 
+      },
+    ];
+
+    let measureCurrentIdx = 0;
+    let protPos = { x: 200, y: 340, rot: 0 };
+    let isDraggingProt = false;
+    let isRotatingProt = false;
+    let protDragOffset = { x: 0, y: 0 };
+    const measureSvg = document.getElementById('measure-svg');
+    const dragProtractor = document.getElementById('draggable-protractor');
+    const protRotHandle = document.getElementById('protractor-rot-handle');
+
+    function loadMeasureQuestion(idx) {
+      measureCurrentIdx = idx;
+      const q = measureQuestions[idx];
+      document.getElementById('measure-q-number').textContent = `第 ${idx + 1} / 5 題`;
+      document.getElementById('measure-q-type').textContent = q.type;
+      document.getElementById('measure-user-input').value = '';
+      document.getElementById('measure-feedback').classList.add('hidden');
+      document.getElementById('align-hint-badge').classList.add('hidden');
+
+      const dots = document.getElementById('measure-progress-dots').children;
+      for (let i = 0; i < dots.length; i++) {
+        if (i === idx) {
+          dots[i].className = 'w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm bg-blue-600 text-white border-2 border-blue-800 scale-110';
+        } else if (i < idx) {
+          dots[i].className = 'w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm bg-emerald-500 text-white border-2 border-emerald-700';
+        } else {
+          dots[i].className = 'w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm bg-slate-200 text-slate-700 border-2 border-slate-400';
+        }
+      }
+
+      const g = document.getElementById('measure-target-angle');
+      const radBase = q.baseAngle * Math.PI / 180;
+      let radArm2;
+      if (q.baseAngle === 180) {
+        radArm2 = (180 - q.angle) * Math.PI / 180;
+      } else {
+        radArm2 = (q.baseAngle + q.angle) * Math.PI / 180;
+      }
+
+      const p1x = q.vertex.x + q.armLen * Math.cos(radBase);
+      const p1y = q.vertex.y - q.armLen * Math.sin(radBase);
+      const p2x = q.vertex.x + q.armLen * Math.cos(radArm2);
+      const p2y = q.vertex.y - q.armLen * Math.sin(radArm2);
+
+      const arcR = 45;
+      const a1x = q.vertex.x + arcR * Math.cos(radBase);
+      const a1y = q.vertex.y - arcR * Math.sin(radBase);
+      const a2x = q.vertex.x + arcR * Math.cos(radArm2);
+      const a2y = q.vertex.y - arcR * Math.sin(radArm2);
+      const sweep = q.baseAngle === 180 ? 1 : 0;
+      const arcPath = `<path d="M ${a1x},${a1y} A ${arcR} ${arcR} 0 0 ${sweep} ${a2x} ${a2y}" fill="none" stroke="#F59E0B" stroke-width="3.5" stroke-dasharray="5,3"/>`;
+
+      g.innerHTML = `
+        ${arcPath}
+        <line x1="${q.vertex.x}" y1="${q.vertex.y}" x2="${p1x}" y2="${p1y}" stroke="#1E293B" stroke-width="6" stroke-linecap="round"/>
+        <line x1="${q.vertex.x}" y1="${q.vertex.y}" x2="${p2x}" y2="${p2y}" stroke="#1E293B" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="${q.vertex.x}" cy="${q.vertex.y}" r="8" fill="#2563EB"/>
+        <text x="${q.vertex.x - 20}" y="${q.vertex.y + 26}" font-size="15" font-weight="bold" fill="#1E293B">頂點</text>
+      `;
+
+      renderMeasureProtractorTicks();
+      resetMeasureProtractor();
+    }
+
+    function renderMeasureProtractorTicks() {
+      const container = document.getElementById('measure-prot-ticks');
+      if (!container) return;
+      container.innerHTML = '';
+      let html = '';
+      const r = 210;
+      for (let deg = 0; deg <= 180; deg++) {
+        const rad = deg * Math.PI / 180;
+        let tickLen = 4;
+        let strokeW = 0.5;
+        let strokeColor = '#94A3B8';
+
+        if (deg % 10 === 0) {
+          tickLen = 12;
+          strokeW = 1.2;
+          strokeColor = '#0369A1';
+        } else if (deg % 5 === 0) {
+          tickLen = 8;
+          strokeW = 0.9;
+          strokeColor = '#0284C7';
+        }
+
+        const x1 = (r - 6) * Math.cos(rad);
+        const y1 = -(r - 6) * Math.sin(rad);
+        const x2 = (r - 6 - tickLen) * Math.cos(rad);
+        const y2 = -(r - 6 - tickLen) * Math.sin(rad);
+
+        html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${strokeColor}" stroke-width="${strokeW}"/>`;
+
+        if (deg % 10 === 0) {
+          const outerDeg = 180 - deg;
+          const txOuter = (r - 24) * Math.cos(rad);
+          const tyOuter = -(r - 24) * Math.sin(rad) + 3.5;
+          html += `<text x="${txOuter}" y="${tyOuter}" fill="#7C3AED" font-size="8.5" font-weight="bold" font-family="Quicksand, sans-serif" text-anchor="middle">${outerDeg}</text>`;
+
+          const innerDeg = deg;
+          const txInner = (r - 42) * Math.cos(rad);
+          const tyInner = -(r - 42) * Math.sin(rad) + 3.5;
+          html += `<text x="${txInner}" y="${tyInner}" fill="#047857" font-size="8.5" font-weight="bold" font-family="Quicksand, sans-serif" text-anchor="middle">${innerDeg}</text>`;
+        }
+      }
+      container.innerHTML = html;
+    }
+
+    function updateProtractorTransform() {
+      if (dragProtractor) {
+        dragProtractor.setAttribute('transform', `translate(${protPos.x}, ${protPos.y}) rotate(${protPos.rot})`);
+      }
+    }
+
+    function resetMeasureProtractor() {
+      if (!dragProtractor) return;
+      dragProtractor.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+      protPos = { x: 200, y: 340, rot: 0 };
+      updateProtractorTransform();
+      document.getElementById('align-hint-badge').classList.add('hidden');
+      setTimeout(() => {
+        if (dragProtractor) dragProtractor.style.transition = '';
+      }, 350);
+    }
+
+    function autoAlignProtractor() {
+      if (!dragProtractor) return;
+      const q = measureQuestions[measureCurrentIdx];
+      dragProtractor.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
+      protPos = { x: q.vertex.x, y: q.vertex.y, rot: q.alignRot };
+      updateProtractorTransform();
+      playTone(580, 0.12);
+
+      const hintBadge = document.getElementById('align-hint-badge');
+      hintBadge.classList.remove('hidden');
+      setTimeout(() => {
+        if (dragProtractor) dragProtractor.style.transition = '';
+      }, 420);
+    }
+
+    if (dragProtractor) {
+      dragProtractor.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('#protractor-rot-handle')) return;
+        dragProtractor.style.transition = '';
+        isDraggingProt = true;
+        const pt = getSvgCoords(e, measureSvg);
+        protDragOffset.x = pt.x - protPos.x;
+        protDragOffset.y = pt.y - protPos.y;
+        dragProtractor.setPointerCapture(e.pointerId);
+      });
+    }
+
+    if (protRotHandle) {
+      protRotHandle.addEventListener('pointerdown', (e) => {
+        if (dragProtractor) dragProtractor.style.transition = '';
+        isRotatingProt = true;
+        e.stopPropagation();
+        protRotHandle.setPointerCapture(e.pointerId);
+      });
+    }
+
+    window.addEventListener('pointermove', (e) => {
+      if (isDraggingProt) {
+        const pt = getSvgCoords(e, measureSvg);
+        protPos.x = pt.x - protDragOffset.x;
+        protPos.y = pt.y - protDragOffset.y;
+        updateProtractorTransform();
+      } else if (isRotatingProt) {
+        const pt = getSvgCoords(e, measureSvg);
+        const dx = pt.x - protPos.x;
+        const dy = pt.y - protPos.y;
+        let angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+        protPos.rot = Math.round(angle);
+        updateProtractorTransform();
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      isDraggingProt = false;
+      isRotatingProt = false;
+    });
+
+    function checkMeasureAnswer() {
+      const val = parseInt(document.getElementById('measure-user-input').value, 10);
+      const fb = document.getElementById('measure-feedback');
+      fb.classList.remove('hidden');
+
+      if (isNaN(val)) {
+        playErrorSound();
+        fb.className = 'p-3.5 rounded-2xl border-2 bg-amber-100 border-amber-300 text-amber-950 font-bold';
+        fb.textContent = '請先輸入你測量出來的度數喔！';
+        return;
+      }
+
+      const q = measureQuestions[measureCurrentIdx];
+      const diff = Math.abs(val - q.angle);
+
+      if (diff === 0) {
+        playSuccessSound();
+        confetti({ particleCount: 35, spread: 50 });
+        fb.className = 'p-3.5 rounded-2xl border-2 bg-emerald-100 border-emerald-300 text-emerald-950 font-bold';
+        fb.innerHTML = `🎉 <b>太準確了！答案就是 ${q.angle}°！</b>`;
+        setTimeout(() => {
+          if (measureCurrentIdx < 4) loadMeasureQuestion(measureCurrentIdx + 1);
+          else {
+            fb.innerHTML += `<div class="mt-2 text-emerald-800">🌟 5題量測全數完成！前往第4關畫角度！</div>`;
+          }
+        }, 1500);
+      } else if (diff <= 3) {
+        playSuccessSound();
+        fb.className = 'p-3.5 rounded-2xl border-2 bg-emerald-100 border-emerald-300 text-emerald-950 font-bold';
+        fb.innerHTML = `👏 <b>非常接近！標準答案是 ${q.angle}°（你量了 ${val}°），繼續保持！</b>`;
+      } else {
+        playErrorSound();
+        fb.className = 'p-3.5 rounded-2xl border-2 bg-rose-100 border-rose-300 text-rose-950 font-bold';
+        fb.innerHTML = `❌ 測量結果不太對喔（你輸入 ${val}°）！<br>💡 <b>小提示：</b>${q.hint}`;
+      }
+    }
+
+    /* Stage 4: Draw Angle Logic */
+    let drawScaleMode = 'inner';
+    let drawTargetDeg = 65;
+    let drawCurrentDeg = 45;
+    let isDraggingDrawArm = false;
+    const drawSvg = document.getElementById('draw-svg');
+    const drawArmHandle = document.getElementById('draw-arm-handle');
+
+    function initDrawProtractor() {
+      renderFullProtractorTicks('draw-static-protractor', 0, 0, 200);
+      setDrawScaleMode(drawScaleMode);
+    }
+
+    function setDrawScaleMode(mode) {
+      drawScaleMode = mode;
+      const innerBtn = document.getElementById('draw-mode-inner-btn');
+      const outerBtn = document.getElementById('draw-mode-outer-btn');
+      const fixedRay = document.getElementById('draw-fixed-ray');
+      const scaleInfo = document.getElementById('draw-scale-info');
+
+      if (mode === 'inner') {
+        innerBtn.className = 'bubble-btn px-4 py-2 rounded-xl font-black text-base bg-emerald-600 text-white border-2 border-emerald-800';
+        outerBtn.className = 'bubble-btn px-4 py-2 rounded-xl font-bold text-base bg-white text-purple-900 border-2 border-purple-400';
+        fixedRay.setAttribute('x2', '500');
+        fixedRay.setAttribute('stroke', '#059669');
+        scaleInfo.textContent = '目前報讀（內圈，右起）：';
+      } else {
+        outerBtn.className = 'bubble-btn px-4 py-2 rounded-xl font-black text-base bg-purple-600 text-white border-2 border-purple-800';
+        innerBtn.className = 'bubble-btn px-4 py-2 rounded-xl font-bold text-base bg-white text-emerald-900 border-2 border-emerald-400';
+        fixedRay.setAttribute('x2', '100');
+        fixedRay.setAttribute('stroke', '#7C3AED');
+        scaleInfo.textContent = '目前報讀（外圈，左起）：';
+      }
+      updateDrawArm(drawCurrentDeg);
+      playTone(490, 0.06);
+    }
+
+    function updateDrawArm(deg) {
+      drawCurrentDeg = Math.max(0, Math.min(180, Math.round(deg)));
+      
+      let rad;
+      if (drawScaleMode === 'inner') {
+        rad = drawCurrentDeg * Math.PI / 180;
+      } else {
+        rad = (180 - drawCurrentDeg) * Math.PI / 180;
+      }
+
+      const x = 300 + 200 * Math.cos(rad);
+      const y = 320 - 200 * Math.sin(rad);
+
+      const movingRay = document.getElementById('draw-moving-ray');
+      const handle = document.getElementById('draw-arm-handle');
+      const fan = document.getElementById('draw-angle-fan');
+      const label = document.getElementById('draw-current-degree-label');
+      const disp = document.getElementById('draw-current-disp');
+
+      if (movingRay) {
+        movingRay.setAttribute('x2', x);
+        movingRay.setAttribute('y2', y);
+      }
+      if (handle) handle.setAttribute('transform', `translate(${x}, ${y})`);
+      if (label) label.textContent = `${drawCurrentDeg}°`;
+      if (disp) disp.textContent = `${drawCurrentDeg}°`;
+
+      if (fan) {
+        if (drawScaleMode === 'inner') {
+          fan.setAttribute('d', `M 300,320 L 500,320 A 200 200 0 0 0 ${x} ${y} Z`);
+          fan.setAttribute('fill', 'rgba(16, 185, 129, 0.25)');
+          fan.setAttribute('stroke', '#10B981');
+        } else {
+          fan.setAttribute('d', `M 300,320 L 100,320 A 200 200 0 0 1 ${x} ${y} Z`);
+          fan.setAttribute('fill', 'rgba(139, 92, 246, 0.25)');
+          fan.setAttribute('stroke', '#8B5CF6');
+        }
+      }
+    }
+
+    if (drawArmHandle) {
+      drawArmHandle.addEventListener('pointerdown', (e) => {
+        isDraggingDrawArm = true;
+        drawArmHandle.setPointerCapture(e.pointerId);
+      });
+    }
+
+    window.addEventListener('pointermove', (e) => {
+      if (!isDraggingDrawArm) return;
+      const pt = getSvgCoords(e, drawSvg);
+      const dx = pt.x - 300;
+      const dy = 320 - pt.y;
+      let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+      if (angle < 0) angle = (pt.x >= 300) ? 0 : 180;
+
+      if (drawScaleMode === 'inner') {
+        updateDrawArm(angle);
+      } else {
+        updateDrawArm(180 - angle);
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      isDraggingDrawArm = false;
+    });
+
+    function checkDrawMatch() {
+      const fb = document.getElementById('draw-feedback');
+      fb.classList.remove('hidden');
+      const diff = Math.abs(drawCurrentDeg - drawTargetDeg);
+
+      if (diff === 0) {
+        playSuccessSound();
+        confetti({ particleCount: 40, spread: 60 });
+        fb.className = 'p-3 rounded-2xl border-2 bg-emerald-100 border-emerald-300 text-emerald-950 font-bold';
+        fb.innerHTML = `🎉 <b>太神了！完美精準畫出 ${drawTargetDeg}°！</b>`;
+      } else if (diff <= 3) {
+        playSuccessSound();
+        fb.className = 'p-3 rounded-2xl border-2 bg-emerald-100 border-emerald-300 text-emerald-950 font-bold';
+        fb.innerHTML = `👏 <b>畫得非常棒！目標是 ${drawTargetDeg}°，你畫了 ${drawCurrentDeg}°！</b>`;
+      } else {
+        playErrorSound();
+        fb.className = 'p-3 rounded-2xl border-2 bg-rose-100 border-rose-300 text-rose-950 font-bold';
+        fb.innerHTML = `❌ 目前畫出的是 ${drawCurrentDeg}°，再微調一下指針對齊 ${drawTargetDeg}° 吧！`;
+      }
+    }
+
+    function nextDrawChallenge() {
+      const pool = [30, 45, 60, 75, 90, 110, 120, 135, 150];
+      const nextDeg = pool[Math.floor(Math.random() * pool.length)];
+      drawTargetDeg = nextDeg;
+      document.getElementById('draw-target-degree').textContent = `${drawTargetDeg}°`;
+      let hint = '';
+      if (drawTargetDeg < 90) hint = '（銳角：小於 90 度）';
+      else if (drawTargetDeg === 90) hint = '（直角：剛好等於 90 度）';
+      else hint = '（鈍角：大於 90 度小於 180 度）';
+      document.getElementById('draw-target-hint').textContent = hint;
+      document.getElementById('draw-feedback').classList.add('hidden');
+      playTone(520, 0.08);
+    }
+
+    /* Stage 5: Graphic Angle Classification Game */
+    const classifyCards = [
+      { id: 'c1', deg: 35, type: 'acute' },
+      { id: 'c2', deg: 90, type: 'right' },
+      { id: 'c3', deg: 125, type: 'obtuse' },
+      { id: 'c4', deg: 60, type: 'acute' },
+      { id: 'c5', deg: 150, type: 'obtuse' },
+      { id: 'c6', deg: 90, type: 'right' },
+      { id: 'c7', deg: 45, type: 'acute' },
+      { id: 'c8', deg: 105, type: 'obtuse' }
+    ];
+
+    let selectedClassifyCardId = null;
+    let classifyState = {};
+
+    function initClassifyGame() {
+      classifyState = {};
+      selectedClassifyCardId = null;
+      document.getElementById('bin-acute-cards').innerHTML = '';
+      document.getElementById('bin-right-cards').innerHTML = '';
+      document.getElementById('bin-obtuse-cards').innerHTML = '';
+      renderClassifyPool();
+    }
+
+    function renderCardMiniSvg(deg) {
+      const rad = deg * Math.PI / 180;
+      const r = 26;
+      const x = 32 + r * Math.cos(rad);
+      const y = 32 - r * Math.sin(rad);
+
+      let arc = '';
+      if (deg === 90) {
+        arc = `<rect x="32" y="22" width="10" height="10" fill="none" stroke="#059669" stroke-width="2"/>`;
+      } else {
+        arc = `<path d="M 44,32 A 12 12 0 0 0 ${32 + 12 * Math.cos(rad)} ${32 - 12 * Math.sin(rad)}" fill="none" stroke="#7C3AED" stroke-width="2"/>`;
+      }
+
+      return `
+        <svg width="64" height="42" viewBox="0 0 64 42" class="shrink-0 bg-white rounded-lg border border-purple-200">
+          <line x1="32" y1="32" x2="58" y2="32" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
+          <line x1="32" y1="32" x2="${x}" y2="${y}" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
+          ${arc}
+          <circle cx="32" cy="32" r="3" fill="#6366F1"/>
+        </svg>
+      `;
+    }
+
+    function renderClassifyPool() {
+      const pool = document.getElementById('classify-cards-pool');
+      pool.innerHTML = '';
+      let remainingCount = 0;
+
+      classifyCards.forEach(c => {
+        if (!classifyState[c.id]) {
+          remainingCount++;
+          const isSelected = selectedClassifyCardId === c.id;
+          const cardEl = document.createElement('div');
+          cardEl.className = `bubble-btn flex items-center gap-2 p-2 px-3 rounded-2xl cursor-pointer border-2 transition ${isSelected ? 'bg-amber-200 border-amber-500 scale-105 shadow-lg ring-2 ring-amber-400' : 'bg-white border-purple-300 text-purple-950 hover:bg-purple-50'}`;
+          cardEl.innerHTML = `
+            ${renderCardMiniSvg(c.deg)}
+            <span class="font-number font-black text-lg">${c.deg}°</span>
+          `;
+          cardEl.onclick = () => selectCardToClassify(c.id);
+          pool.appendChild(cardEl);
+        }
+      });
+
+      document.getElementById('classify-remaining').textContent = `剩餘 ${remainingCount} 張`;
+      if (remainingCount === 0) {
+        confetti({ particleCount: 50, spread: 70 });
+        pool.innerHTML = `<div class="text-emerald-700 font-bold text-lg">🎉 恭喜！你成功把所有角度幾何圖形精準分類囉！</div>`;
+      }
+    }
+
+    function selectCardToClassify(cardId) {
+      selectedClassifyCardId = cardId;
+      playTone(500, 0.05);
+      renderClassifyPool();
+    }
+
+    function assignSelectedCard(binType) {
+      if (!selectedClassifyCardId) {
+        playErrorSound();
+        return;
+      }
+      const card = classifyCards.find(c => c.id === selectedClassifyCardId);
+      if (card.type === binType) {
+        playSuccessSound();
+        classifyState[card.id] = binType;
+        const binCards = document.getElementById(`bin-${binType}-cards`);
+        const badge = document.createElement('div');
+        badge.className = 'flex items-center gap-1 font-number text-sm font-bold bg-white px-2 py-1 rounded-xl border border-slate-300 shadow-sm';
+        badge.innerHTML = `${renderCardMiniSvg(card.deg)} <span>${card.deg}°</span>`;
+        binCards.appendChild(badge);
+        selectedClassifyCardId = null;
+        renderClassifyPool();
+      } else {
+        playErrorSound();
+      }
+    }
+
+    /* Stage 6: Clock Rotation & Universal Sentence Generator */
+    let rotStartNum = 9;
+    let rotEndNum = 12;
+    let rotDirection = 'cw';
+    let isClockAnimating = false;
+
+    function initRotateDial() {
+      renderClockNumbers();
+      populateSentenceDropdowns();
+      calculateRotationSentence();
+      hideRotateAnswer();
+    }
+
+    function revealRotateAnswer() {
+      const mask = document.getElementById('rotate-answer-mask');
+      const remaskBtn = document.getElementById('remask-btn');
+      if (mask) mask.classList.add('hidden');
+      if (remaskBtn) remaskBtn.classList.remove('hidden');
+      playSuccessSound();
+    }
+
+    function hideRotateAnswer() {
+      const mask = document.getElementById('rotate-answer-mask');
+      const remaskBtn = document.getElementById('remask-btn');
+      if (mask) mask.classList.remove('hidden');
+      if (remaskBtn) remaskBtn.classList.add('hidden');
+    }
+
+    function renderClockNumbers() {
+      const container = document.getElementById('clock-marks-container');
+      if (!container || container.children.length > 0) return;
+
+      let html = '';
+      const cx = 200, cy = 200, r = 160;
+
+      for (let i = 1; i <= 12; i++) {
+        const rad = (i * 30 - 90) * Math.PI / 180;
+        const x1 = cx + (r - 8) * Math.cos(rad);
+        const y1 = cy + (r - 8) * Math.sin(rad);
+        const x2 = cx + (r - 18) * Math.cos(rad);
+        const y2 = cy + (r - 18) * Math.sin(rad);
+
+        html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#F43F5E" stroke-width="3.5" stroke-linecap="round"/>`;
+
+        const tx = cx + (r - 34) * Math.cos(rad);
+        const ty = cy + (r - 34) * Math.sin(rad) + 6;
+        html += `<text x="${tx}" y="${ty}" text-anchor="middle" font-size="18" font-weight="900" fill="#9F1239" font-family="Quicksand, sans-serif">${i}</text>`;
+      }
+      container.innerHTML = html;
+    }
+
+    function populateSentenceDropdowns() {
+      const startSel = document.getElementById('rot-select-start');
+      const endSel = document.getElementById('rot-select-end');
+      if (!startSel || !endSel || startSel.children.length > 0) return;
+
+      for (let i = 1; i <= 12; i++) {
+        const opt1 = document.createElement('option');
+        opt1.value = i;
+        opt1.textContent = `${i} 點`;
+        if (i === 9) opt1.selected = true;
+        startSel.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = i;
+        opt2.textContent = `${i} 點`;
+        if (i === 12) opt2.selected = true;
+        endSel.appendChild(opt2);
+      }
+    }
+
+    function onRotateSentenceChanged() {
+      rotStartNum = parseInt(document.getElementById('rot-select-start').value, 10);
+      rotDirection = document.getElementById('rot-select-dir').value;
+      rotEndNum = parseInt(document.getElementById('rot-select-end').value, 10);
+      hideRotateAnswer();
+      calculateRotationSentence();
+    }
+
+    function setRotatePreset(start, dir, end) {
+      document.getElementById('rot-select-start').value = start;
+      document.getElementById('rot-select-dir').value = dir;
+      document.getElementById('rot-select-end').value = end;
+      onRotateSentenceChanged();
+      animateClockRotation();
+    }
+
+    function calculateRotationSentence() {
+      let steps = 0;
+      if (rotDirection === 'cw') {
+        steps = (rotEndNum - rotStartNum + 12) % 12;
+      } else {
+        steps = (rotStartNum - rotEndNum + 12) % 12;
+      }
+      if (steps === 0) steps = 12; // Complete circle
+
+      const totalDeg = steps * 30;
+
+      document.getElementById('calc-step-count').textContent = steps;
+      document.getElementById('calc-formula-text').textContent = `${steps} × 30° = ${totalDeg}°`;
+      document.getElementById('calc-result-deg').textContent = `${totalDeg}°`;
+
+      let catText = '';
+      if (totalDeg < 90) catText = '銳角（小於 1/4 圈）';
+      else if (totalDeg === 90) catText = '直角（剛好 1/4 圈）';
+      else if (totalDeg < 180) catText = '鈍角（介於 1/4 圈至半圈）';
+      else if (totalDeg === 180) catText = '平角（剛好半圈 180°）';
+      else if (totalDeg === 360) catText = '周角（完整轉一整圈 360°）';
+      else catText = `旋轉了 ${steps} 大格`;
+
+      document.getElementById('calc-angle-category').textContent = catText;
+
+      updateClockSector(rotStartNum, rotDirection, totalDeg);
+    }
+
+    function updateClockSector(startNum, dir, totalDeg) {
+      const cx = 200, cy = 200, r = 130;
+      const startAngleDeg = startNum * 30 - 90;
+      const startRad = startAngleDeg * Math.PI / 180;
+
+      const sx = cx + r * Math.cos(startRad);
+      const sy = cy + r * Math.sin(startRad);
+
+      const startRay = document.getElementById('rotate-start-ray');
+      if (startRay) {
+        startRay.setAttribute('x2', sx);
+        startRay.setAttribute('y2', sy);
+      }
+
+      let endAngleDeg = dir === 'cw' ? startAngleDeg + totalDeg : startAngleDeg - totalDeg;
+      const endRad = endAngleDeg * Math.PI / 180;
+      const ex = cx + r * Math.cos(endRad);
+      const ey = cy + r * Math.sin(endRad);
+
+      const movingArm = document.getElementById('rotate-moving-arm');
+      if (movingArm) {
+        movingArm.setAttribute('x2', ex);
+        movingArm.setAttribute('y2', ey);
+      }
+
+      const sector = document.getElementById('rotate-sector');
+      if (sector) {
+        if (totalDeg >= 360) {
+          sector.setAttribute('d', `M ${cx},${cy} m -${r},0 a ${r},${r} 0 1,0 ${r * 2},0 a ${r},${r} 0 1,0 -${r * 2},0`);
+        } else {
+          const largeArc = totalDeg > 180 ? 1 : 0;
+          const sweep = dir === 'cw' ? 1 : 0;
+          sector.setAttribute('d', `M ${cx},${cy} L ${sx},${sy} A ${r} ${r} 0 ${largeArc} ${sweep} ${ex} ${ey} Z`);
+        }
+      }
+    }
+
+    function animateClockRotation() {
+      if (isClockAnimating) return;
+      isClockAnimating = true;
+      playTone(550, 0.1);
+
+      let steps = (rotDirection === 'cw') ? (rotEndNum - rotStartNum + 12) % 12 : (rotStartNum - rotEndNum + 12) % 12;
+      if (steps === 0) steps = 12;
+      const targetDeg = steps * 30;
+
+      let currentD = 0;
+      const stepIncrement = 3;
+      const interval = setInterval(() => {
+        currentD += stepIncrement;
+        if (currentD >= targetDeg) {
+          currentD = targetDeg;
+          clearInterval(interval);
+          isClockAnimating = false;
+          playSuccessSound();
+        }
+        updateClockSector(rotStartNum, rotDirection, currentD);
+      }, 16);
+    }
+
+    /* Stage 7: Set Squares Explorer & Angle Combination */
+    let triSubMode = 'explore';
+    let isoPos = { x: 140, y: 220, rot: 0 };
+    let specPos = { x: 380, y: 240, rot: 0 };
+    let isDraggingIso = false;
+    let isRotatingIso = false;
+    let isDraggingSpec = false;
+    let isRotatingSpec = false;
+    let isoDragOffset = { x: 0, y: 0 };
+    let specDragOffset = { x: 0, y: 0 };
+
+    const setSquaresSvg = document.getElementById('set-squares-svg');
+    const triIsoGroup = document.getElementById('tri-isosceles-group');
+    const triSpecGroup = document.getElementById('tri-special-group');
+    const triIsoRotHandle = document.getElementById('tri-iso-rot');
+    const triSpecRotHandle = document.getElementById('tri-spec-rot');
+
+    function initTriangleCalcStage() {
+      setTriSubMode(triSubMode);
+      updateAngleCombine();
+    }
+
+    function setTriSubMode(mode) {
+      triSubMode = mode;
+      const exploreBtn = document.getElementById('tri-submode-explore-btn');
+      const combineBtn = document.getElementById('tri-submode-combine-btn');
+      const explorePanel = document.getElementById('tri-panel-explore');
+      const combinePanel = document.getElementById('tri-panel-combine');
+
+      if (mode === 'explore') {
+        exploreBtn.className = 'bubble-btn px-3 py-1.5 rounded-xl text-sm font-bold bg-indigo-600 text-white';
+        combineBtn.className = 'bubble-btn px-3 py-1.5 rounded-xl text-sm font-bold bg-white text-indigo-900 border border-indigo-300';
+        explorePanel.classList.remove('hidden');
+        combinePanel.classList.add('hidden');
+      } else {
+        combineBtn.className = 'bubble-btn px-3 py-1.5 rounded-xl text-sm font-bold bg-indigo-600 text-white';
+        exploreBtn.className = 'bubble-btn px-3 py-1.5 rounded-xl text-sm font-bold bg-white text-indigo-900 border border-indigo-300';
+        combinePanel.classList.remove('hidden');
+        explorePanel.classList.add('hidden');
+        updateAngleCombine();
+      }
+      playTone(480, 0.06);
+    }
+
+    function updateTriTransforms() {
+      if (triIsoGroup) triIsoGroup.setAttribute('transform', `translate(${isoPos.x}, ${isoPos.y}) rotate(${isoPos.rot})`);
+      if (triSpecGroup) triSpecGroup.setAttribute('transform', `translate(${specPos.x}, ${specPos.y}) rotate(${specPos.rot})`);
+    }
+
+    function resetTrianglesPosition() {
+      isoPos = { x: 140, y: 220, rot: 0 };
+      specPos = { x: 380, y: 240, rot: 0 };
+      updateTriTransforms();
+    }
+
+    if (triIsoGroup) {
+      triIsoGroup.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('#tri-iso-rot')) return;
+        isDraggingIso = true;
+        const pt = getSvgCoords(e, setSquaresSvg);
+        isoDragOffset.x = pt.x - isoPos.x;
+        isoDragOffset.y = pt.y - isoPos.y;
+        triIsoGroup.setPointerCapture(e.pointerId);
+      });
+    }
+
+    if (triIsoRotHandle) {
+      triIsoRotHandle.addEventListener('pointerdown', (e) => {
+        isRotatingIso = true;
+        e.stopPropagation();
+        triIsoRotHandle.setPointerCapture(e.pointerId);
+      });
+    }
+
+    if (triSpecGroup) {
+      triSpecGroup.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('#tri-spec-rot')) return;
+        isDraggingSpec = true;
+        const pt = getSvgCoords(e, setSquaresSvg);
+        specDragOffset.x = pt.x - specPos.x;
+        specDragOffset.y = pt.y - specPos.y;
+        triSpecGroup.setPointerCapture(e.pointerId);
+      });
+    }
+
+    if (triSpecRotHandle) {
+      triSpecRotHandle.addEventListener('pointerdown', (e) => {
+        isRotatingSpec = true;
+        e.stopPropagation();
+        triSpecRotHandle.setPointerCapture(e.pointerId);
+      });
+    }
+
+    window.addEventListener('pointermove', (e) => {
+      if (isDraggingIso) {
+        const pt = getSvgCoords(e, setSquaresSvg);
+        isoPos.x = pt.x - isoDragOffset.x;
+        isoPos.y = pt.y - isoDragOffset.y;
+        updateTriTransforms();
+      } else if (isRotatingIso) {
+        const pt = getSvgCoords(e, setSquaresSvg);
+        const dx = pt.x - isoPos.x;
+        const dy = pt.y - isoPos.y;
+        isoPos.rot = Math.round(Math.atan2(dy, dx) * 180 / Math.PI);
+        updateTriTransforms();
+      } else if (isDraggingSpec) {
+        const pt = getSvgCoords(e, setSquaresSvg);
+        specPos.x = pt.x - specDragOffset.x;
+        specPos.y = pt.y - specDragOffset.y;
+        updateTriTransforms();
+      } else if (isRotatingSpec) {
+        const pt = getSvgCoords(e, setSquaresSvg);
+        const dx = pt.x - specPos.x;
+        const dy = pt.y - specPos.y;
+        specPos.rot = Math.round(Math.atan2(dy, dx) * 180 / Math.PI);
+        updateTriTransforms();
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      isDraggingIso = false;
+      isRotatingIso = false;
+      isDraggingSpec = false;
+      isRotatingSpec = false;
+    });
+
+    /* Angle Addition Calculation Logic */
+    function updateAngleCombine() {
+      const deg1 = parseInt(document.getElementById('slider-deg1').value, 10);
+      const deg2 = parseInt(document.getElementById('slider-deg2').value, 10);
+      const sum = deg1 + deg2;
+
+      document.getElementById('label-deg1').textContent = `${deg1}°`;
+      document.getElementById('label-deg2').textContent = `${deg2}°`;
+      document.getElementById('combine-formula-disp').textContent = `${deg1}° + ${deg2}° = ${sum}°`;
+
+      let sumCategory = '';
+      if (sum < 90) sumCategory = `${sum}° 是銳角（小於 90°）`;
+      else if (sum === 90) sumCategory = `${sum}° 剛好是直角（90°）！`;
+      else if (sum < 180) sumCategory = `${sum}° 是鈍角（大於 90° 小於 180°）`;
+      else if (sum === 180) sumCategory = `${sum}° 剛好是平角（180° 一條直線）！`;
+      else sumCategory = `${sum}°（大於 180°）`;
+
+      document.getElementById('combine-type-disp').textContent = sumCategory;
+
+      renderCombinedFanSvg(deg1, deg2);
+    }
+
+    function setCombinePreset(d1, d2) {
+      document.getElementById('slider-deg1').value = d1;
+      document.getElementById('slider-deg2').value = d2;
+      updateAngleCombine();
+      playTone(520, 0.06);
+    }
+
+    function renderCombinedFanSvg(d1, d2) {
+      const layer = document.getElementById('calc-svg-fan-layer');
+      if (!layer) return;
+
+      const cx = 210, cy = 270, r = 180;
+      const rad0 = 0;
+      const rad1 = d1 * Math.PI / 180;
+      const radTotal = (d1 + d2) * Math.PI / 180;
+
+      const p0x = cx + r * Math.cos(rad0), p0y = cy - r * Math.sin(rad0);
+      const p1x = cx + r * Math.cos(rad1), p1y = cy - r * Math.sin(rad1);
+      const p2x = cx + r * Math.cos(radTotal), p2y = cy - r * Math.sin(radTotal);
+
+      const fan1 = `M ${cx},${cy} L ${p0x},${p0y} A ${r} ${r} 0 0 0 ${p1x} ${p1y} Z`;
+      const fan2 = `M ${cx},${cy} L ${p1x},${p1y} A ${r} ${r} 0 0 0 ${p2x} ${p2y} Z`;
+
+      const midRad1 = (d1 / 2) * Math.PI / 180;
+      const tx1 = cx + (r * 0.65) * Math.cos(midRad1);
+      const ty1 = cy - (r * 0.65) * Math.sin(midRad1);
+
+      const midRad2 = (d1 + d2 / 2) * Math.PI / 180;
+      const tx2 = cx + (r * 0.65) * Math.cos(midRad2);
+      const ty2 = cy - (r * 0.65) * Math.sin(midRad2);
+
+      layer.innerHTML = `
+        <path d="${fan1}" fill="rgba(245, 158, 11, 0.35)" stroke="#F59E0B" stroke-width="2.5"/>
+        <path d="${fan2}" fill="rgba(59, 130, 246, 0.35)" stroke="#3B82F6" stroke-width="2.5"/>
+        <line x1="${cx}" y1="${cy}" x2="${p0x}" y2="${p0y}" stroke="#D97706" stroke-width="4" stroke-linecap="round"/>
+        <line x1="${cx}" y1="${cy}" x2="${p1x}" y2="${p1y}" stroke="#475569" stroke-width="3" stroke-linecap="round" stroke-dasharray="4,3"/>
+        <line x1="${cx}" y1="${cy}" x2="${p2x}" y2="${p2y}" stroke="#2563EB" stroke-width="4" stroke-linecap="round"/>
+        <text x="${tx1}" y="${ty1}" font-size="18" font-weight="bold" fill="#B45309" text-anchor="middle">角1: ${d1}°</text>
+        <text x="${tx2}" y="${ty2}" font-size="18" font-weight="bold" fill="#1D4ED8" text-anchor="middle">角2: ${d2}°</text>
+      `;
+    }
+
+    /* Stage 8: 12 Questions Formative Assessment */
+    const quizQuestions = [
+      {
+        q: "1. 關於「角的大小」，下列哪一個說法是完全正確的？",
+        options: ["邊畫得越長，角就越大", "角的大小是指兩條邊張開的程度，和邊長無關", "只有用大張紙畫出來的角才會比較大", "只要顏色越深，角就越大"],
+        ans: 1,
+        explain: "角的大小只看「張開的程度」，邊畫得再長也不會改變角度大小！"
+      },
+      {
+        q: "2. 使用量角器量測角度時，第一步應該做什麼？",
+        options: ["量角器的 0 度線對齊角的頂點", "量角器的中心點精準對齊角的頂點", "把量角器隨便放上去看數字", "用尺量邊長"],
+        ans: 1,
+        explain: "量角三步驟第一步：將量角器的「中心點」對齊角的「頂點」。"
+      },
+      {
+        q: "3. 一個大於 0 度且小於 90 度的角，叫做什麼角？",
+        options: ["直角", "鈍角", "銳角", "平角"],
+        ans: 2,
+        explain: "小於 90 度的角是「銳角」，尖尖的像小雞嘴巴。"
+      },
+      {
+        q: "4. 一個剛好等於 90 度的角，叫做什麼角？",
+        options: ["平角", "直角", "銳角", "鈍角"],
+        ans: 1,
+        explain: "剛好等於 90 度的角稱為「直角」，通常會標記一個小方塊。"
+      },
+      {
+        q: "5. 一副「等腰直角三角板」的三個角，分別是多少度？",
+        options: ["30°, 60°, 90°", "45°, 45°, 90°", "60°, 60°, 60°", "40°, 50°, 90°"],
+        ans: 1,
+        explain: "等腰直角三角板的兩個底角各為 45°，頂角為 90° 直角。"
+      },
+      {
+        q: "6. 鐘面上一整圈是 360 度，被平分成 12 大格，那麼走「一大格」是幾度？",
+        options: ["10°", "12°", "30°", "60°"],
+        ans: 2,
+        explain: "360° ÷ 12 = 30°，鐘面上每走 1 大格就是 30 度！"
+      },
+      {
+        q: "7. 鐘面上的指針從「9」開始，沿著【順時針】方向轉到「12」，共轉了幾度？",
+        options: ["60°", "90°", "120°", "180°"],
+        ans: 1,
+        explain: "從 9 到 12 共走了 3 大格，3 × 30° = 90°（剛好轉了 1/4 圈直角）。"
+      },
+      {
+        q: "8. 【旋轉角：順時針】鐘面上的指針從數字「2」開始，沿著【順時針】方向轉到數字「7」，共轉了幾大格？旋轉角是幾度？",
+        options: ["4 大格，120°", "5 大格，150°", "5 大格，180°", "6 大格，150°"],
+        ans: 1,
+        explain: "從 2 順時針轉到 7，經過 3、4、5、6、7 共 5 大格。算式：5 × 30° = 150°（鈍角）。"
+      },
+      {
+        q: "9. 【旋轉角：逆時針】鐘面上的指針從數字「7」開始，沿著【逆時針】方向轉到數字「4」，共轉了幾大格？旋轉角是幾度？",
+        options: ["3 大格，90°（直角）", "3 大格，60°（銳角）", "4 大格，120°（鈍角）", "9 大格，270°（鈍角）"],
+        ans: 0,
+        explain: "注意方向是【逆時針】倒著轉！從 7 逆時針轉到 4，依序經過 6、5、4 共 3 大格。算式：3 × 30° = 90°，剛好是直角！"
+      },
+      {
+        q: "10. 小美把三角板上的 30° 角和 45° 角緊密拼在一起，合成的新角是多少度？是什麼角？",
+        options: ["75°，銳角", "75°，鈍角", "85°，銳角", "105°，鈍角"],
+        ans: 0,
+        explain: "30° + 45° = 75°，因為 75° 小於 90°，所以是「銳角」。"
+      },
+      {
+        q: "11. 將一個 45° 的角和一個 90° 的角緊密拼在一起，合成角是多少度？",
+        options: ["120°", "135°", "145°", "180°"],
+        ans: 1,
+        explain: "45° + 90° = 135°（大於 90° 小於 180°，是鈍角）。"
+      },
+      {
+        q: "12. 鐘面上的指針轉了一整圈回到原點（旋轉角為 360 度），我們稱為什麼角？",
+        options: ["直角", "平角", "周角", "圓形角"],
+        ans: 2,
+        explain: "轉了一整圈（360°）形成的旋轉角稱為「周角」。"
+      }
+    ];
+
+    let quizCurrentIdx = 0;
+    let quizScore = 0;
+    let quizAnswersState = Array(quizQuestions.length).fill(null);
+
+    function loadQuizQuestion(idx) {
+      quizCurrentIdx = idx;
+      const totalQ = quizQuestions.length;
+      const container = document.getElementById('quiz-card-container');
+      const q = quizQuestions[idx];
+      const answered = quizAnswersState[idx] !== null;
+
+      let optionsHtml = '';
+      q.options.forEach((opt, optIdx) => {
+        let btnClass = 'bubble-btn w-full p-3.5 rounded-2xl border-2 text-left font-bold text-base transition flex items-center justify-between ';
+        if (!answered) {
+          btnClass += 'bg-white hover:bg-rose-100 border-rose-300 text-slate-800';
+        } else {
+          if (optIdx === q.ans) {
+            btnClass += 'bg-emerald-100 border-emerald-500 text-emerald-950 font-black';
+          } else if (optIdx === quizAnswersState[idx]) {
+            btnClass += 'bg-rose-100 border-rose-500 text-rose-950';
+          } else {
+            btnClass += 'bg-slate-100 border-slate-300 text-slate-400 opacity-60';
+          }
+        }
+        optionsHtml += `
+          <button onclick="selectQuizOption(${optIdx})" ${answered ? 'disabled' : ''} class="${btnClass}">
+            <span>${['A', 'B', 'C', 'D'][optIdx]}. ${opt}</span>
+            ${answered && optIdx === q.ans ? '<span>✅</span>' : ''}
+            ${answered && optIdx === quizAnswersState[idx] && optIdx !== q.ans ? '<span>❌</span>' : ''}
+          </button>
+        `;
+      });
+
+      let footerNavHtml = `
+        <div class="flex items-center justify-between mt-4 pt-3 border-t border-rose-200">
+          <button onclick="loadQuizQuestion(${Math.max(0, idx - 1)})" ${idx === 0 ? 'disabled' : ''} class="bubble-btn px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl text-sm border border-slate-300 disabled:opacity-30">
+            ⬅️ 上一題
+          </button>
+          <span class="text-xs font-bold text-slate-500">第 ${idx + 1} / ${totalQ} 題</span>
+          <button onclick="loadQuizQuestion(${Math.min(totalQ - 1, idx + 1)})" ${idx === totalQ - 1 ? 'disabled' : ''} class="bubble-btn px-4 py-2 bg-rose-500 text-white font-bold rounded-xl text-sm border border-rose-700 disabled:opacity-30">
+            下一題 ➡️
+          </button>
+        </div>
+      `;
+
+      let explainHtml = '';
+      if (answered) {
+        explainHtml = `
+          <div class="mt-3 p-3.5 bg-amber-100 rounded-2xl border border-amber-300 text-amber-950 text-sm leading-relaxed">
+            💡 <b>解析：</b>${q.explain}
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="bg-rose-200 text-rose-900 font-bold text-xs px-2.5 py-1 rounded-full">問題 ${idx + 1} / ${totalQ}</span>
+            <button onclick="toggleScratchpad()" class="text-xs text-emerald-800 font-bold bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-300">
+              📝 打開草稿板計算
+            </button>
+          </div>
+          <h3 class="text-lg sm:text-xl font-black text-rose-950 leading-snug">${q.q}</h3>
+          <div class="space-y-2.5 pt-1">${optionsHtml}</div>
+          ${explainHtml}
+          ${footerNavHtml}
+        </div>
+      `;
+    }
+
+    function selectQuizOption(optIdx) {
+      if (quizAnswersState[quizCurrentIdx] !== null) return;
+      quizAnswersState[quizCurrentIdx] = optIdx;
+
+      const q = quizQuestions[quizCurrentIdx];
+      if (optIdx === q.ans) {
+        playSuccessSound();
+        quizScore++;
+        document.getElementById('quiz-score-badge').textContent = `${quizScore} / ${quizQuestions.length}`;
+      } else {
+        playErrorSound();
+      }
+
+      loadQuizQuestion(quizCurrentIdx);
+
+      const answeredCount = quizAnswersState.filter(a => a !== null).length;
+      if (answeredCount === quizQuestions.length) {
+        setTimeout(() => {
+          confetti({ particleCount: 90, spread: 100 });
+        }, 500);
+      }
+    }
+
+    /* Floating Scratchpad Canvas Logic */
+    const scratchModal = document.getElementById('scratchpad-modal');
+    const scratchCanvas = document.getElementById('scratch-canvas');
+    let scratchCtx = null;
+    let isDrawingScratch = false;
+
+    function toggleScratchpad() {
+      scratchModal.classList.toggle('hidden');
+      if (!scratchModal.classList.contains('hidden')) {
+        setTimeout(initScratchCanvas, 50);
+      }
+    }
+
+    function initScratchCanvas() {
+      const rect = scratchCanvas.getBoundingClientRect();
+      scratchCanvas.width = rect.width;
+      scratchCanvas.height = rect.height;
+      scratchCtx = scratchCanvas.getContext('2d');
+      scratchCtx.lineCap = 'round';
+      scratchCtx.lineJoin = 'round';
+      scratchCtx.lineWidth = 3;
+      scratchCtx.strokeStyle = '#1E3A8A';
+    }
+
+    function clearScratchpad() {
+      if (scratchCtx) {
+        scratchCtx.clearRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+      }
+    }
+
+    function getCanvasPos(e) {
+      const rect = scratchCanvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+
+    scratchCanvas.addEventListener('pointerdown', (e) => {
+      isDrawingScratch = true;
+      const pos = getCanvasPos(e);
+      if (scratchCtx) {
+        scratchCtx.beginPath();
+        scratchCtx.moveTo(pos.x, pos.y);
+      }
+      scratchCanvas.setPointerCapture(e.pointerId);
+    });
+
+    scratchCanvas.addEventListener('pointermove', (e) => {
+      if (!isDrawingScratch || !scratchCtx) return;
+      const pos = getCanvasPos(e);
+      scratchCtx.lineTo(pos.x, pos.y);
+      scratchCtx.stroke();
+    });
+
+    scratchCanvas.addEventListener('pointerup', () => {
+      isDrawingScratch = false;
+    });
+
+    /* Global Window Load Initialization */
+    window.onload = function () {
+      renderFullProtractorTicks('teach-protractor-ticks', 270, 260, 240);
+      loadMeasureQuestion(0);
+      initDrawProtractor();
+      initClassifyGame();
+      initRotateDial();
+      initTriangleCalcStage();
+      loadQuizQuestion(0);
+
+      // Auto enable 16:9 cinema fullscreen mode on typical desktop/laptop screens
+      if (window.innerWidth >= 1024 && window.innerHeight <= 920) {
+        toggleCinemaMode();
+      }
+    };
+  </script>
+</body>
+</html>

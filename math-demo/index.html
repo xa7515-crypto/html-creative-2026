@@ -144,7 +144,8 @@
   </div>
 
   <script>
-    const SPREADSHEET_ID = "1UPKM8c9KwckyU8OfCMLE8f5ttUtBW4LR4K9zSHIty5g";
+    // 自己的 Google 試算表 ID（等你建好表、把 ID 貼上來就填這裡；留空時只用下方內建資料，不連線）
+    const SPREADSHEET_ID = "";
 
     // 10 個單元的淡色明亮莫蘭迪配色方案
     const UNIT_PALETTES = [
@@ -248,7 +249,7 @@
         nanI: "第 1 單元",
         kangHsuan: "第 1 單元",
         hanLin: "第 1 單元",
-        url: "https://gemini.google.com/share/6a82077dd38f?skid=8ea65033-bb0b-429c-a12e-d61366aef8af",
+        url: "../math4-01/",
         status: "active"
       },
       {
@@ -257,7 +258,7 @@
         nanI: "第 2 單元",
         kangHsuan: "第 2 單元",
         hanLin: "第 2 單元",
-        url: "https://gemini.google.com/share/95c6546d80f0?skid=2f162640-ac2d-4bc1-8851-1ab446eefee9",
+        url: "../math4-02/",
         status: "active"
       },
       {
@@ -266,7 +267,7 @@
         nanI: "第 3 單元",
         kangHsuan: "第 3 單元",
         hanLin: "第 3 單元",
-        url: "https://share.gemini.google/JzulLNs4tH7l",
+        url: "../math4-03/",
         status: "active"
       },
       {
@@ -275,7 +276,7 @@
         nanI: "第 4 單元",
         kangHsuan: "第 4 單元",
         hanLin: "第 6 單元",
-        url: "https://share.gemini.google/evD0osBEKQsu",
+        url: "../math4-04/",
         status: "active"
       },
       {
@@ -284,8 +285,8 @@
         nanI: "第 5 單元",
         kangHsuan: "第 6 單元",
         hanLin: "第 7 單元",
-        url: "",
-        status: "upcoming"
+        url: "../math4-05/",
+        status: "active"
       },
       {
         id: 6,
@@ -293,8 +294,8 @@
         nanI: "第 6 單元",
         kangHsuan: "第 9 單元",
         hanLin: "第 4 單元",
-        url: "",
-        status: "upcoming"
+        url: "../math4-06/",
+        status: "active"
       },
       {
         id: 7,
@@ -320,8 +321,8 @@
         nanI: "第 9 單元",
         kangHsuan: "第 7 單元",
         hanLin: "第 9 單元",
-        url: "",
-        status: "upcoming"
+        url: "../math4-09/",
+        status: "active"
       },
       {
         id: 10,
@@ -512,6 +513,10 @@
 
     // Google 試算表自動同步與解鎖
     async function syncFromGoogleSheet(isManual = false) {
+      if (!SPREADSHEET_ID) {
+        if (isManual) showToast("尚未設定試算表，用內建單元列表顯示 ✨");
+        return;
+      }
       const icon = document.getElementById('refreshIcon');
       if (icon) icon.classList.add('fa-spin');
 

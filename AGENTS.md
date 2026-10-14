@@ -21,6 +21,8 @@
 - `public-data.js`、`learning-focus-data.js` — 教材索引與學習重點資料
 - `interactive-generator/` — 互動教材提示詞產生器（新趨勢老師品牌，原作者 sunny680228）
 - `math-demo/` — 數學四上互動學習入口範例（新趨勢老師品牌，原作者 sunny680228）
+- `math4-01/`～`math4-06/`、`math4-09/` — 7 個數學單元互動頁（新趨勢老師品牌，原作者 sunny680228）
+- `math-units-links.csv` — 試算表匯入檔（單元＋連結，B 欄為 Pages 預定網址，開通後生效）
 - `assets/` — 頭像等素材（`my-avatar.jpg` 新趨勢老師頭像）
 - `.nojekyll` — GitHub Pages 設定
 - `.git/` — Git 版本控制（L2：GitHub 私有 repo）

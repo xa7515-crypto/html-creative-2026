@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>分數奇幻王國 - 四年級數學互動學習網</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2357466f'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='serif'%3E%E6%96%B0%3C/text%3E%3C/svg%3E">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-main: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+    }
+    * {
+      font-family: var(--font-main);
+      box-sizing: border-box;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: linear-gradient(135deg, #FFF7ED 0%, #EFF6FF 50%, #FAF5FF 100%);
+      color: #1E293B;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    /* 全面升級：標題字級 36 號字 (36px)，內文字級 24px */
+    .title-36 {
+      font-size: 36px !important;
+      line-height: 1.3 !important;
+      font-weight: 900;
+    }
+    .body-24 {
+      font-size: 24px !important;
+      line-height: 1.5 !important;
+    }
+    /* 16:9 主舞台容器 */
+    .stage-16-9 {
+      width: 100%;
+      max-width: 1380px;
+      min-height: 780px;
+      margin: 0 auto;
+      border-radius: 28px;
+    }
+    /* 糖果馬卡龍圓潤陰影與動態 */
+    .bubble-shadow {
+      box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.08), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
+    }
+    .candy-btn {
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+    }
+    .candy-btn:active {
+      transform: scale(0.96);
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0.85); opacity: 0; }
+      60% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    .animate-pop {
+      animation: bounceIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    .float-icon {
+      animation: gentleFloat 2.6s ease-in-out infinite;
+    }
+    /* 分數專用直式排版 */
+    .math-fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 2px;
+      font-weight: 700;
+    }
+    .math-fraction .numerator {
+      border-bottom: 2px solid currentColor;
+      padding-bottom: 1px;
+      line-height: 1;
+    }
+    .math-fraction .denominator {
+      padding-top: 1px;
+      line-height: 1;
+    }
+    /* 數線卡片保護樣式：徹底分離避免碰線，具備充足淨空 */
+    .number-line-card {
+      background: #FFFFFF;
+      border: 2px solid #CBD5E1;
+      border-radius: 12px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.06);
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .number-line-card.whole-card {
+      background: #FEF3C7;
+      border-color: #F59E0B;
+      color: #78350F;
+      font-weight: 900;
+    }
+    /* 浮動手寫板專用格線 */
+    .math-grid-bg {
+      background-size: 28px 28px;
+      background-image: 
+        linear-gradient(to right, rgba(203, 213, 225, 0.4) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(203, 213, 225, 0.4) 1px, transparent 1px);
+    }
+    /* 滾動條美化 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 flex flex-col items-center justify-start min-h-screen">
+
+  <!-- 頂部資訊與全域工具列 -->
+  <header class="w-full max-w-[1380px] flex flex-wrap items-center justify-between gap-4 mb-4 bg-white/90 backdrop-blur-md px-6 py-4 rounded-3xl bubble-shadow border-2 border-orange-200">
+    <div class="flex items-center gap-4">
+      <div class="w-14 h-14 rounded-2xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-3xl float-icon shadow-inner">
+        🍕
+      </div>
+      <div>
+        <h1 class="title-36 text-amber-950 tracking-tight flex items-center gap-3">
+          分數奇幻王國
+          <span class="body-24 bg-amber-400 text-amber-950 font-bold px-4 py-0.5 rounded-full shadow-sm text-lg">四年級數學</span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- 頂部控制按鈕：含全面計算板開關 -->
+    <div class="flex items-center gap-3 flex-wrap">
+      <button onclick="toggleScratchpad()" class="candy-btn px-4 py-2 rounded-2xl bg-amber-100 hover:bg-amber-200 border-2 border-amber-300 flex items-center gap-2 body-24 font-black text-amber-900 shadow-sm">
+        <span>✏️</span>
+        <span>學生計算板</span>
+      </button>
+      <button id="soundToggleBtn" onclick="toggleSound()" class="candy-btn px-4 py-2 rounded-2xl bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 flex items-center gap-2 body-24 font-bold text-slate-700">
+        <span id="soundIcon">🔊</span>
+        <span id="soundText">音效開</span>
+      </button>
+      <div class="px-5 py-2 rounded-2xl bg-gradient-to-r from-pink-400 to-rose-400 text-white font-bold body-24 shadow-md flex items-center gap-2 border border-white">
+        <span>⭐</span>
+        <span>新趨勢老師</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 4 大核心導航標籤列 -->
+  <nav class="w-full max-w-[1380px] grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4">
+    <button id="tabBtn1" onclick="switchTab(1)" class="tab-btn candy-btn py-3 px-4 rounded-2xl body-24 font-bold text-center border-4 transition-all duration-300 bg-amber-400 border-amber-500 text-amber-950 shadow-lg">
+      🌟 概念探索
+    </button>
+    <button id="tabBtn2" onclick="switchTab(2)" class="tab-btn candy-btn py-3 px-4 rounded-2xl body-24 font-bold text-center border-4 transition-all duration-300 bg-white/80 border-slate-200 text-slate-600 hover:bg-sky-50 shadow">
+      🧰 分數工具板
+    </button>
+    <button id="tabBtn3" onclick="switchTab(3)" class="tab-btn candy-btn py-3 px-4 rounded-2xl body-24 font-bold text-center border-4 transition-all duration-300 bg-white/80 border-slate-200 text-slate-600 hover:bg-emerald-50 shadow">
+      📖 生活情境＆數線
+    </button>
+    <button id="tabBtn4" onclick="switchTab(4)" class="tab-btn candy-btn py-3 px-4 rounded-2xl body-24 font-bold text-center border-4 transition-all duration-300 bg-white/80 border-slate-200 text-slate-600 hover:bg-purple-50 shadow">
+      🎯 十題大檢核
+    </button>
+  </nav>
+
+  <!-- 主視覺舞台 16:9 容器 -->
+  <main class="stage-16-9 bg-white/95 rounded-3xl bubble-shadow border-4 border-amber-200/80 p-5 md:p-7 flex flex-col justify-between overflow-hidden relative">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: 概念探索小學堂（第一關：先認識分數意義，再進入三大家族分類） -->
+    <!-- ========================================== -->
+    <div id="tabContent1" class="tab-pane flex flex-col h-full space-y-4">
+      <div class="flex flex-wrap items-center justify-between border-b-2 border-amber-100 pb-3 gap-3">
+        <h2 class="title-36 text-amber-950 flex items-center gap-3">
+          <span>🍰</span> 概念探索第一關
+        </h2>
+        <div class="flex items-center gap-2">
+          <button id="conceptStepBtn1" onclick="switchConceptStep(1)" class="candy-btn px-4 py-2 rounded-xl body-24 font-bold bg-amber-500 text-white shadow">
+            🌱 第 1 步：認識分數的意義
+          </button>
+          <button id="conceptStepBtn2" onclick="switchConceptStep(2)" class="candy-btn px-4 py-2 rounded-xl body-24 font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">
+            🏰 第 2 步：三大分數家族與分類
+          </button>
+        </div>
+      </div>
+
+      <!-- 第 1 步：認識分數基本概念 -->
+      <div id="conceptStep1" class="flex-1 flex flex-col justify-between space-y-3">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 bubble-shadow flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="body-24 font-black text-amber-900 bg-amber-200 px-3 py-1 rounded-xl">1. 一定要「平分」</span>
+                <span class="text-3xl">⚖️</span>
+              </div>
+              <p class="body-24 text-slate-700 leading-relaxed">
+                把 1 個完整的東西切開時，<b>每一塊的大小必須完全一樣大</b>，這才叫做「平分」！
+              </p>
+            </div>
+            <div class="bg-white/80 p-2 rounded-xl text-center font-bold text-amber-800 text-base mt-2 border border-amber-200">
+              若是切得一大一小，就不能直接用分數表示喔！
+            </div>
+          </div>
+
+          <div class="bg-sky-50 border-2 border-sky-300 rounded-2xl p-4 bubble-shadow flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="body-24 font-black text-sky-900 bg-sky-200 px-3 py-1 rounded-xl">2. 底下的「分母」</span>
+                <span class="text-3xl">🏠</span>
+              </div>
+              <p class="body-24 text-slate-700 leading-relaxed">
+                分數橫線<b>下方的數字</b>，代表 1 個完整單位<b>總共被平分成了幾等份</b>（也就是切成了幾塊）。
+              </p>
+            </div>
+            <div class="bg-white/80 p-2 rounded-xl text-center font-bold text-sky-800 text-base mt-2 border border-sky-200">
+              例如平分成 4 份，分母就是 4
+            </div>
+          </div>
+
+          <div class="bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-4 bubble-shadow flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="body-24 font-black text-emerald-900 bg-emerald-200 px-3 py-1 rounded-xl">3. 上面的「分子」</span>
+                <span class="text-3xl">👶</span>
+              </div>
+              <p class="body-24 text-slate-700 leading-relaxed">
+                分數橫線<b>上方的數字</b>，代表我們<b>拿取、吃了或塗色了其中的幾等份</b>。
+              </p>
+            </div>
+            <div class="bg-white/80 p-2 rounded-xl text-center font-bold text-emerald-800 text-base mt-2 border border-emerald-200">
+              拿了 3 塊，分子就是 3
+            </div>
+          </div>
+        </div>
+
+        <!-- 披薩動手切片互動 -->
+        <div class="bg-white rounded-2xl border-3 border-amber-200 p-4 shadow-sm flex flex-col md:flex-row items-center justify-around gap-6 flex-1">
+          <div class="flex flex-col items-center gap-2">
+            <div class="body-24 font-bold text-amber-950 flex items-center gap-2">
+              <span>🍕</span> 點選切片披薩來塗色／拿取：
+            </div>
+            <svg id="pizzaBasicsSvg" width="200" height="200" viewBox="0 0 200 200" class="filter drop-shadow-md cursor-pointer"></svg>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-base font-bold text-slate-600">選擇平分成：</span>
+              <button onclick="setBasicsDivisions(2)" class="basics-div-btn px-3 py-1 rounded-lg text-base font-bold border border-slate-300 bg-white">2 份</button>
+              <button onclick="setBasicsDivisions(4)" class="basics-div-btn px-3 py-1 rounded-lg text-base font-bold border border-amber-500 bg-amber-400 text-amber-950 font-black">4 份</button>
+              <button onclick="setBasicsDivisions(6)" class="basics-div-btn px-3 py-1 rounded-lg text-base font-bold border border-slate-300 bg-white">6 份</button>
+              <button onclick="setBasicsDivisions(8)" class="basics-div-btn px-3 py-1 rounded-lg text-base font-bold border border-slate-300 bg-white">8 份</button>
+            </div>
+          </div>
+
+          <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-5 flex flex-col justify-between max-w-lg w-full space-y-3 shadow-inner">
+            <div class="flex items-center justify-between border-b border-amber-200 pb-2">
+              <span class="body-24 font-black text-amber-900">分數寫法與意義</span>
+              <span class="text-sm font-bold bg-amber-200 text-amber-900 px-3 py-1 rounded-full">即時聯動</span>
+            </div>
+            <div class="flex items-center justify-center gap-6 py-1">
+              <div class="math-fraction text-4xl font-black text-amber-900">
+                <span class="numerator" id="basicNumDisplay">1</span>
+                <span class="denominator" id="basicDenDisplay">4</span>
+              </div>
+              <div class="body-24 text-slate-700 font-bold space-y-1">
+                <p>讀作：<span class="text-amber-700 font-black" id="basicReadText">四分之一</span></p>
+                <p class="text-base text-slate-600" id="basicMeaningText">代表 1 個披薩平分成 4 等份中的 1 份</p>
+              </div>
+            </div>
+            <button onclick="switchConceptStep(2)" class="candy-btn w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black body-24 shadow text-center flex items-center justify-center gap-2">
+              <span>我懂基本意義了！前往認識三大家族 ➔</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 第 2 步：三大家族與分類魔術桶 -->
+      <div id="conceptStep2" class="hidden flex-1 flex-col justify-between space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-gradient-to-b from-emerald-50 to-teal-50 border-3 border-emerald-300 rounded-2xl p-4 bubble-shadow flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="body-24 font-black text-emerald-800 bg-emerald-200 px-3 py-1 rounded-xl">真分數</span>
+                <span class="text-3xl">🌱</span>
+              </div>
+              <p class="body-24 text-emerald-950 font-bold mb-1">分子 < 分母</p>
+              <p class="body-24 text-slate-600 mb-2">數值小於 1，像還沒裝滿一整盒！</p>
+            </div>
+            <div class="bg-white/90 p-2 rounded-xl border border-emerald-200 text-center body-24 font-black text-emerald-700 flex items-center justify-center gap-2">
+              <span>如：</span>
+              <span><span class="math-fraction"><span class="numerator">3</span><span class="denominator">4</span></span></span>、
+              <span><span class="math-fraction"><span class="numerator">2</span><span class="denominator">5</span></span></span>、
+              <span><span class="math-fraction"><span class="numerator">7</span><span class="denominator">10</span></span></span>
+            </div>
+          </div>
+
+          <div class="bg-gradient-to-b from-sky-50 to-blue-50 border-3 border-sky-300 rounded-2xl p-4 bubble-shadow flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="body-24 font-black text-sky-800 bg-sky-200 px-3 py-1 rounded-xl">假分數</span>
+                <span class="text-3xl">🚀</span>
+              </div>
+              <p class="body-24 text-sky-950 font-bold mb-1">分子 ≥ 分母</p>
+              <p class="body-24 text-slate-600 mb-2">分子大於或等於分母，等於 1 或比 1 大！</p>
+            </div>
+            <div class="bg-white/90 p-2 rounded-xl border border-sky-200 text-center body-24 font-black text-sky-700 flex items-center justify-center gap-2">
+              <span>如：</span>
+              <span><span class="math-fraction"><span class="numerator">3</span><span class="denominator">3</span></span>(=1)</span>、
+              <span><span class="math-fraction"><span class="numerator">7</span><span class="denominator">2</span></span></span>、
+              <span><span class="math-fraction"><span class="numerator">11</span><span class="denominator">4</span></span></span>
+            </div>
+          </div>
+
+          <div class="bg-gradient-to-b from-purple-50 to-pink-50 border-3 border-purple-300 rounded-2xl p-4 bubble-shadow flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="body-24 font-black text-purple-800 bg-purple-200 px-3 py-1 rounded-xl">帶分數</span>
+                <span class="text-3xl">🎁</span>
+              </div>
+              <p class="body-24 text-purple-950 font-bold mb-1">整數 ＋ 真分數</p>
+              <p class="body-24 text-slate-600 mb-2">身旁帶著完整整數盒，再加上剩下的一部分！</p>
+            </div>
+            <div class="bg-white/90 p-2 rounded-xl border border-purple-200 text-center body-24 font-black text-purple-700 flex items-center justify-center gap-2">
+              <span>如：</span>
+              <span>3 <span class="math-fraction"><span class="numerator">1</span><span class="denominator">2</span></span></span>、
+              <span>2 <span class="math-fraction"><span class="numerator">7</span><span class="denominator">10</span></span></span>、
+              <span>2 <span class="math-fraction"><span class="numerator">3</span><span class="denominator">4</span></span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 分類小挑戰區 -->
+        <div class="bg-amber-50/70 border-3 border-dashed border-amber-300 rounded-2xl p-4 flex-1 flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-3xl">🎯</span>
+              <span class="body-24 font-black text-amber-950">動手分類樂：請點選卡片，再點選投入下方分類桶！</span>
+            </div>
+            <button onclick="resetSortingGame()" class="candy-btn px-4 py-1 rounded-xl bg-amber-200 hover:bg-amber-300 text-amber-900 font-bold body-24 flex items-center gap-2">
+              🔄 重新出題
+            </button>
+          </div>
+
+          <div id="cardsPool" class="flex flex-wrap items-center justify-center gap-3 py-2 min-h-[60px]"></div>
+
+          <div class="grid grid-cols-3 gap-4 mt-1">
+            <div id="bucket-proper" onclick="dropCardTo('proper')" class="candy-btn bg-emerald-100/90 border-3 border-emerald-400 rounded-2xl p-3 min-h-[110px] flex flex-col items-center justify-between text-center hover:bg-emerald-200">
+              <div class="body-24 font-black text-emerald-900 flex items-center gap-1">
+                <span>🌱</span> 真分數桶 (< 1)
+              </div>
+              <div id="properBucketItems" class="flex flex-wrap gap-1.5 justify-center items-center w-full py-1"></div>
+              <div id="properCount" class="body-24 font-bold text-emerald-800 text-sm">已收集: 0</div>
+            </div>
+
+            <div id="bucket-improper" onclick="dropCardTo('improper')" class="candy-btn bg-sky-100/90 border-3 border-sky-400 rounded-2xl p-3 min-h-[110px] flex flex-col items-center justify-between text-center hover:bg-sky-200">
+              <div class="body-24 font-black text-sky-900 flex items-center gap-1">
+                <span>🚀</span> 假分數桶 (≥ 1)
+              </div>
+              <div id="improperBucketItems" class="flex flex-wrap gap-1.5 justify-center items-center w-full py-1"></div>
+              <div id="improperCount" class="body-24 font-bold text-sky-800 text-sm">已收集: 0</div>
+            </div>
+
+            <div id="bucket-mixed" onclick="dropCardTo('mixed')" class="candy-btn bg-purple-100/90 border-3 border-purple-400 rounded-2xl p-3 min-h-[110px] flex flex-col items-center justify-between text-center hover:bg-purple-200">
+              <div class="body-24 font-black text-purple-900 flex items-center gap-1">
+                <span>🎁</span> 帶分數桶 (整數+真分數)
+              </div>
+              <div id="mixedBucketItems" class="flex flex-wrap gap-1.5 justify-center items-center w-full py-1"></div>
+              <div id="mixedCount" class="body-24 font-bold text-purple-800 text-sm">已收集: 0</div>
+            </div>
+          </div>
+
+          <div id="sortingFeedback" class="text-center body-24 font-bold text-slate-600 min-h-[28px]">
+            請先點選上方任一張分數卡片！
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: 分數多功能工具板 -->
+    <!-- ========================================== -->
+    <div id="tabContent2" class="tab-pane hidden flex-col lg:flex-row h-full gap-4 overflow-hidden">
+      <div class="flex-1 bg-amber-50/50 border-3 border-amber-200 rounded-2xl p-4 flex flex-col justify-between overflow-hidden shadow-sm">
+        <div id="canvasDescription" class="body-24 font-bold text-slate-800 bg-white/90 border border-amber-200 px-4 py-2 rounded-xl flex items-center gap-2 shadow-xs">
+          <span>🎨</span> 圓餅模型：每單位平分 12 份，已著色 <span class="font-black text-orange-600">13</span> 份
+        </div>
+
+        <div id="toolCanvas" class="flex-1 flex flex-wrap items-center justify-around gap-4 p-3 overflow-y-auto min-h-[300px]"></div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-amber-200">
+          <div class="flex items-center gap-2">
+            <button onclick="changeToolPieces(-1)" class="candy-btn px-4 py-2 rounded-xl bg-white border-2 border-slate-300 text-slate-700 font-black body-24 hover:bg-slate-100 flex items-center gap-1 shadow-sm">
+              <span>➖</span> 減少 1 份
+            </button>
+            <button onclick="changeToolPieces(1)" class="candy-btn px-4 py-2 rounded-xl bg-amber-400 border-2 border-amber-500 text-amber-950 font-black body-24 shadow-sm flex items-center gap-1">
+              <span>➕</span> 增加 1 份
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="fillAllTool()" class="candy-btn px-4 py-2 rounded-xl bg-sky-100 hover:bg-sky-200 border-2 border-sky-300 text-sky-900 font-bold text-lg shadow-sm">
+              滿裝整數
+            </button>
+            <button onclick="clearTool()" class="candy-btn px-4 py-2 rounded-xl bg-rose-100 hover:bg-rose-200 border-2 border-rose-300 text-rose-900 font-bold text-lg shadow-sm">
+              全部清除
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右側工具板操控欄 -->
+      <div class="w-full lg:w-[360px] bg-amber-50/90 border-3 border-amber-300 rounded-2xl p-4 flex flex-col justify-between gap-3 shadow-md shrink-0">
+        <div class="text-center pb-2 border-b-2 border-amber-200">
+          <h3 class="title-36 text-amber-950 tracking-wide">分數工具</h3>
+        </div>
+
+        <div class="bg-white border-2 border-amber-300 rounded-2xl p-3 shadow-inner space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-orange-400 text-white font-black text-sm shadow-xs">假分數</span>
+              <span class="px-2.5 py-1 rounded-lg bg-amber-500 text-white font-black text-sm shadow-xs">帶分數</span>
+            </div>
+            <button id="toggleEyeBtn" onclick="toggleToolAnswerVisibility()" class="candy-btn w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 flex items-center justify-center text-xl shadow-xs" title="顯示/隱藏帶分數答案">
+              👁️
+            </button>
+          </div>
+
+          <div class="flex items-center justify-center gap-2 py-1">
+            <button onclick="changeToolPieces(-1)" class="candy-btn w-8 h-8 rounded-lg bg-slate-100 border border-slate-300 text-slate-700 font-black flex items-center justify-center hover:bg-amber-100">
+              ◀
+            </button>
+            <div class="math-fraction text-3xl font-black text-amber-950 px-2 py-1 bg-amber-50 rounded-xl border-2 border-amber-300 min-w-[54px]">
+              <span class="numerator" id="toolNumDisplay">13</span>
+              <span class="denominator" id="toolDenDisplay">12</span>
+            </div>
+            <button onclick="changeToolPieces(1)" class="candy-btn w-8 h-8 rounded-lg bg-slate-100 border border-slate-300 text-slate-700 font-black flex items-center justify-center hover:bg-amber-100">
+              ▶
+            </button>
+
+            <span class="text-2xl font-black text-slate-500">＝</span>
+
+            <div id="toolMixedBox" class="flex items-center gap-1.5 px-3 py-1 bg-amber-100/80 rounded-xl border-2 border-amber-400 transition-opacity duration-200">
+              <div id="toolMixedDisplay" class="flex items-center gap-1 body-24 font-black text-amber-950">
+                <span>1</span>
+                <span class="math-fraction text-2xl">
+                  <span class="numerator">1</span>
+                  <span class="denominator">12</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-center gap-2">
+            <span class="h-0.5 bg-amber-200 flex-1"></span>
+            <span class="text-sm font-bold text-amber-900">圖形選擇</span>
+            <span class="h-0.5 bg-amber-200 flex-1"></span>
+          </div>
+          <div class="grid grid-cols-4 gap-2">
+            <button id="shapeBtn-circle" onclick="setToolShape('circle')" class="candy-btn p-2 rounded-xl border-3 border-orange-500 bg-amber-200 flex flex-col items-center justify-center gap-1 shadow">
+              <span class="text-2xl">🍕</span>
+              <span class="text-xs font-black text-amber-950">圓餅</span>
+            </button>
+            <button id="shapeBtn-bar" onclick="setToolShape('bar')" class="candy-btn p-2 rounded-xl border-2 border-slate-300 bg-white flex flex-col items-center justify-center gap-1 hover:bg-amber-50">
+              <span class="text-2xl">🍫</span>
+              <span class="text-xs font-black text-slate-700">長條</span>
+            </button>
+            <button id="shapeBtn-grid" onclick="setToolShape('grid')" class="candy-btn p-2 rounded-xl border-2 border-slate-300 bg-white flex flex-col items-center justify-center gap-1 hover:bg-amber-50">
+              <span class="text-2xl">🧇</span>
+              <span class="text-xs font-black text-slate-700">方格</span>
+            </button>
+            <button id="shapeBtn-pear" onclick="setToolShape('pear')" class="candy-btn p-2 rounded-xl border-2 border-slate-300 bg-white flex flex-col items-center justify-center gap-1 hover:bg-amber-50">
+              <span class="text-2xl">🍐</span>
+              <span class="text-xs font-black text-slate-700">水梨盒</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-center gap-2">
+            <span class="h-0.5 bg-amber-200 flex-1"></span>
+            <span class="text-sm font-bold text-amber-900">等分選擇（分母）</span>
+            <span class="h-0.5 bg-amber-200 flex-1"></span>
+          </div>
+          <div id="denButtonsGrid" class="grid grid-cols-6 gap-1.5"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: 生活情境闖關 ＆ 分數數線小青蛙 -->
+    <!-- ========================================== -->
+    <div id="tabContent3" class="tab-pane hidden flex-col h-full space-y-4">
+      <div class="flex flex-wrap items-center justify-between border-b-2 border-emerald-100 pb-2 gap-2">
+        <h2 class="title-36 text-slate-800 flex items-center gap-3">
+          <span>📖</span> 生活情境闖關 ＆ 分數數線小青蛙
+        </h2>
+        <div class="flex gap-2 items-center flex-wrap">
+          <button onclick="toggleScratchpad()" class="candy-btn px-4 py-2 rounded-xl body-24 font-black bg-amber-400 text-amber-950 border-2 border-amber-500 shadow flex items-center gap-1">
+            <span>✏️</span> 算算看草稿板
+          </button>
+          <button id="subStageBtn1" onclick="switchStageMode('stages')" class="candy-btn px-4 py-2 rounded-xl body-24 font-bold bg-amber-500 text-white shadow">
+            🎯 生活情境 5 關卡
+          </button>
+          <button id="subStageBtn2" onclick="switchStageMode('frog')" class="candy-btn px-4 py-2 rounded-xl body-24 font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">
+            🐸 小青蛙數線
+          </button>
+        </div>
+      </div>
+
+      <!-- 子分頁 A: 生活 5 大關卡 -->
+      <div id="stageModeSection" class="flex-1 flex flex-col justify-between space-y-3">
+        <div class="flex items-center gap-2 overflow-x-auto pb-1">
+          <button onclick="loadBookStage(0)" id="stageTab0" class="stage-tab-btn candy-btn px-4 py-1.5 rounded-xl font-bold body-24 bg-amber-400 text-amber-950 border-2 border-amber-500 shadow-sm shrink-0">情境 1: 色紙連續量</button>
+          <button onclick="loadBookStage(1)" id="stageTab1" class="stage-tab-btn candy-btn px-4 py-1.5 rounded-xl font-bold body-24 bg-white text-slate-700 border border-slate-300 shrink-0">情境 2: 量杯公升</button>
+          <button onclick="loadBookStage(2)" id="stageTab2" class="stage-tab-btn candy-btn px-4 py-1.5 rounded-xl font-bold body-24 bg-white text-slate-700 border border-slate-300 shrink-0">情境 3: 薄餅換算</button>
+          <button onclick="loadBookStage(3)" id="stageTab3" class="stage-tab-btn candy-btn px-4 py-1.5 rounded-xl font-bold body-24 bg-white text-slate-700 border border-slate-300 shrink-0">情境 4: 酥餅帶分數</button>
+          <button onclick="loadBookStage(4)" id="stageTab4" class="stage-tab-btn candy-btn px-4 py-1.5 rounded-xl font-bold body-24 bg-white text-slate-700 border border-slate-300 shrink-0">情境 5: 水梨離散量</button>
+        </div>
+
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-3 border-amber-300 rounded-2xl p-4 flex flex-col justify-between flex-1">
+          <div class="bg-white p-3.5 rounded-xl border border-amber-200 shadow-sm flex items-start gap-4">
+            <span class="body-24 font-black bg-rose-500 text-white px-3 py-1 rounded-xl shrink-0" id="stageBadge">情境 1</span>
+            <div class="body-24 font-bold text-slate-800" id="stageQuestionText">載入中...</div>
+          </div>
+
+          <div class="bg-white/90 rounded-2xl border-2 border-dashed border-amber-400 p-3 my-2 flex-1 flex flex-col items-center justify-center min-h-[190px]" id="stageVisualBox"></div>
+
+          <div class="flex flex-wrap items-center justify-between gap-3 bg-amber-100/70 p-3 rounded-xl border border-amber-200">
+            <div class="body-24 text-amber-950 font-bold" id="stageHintText">💡 觀察圖中總共有幾個部分？</div>
+            <button onclick="toggleStageSolution()" class="candy-btn px-5 py-2 rounded-xl bg-amber-500 text-white font-bold body-24 shadow">
+              🔍 觀看解說與答案
+            </button>
+          </div>
+
+          <div id="stageSolutionCard" class="hidden mt-2 bg-emerald-50 border-2 border-emerald-300 rounded-xl p-3.5 animate-pop">
+            <div class="body-24 text-emerald-950 font-bold" id="stageSolutionContent">詳解內容</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 子分頁 B: 分數數線小青蛙（徹底修正字與線重疊問題） -->
+      <div id="frogModeSection" class="hidden flex-1 flex flex-col justify-between space-y-3">
+        <!-- 數線控制面板 -->
+        <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="body-24 font-bold text-emerald-950">數線每一大格平分成：</span>
+            <div class="flex gap-2">
+              <button onclick="setLinePartitions(2)" class="partition-btn candy-btn px-4 py-1.5 rounded-xl body-24 font-bold bg-white text-slate-700 border border-slate-300">2 等分</button>
+              <button onclick="setLinePartitions(3)" class="partition-btn candy-btn px-4 py-1.5 rounded-xl body-24 font-bold bg-white text-slate-700 border border-slate-300">3 等分</button>
+              <button onclick="setLinePartitions(4)" class="partition-btn candy-btn px-4 py-1.5 rounded-xl body-24 font-bold bg-emerald-500 text-white border border-emerald-600 shadow-sm">4 等分</button>
+              <button onclick="setLinePartitions(5)" class="partition-btn candy-btn px-4 py-1.5 rounded-xl body-24 font-bold bg-white text-slate-700 border border-slate-300">5 等分</button>
+            </div>
+          </div>
+
+          <button onclick="randomFrogJump()" class="candy-btn px-4 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold body-24 shadow">
+            🎲 隨機跳躍
+          </button>
+        </div>
+
+        <!-- 數線主舞台：給予充裕垂直高度，確保青蛙、數線與卡片分層獨立，絕不碰線！ -->
+        <div class="bg-white border-2 border-slate-200 rounded-2xl p-5 shadow-inner flex flex-col justify-between min-h-[360px] overflow-x-auto">
+          <!-- 頂部整數導引指引條 -->
+          <div class="w-full flex items-center justify-between text-slate-400 body-24 font-bold px-6 mb-2">
+            <span>起點 0</span>
+            <span>整數 1</span>
+            <span>整數 2</span>
+            <span>終點 3</span>
+          </div>
+
+          <!-- 數線中央高距容器 (高度加深至 220px，層級由上而下：青蛙 -> 主軸與刻度 -> 數字卡片) -->
+          <div class="relative w-full min-w-[760px] h-52 my-2 select-none" id="numberLineWrapper">
+            <!-- 1. 小青蛙游標：懸浮在主軸正上方 (top: 0 ~ 58px) -->
+            <div id="frogMarker" class="absolute top-0 -ml-12 flex flex-col items-center transition-all duration-300 pointer-events-none z-30">
+              <div class="flex items-center gap-1 bg-emerald-600 text-white px-3 py-0.5 rounded-full text-sm font-black shadow-md border-2 border-white whitespace-nowrap mb-1" id="frogBadge">
+                5/4
+              </div>
+              <span class="text-5xl filter drop-shadow-md float-icon">🐸</span>
+              <span class="text-rose-500 text-lg font-black -mt-1">▼</span>
+            </div>
+
+            <!-- 2. 數線實體主軸（固定置於 Y: 75px，與下方數字保有 35px 以上的絕對淨空） -->
+            <div class="absolute left-6 right-6 h-2 bg-slate-700 rounded-full top-[75px]"></div>
+
+            <!-- 3. 精確軸心定位紅點（坐落在 Y: 75px 主軸正中央） -->
+            <div id="axisDotMarker" class="absolute top-[68px] -ml-2.5 w-5 h-5 bg-rose-500 rounded-full border-2 border-white ring-4 ring-rose-200 shadow-md transition-all duration-300 pointer-events-none z-20"></div>
+
+            <!-- 4. 刻度線與下方獨立卡片（卡片置於 Y: 110px，徹底不與 75px 主軸碰觸） -->
+            <div id="ticksContainer" class="absolute left-6 right-6 top-0 bottom-0 pointer-events-none"></div>
+          </div>
+
+          <!-- 底部提示文字（完全置於數線容器外，絕不重疊） -->
+          <div class="text-center body-24 text-slate-600 font-medium bg-slate-50 py-2.5 px-4 rounded-xl border border-slate-200 mt-2">
+            💡 點選數線上的任何<b>刻度點</b>或<b>數字卡片</b>，小青蛙就會跳到指定位置！
+          </div>
+        </div>
+
+        <!-- 數線即時解析解說卡 -->
+        <div class="bg-emerald-100/70 border-2 border-emerald-300 rounded-2xl p-4 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <span class="text-4xl">🔎</span>
+            <div>
+              <p class="body-24 font-bold text-emerald-950" id="numberLineExplainTitle">小青蛙跳了 5 步，每一步等於 1/4</p>
+              <p class="body-24 text-slate-700" id="numberLineExplainSub">在數線上表示為假分數 5/4，也就是帶分數 1 又 1/4！</p>
+            </div>
+          </div>
+          <div class="bg-white px-4 py-2 rounded-xl border border-emerald-300 body-24 font-black text-emerald-800" id="frogCurrentPosBadge">
+            位置: 5/4
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: 即時十題小達人 -->
+    <!-- ========================================== -->
+    <div id="tabContent4" class="tab-pane hidden flex-col h-full justify-between">
+      <div class="flex items-center justify-between border-b-2 border-emerald-100 pb-3">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">📝</span>
+          <h2 class="title-36 text-slate-800">十題通關大檢核</h2>
+        </div>
+        <div class="flex items-center gap-4">
+          <button onclick="toggleScratchpad()" class="candy-btn px-4 py-1.5 rounded-xl body-24 font-black bg-amber-100 text-amber-900 border-2 border-amber-300 flex items-center gap-1 text-base shadow-sm">
+            <span>✏️</span> 計算板
+          </button>
+          <span class="body-24 font-bold text-slate-600" id="quizProgressText">第 1 / 10 題</span>
+          <div class="w-44 h-4 bg-slate-100 rounded-full overflow-hidden border border-slate-300">
+            <div id="quizProgressBar" class="h-full bg-gradient-to-r from-emerald-400 to-teal-500 transition-all duration-300 w-[10%]"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="quizContainer" class="flex-1 flex flex-col justify-between py-3">
+        <div class="bg-amber-50/80 border-2 border-amber-200 rounded-2xl p-4 mb-3 shadow-sm">
+          <div class="flex items-start gap-3">
+            <span class="body-24 font-black bg-amber-400 text-amber-950 px-3 py-1 rounded-xl shrink-0" id="questionBadge">Q1</span>
+            <div class="body-24 font-bold text-slate-800 leading-relaxed" id="questionText">題目載入中...</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3" id="optionsGrid"></div>
+
+        <div id="explanationBox" class="hidden bg-slate-50 border-2 border-slate-300 rounded-2xl p-4 animate-pop">
+          <div class="flex items-start gap-3">
+            <span id="resultIcon" class="text-4xl">🎉</span>
+            <div class="flex-1">
+              <h4 id="resultTitle" class="body-24 font-black text-emerald-700 mb-1">太棒了，答對了！</h4>
+              <p id="resultExplanation" class="body-24 text-slate-700">觀念小叮嚀...</p>
+            </div>
+            <button id="nextQuestionBtn" onclick="nextQuestion()" class="candy-btn px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black body-24 shadow-md shrink-0">
+              下一題 ➔
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="quizSummaryScreen" class="hidden flex-1 flex flex-col items-center justify-center text-center p-6 space-y-4 animate-pop">
+        <div class="text-7xl float-icon">🏆</div>
+        <h3 class="title-36 text-amber-900">恭喜完成分數十題大挑戰！</h3>
+        <div class="bg-gradient-to-r from-amber-100 to-orange-100 border-3 border-amber-300 rounded-2xl p-6 w-full max-w-xl bubble-shadow space-y-3">
+          <p class="body-24 text-slate-700 font-bold">你的最終得分</p>
+          <div class="text-6xl font-black text-amber-600" id="finalScoreText">100 分</div>
+          <p class="body-24 text-amber-950 font-bold bg-white/80 py-2 px-4 rounded-xl border border-amber-200" id="honoraryBadge">
+            榮獲稱號：【分數特級全能小魔導師 🌟】
+          </p>
+        </div>
+        <div class="flex gap-4">
+          <button onclick="restartQuiz()" class="candy-btn px-8 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black body-24 shadow-lg">
+            🔄 重新挑戰一次
+          </button>
+          <button onclick="switchTab(2)" class="candy-btn px-8 py-3 rounded-2xl bg-sky-100 hover:bg-sky-200 text-sky-900 border-2 border-sky-300 font-black body-24 shadow">
+            🧰 開啟分數工具板
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 全面通用：學生浮動計算草稿板 (Draggable Scratchpad) -->
+  <!-- ========================================== -->
+  <div id="scratchpadBox" class="hidden fixed bottom-6 right-6 w-[420px] max-w-[92vw] bg-white/95 backdrop-blur-md border-4 border-amber-300 rounded-3xl bubble-shadow flex-col z-50 overflow-hidden select-none animate-pop">
+    <!-- 頂部拖曳與工具列 -->
+    <div id="padHeader" class="bg-gradient-to-r from-amber-400 to-orange-400 px-4 py-2.5 flex items-center justify-between cursor-move text-amber-950">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">✏️</span>
+        <span class="body-24 font-black text-base">學生計算草稿板</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="toggleGridPad()" class="candy-btn px-2 py-0.5 rounded-lg bg-white/80 hover:bg-white text-xs font-black" title="切換數學方格線">
+          📏 方格
+        </button>
+        <button onclick="clearScratchpad()" class="candy-btn px-2 py-0.5 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-800 text-xs font-black">
+          🗑️ 清除
+        </button>
+        <button onclick="toggleScratchpad()" class="candy-btn w-7 h-7 rounded-full bg-amber-200 hover:bg-amber-300 text-amber-950 font-black flex items-center justify-center">
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- 畫布區域 -->
+    <div class="relative w-full h-[280px] bg-amber-50/30 overflow-hidden" id="padCanvasWrapper">
+      <canvas id="scratchpadCanvas" width="420" height="280" class="w-full h-full cursor-crosshair" style="touch-action: none;"></canvas>
+    </div>
+
+    <!-- 底部畫筆選色與工具列 -->
+    <div class="bg-amber-50 px-4 py-2 border-t border-amber-200 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <button onclick="setPadColor('#1e293b')" class="pad-color-btn w-6 h-6 rounded-full bg-slate-800 border-2 border-amber-500 shadow-xs" title="黑筆"></button>
+        <button onclick="setPadColor('#2563eb')" class="pad-color-btn w-6 h-6 rounded-full bg-blue-600 border-2 border-white shadow-xs" title="藍筆"></button>
+        <button onclick="setPadColor('#dc2626')" class="pad-color-btn w-6 h-6 rounded-full bg-red-600 border-2 border-white shadow-xs" title="紅筆"></button>
+        <button onclick="setPadColor('#16a34a')" class="pad-color-btn w-6 h-6 rounded-full bg-emerald-600 border-2 border-white shadow-xs" title="綠筆"></button>
+        <button onclick="setPadEraser()" class="candy-btn px-2.5 py-1 rounded-xl bg-white border border-slate-300 text-xs font-black text-slate-700 hover:bg-slate-100 flex items-center gap-1 shadow-xs">
+          <span>🧹</span> 橡皮擦
+        </button>
+      </div>
+      <div class="flex items-center gap-1">
+        <span class="text-xs font-bold text-slate-500">筆寬:</span>
+        <button onclick="setPadLineWidth(2)" class="candy-btn w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold">細</button>
+        <button onclick="setPadLineWidth(4)" class="candy-btn w-6 h-6 rounded-lg bg-amber-300 border border-amber-500 text-xs font-bold">中</button>
+        <button onclick="setPadLineWidth(8)" class="candy-btn w-6 h-6 rounded-lg bg-white border border-slate-300 text-xs font-bold">粗</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       1. 輕量 Web Audio API 音效合成
+       ========================================================================== */
+    let audioCtx = null;
+    let isSoundMuted = false;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleSound() {
+      isSoundMuted = !isSoundMuted;
+      document.getElementById('soundIcon').innerText = isSoundMuted ? '🔇' : '🔊';
+      document.getElementById('soundText').innerText = isSoundMuted ? '音效關' : '音效開';
+      if (!isSoundMuted) playSound('click');
+    }
+
+    function playSound(type) {
+      if (isSoundMuted) return;
+      try {
+        initAudio();
+        const now = audioCtx.currentTime;
+        if (type === 'click') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(460, now);
+          osc.frequency.exponentialRampToValueAtTime(760, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'correct') {
+          const notes = [523.25, 659.25, 783.99];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+            gain.gain.setValueAtTime(0.2, now + idx * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.35);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.07);
+            osc.stop(now + idx * 0.07 + 0.35);
+          });
+        } else if (type === 'wrong') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(260, now);
+          osc.frequency.linearRampToValueAtTime(190, now + 0.25);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'victory') {
+          const chord = [523.25, 659.25, 783.99, 1046.50];
+          chord.forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + i * 0.1);
+            gain.gain.setValueAtTime(0.25, now + i * 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.5);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + i * 0.1);
+            osc.stop(now + i * 0.1 + 0.5);
+          });
+        }
+      } catch (e) {
+        console.warn('Audio Context:', e);
+      }
+    }
+
+    /* ==========================================================================
+       2. 分頁標籤切換
+       ========================================================================== */
+    function switchTab(tabIndex) {
+      playSound('click');
+      for (let i = 1; i <= 4; i++) {
+        const pane = document.getElementById(`tabContent${i}`);
+        const btn = document.getElementById(`tabBtn${i}`);
+        if (i === tabIndex) {
+          pane.classList.remove('hidden');
+          pane.classList.add('flex');
+          btn.className = "tab-btn candy-btn py-3 px-4 rounded-2xl body-24 font-bold text-center border-4 transition-all duration-300 bg-amber-400 border-amber-500 text-amber-950 shadow-lg scale-102";
+        } else {
+          pane.classList.remove('flex');
+          pane.classList.add('hidden');
+          btn.className = "tab-btn candy-btn py-3 px-4 rounded-2xl body-24 font-bold text-center border-4 transition-all duration-300 bg-white/80 border-slate-200 text-slate-600 hover:bg-slate-50 shadow";
+        }
+      }
+      if (tabIndex === 2) renderToolBoard();
+      if (tabIndex === 3) {
+        loadBookStage(currentBookStageIndex);
+        renderNumberLine();
+      }
+    }
+
+    /* ==========================================================================
+       3. TAB 1: 概念探索小學堂（步驟1認識分數；步驟2三大家族）
+       ========================================================================== */
+    let basicsDivisions = 4;
+    let basicsTaken = 1;
+
+    function switchConceptStep(step) {
+      playSound('click');
+      const btn1 = document.getElementById('conceptStepBtn1');
+      const btn2 = document.getElementById('conceptStepBtn2');
+      const step1 = document.getElementById('conceptStep1');
+      const step2 = document.getElementById('conceptStep2');
+
+      if (step === 1) {
+        btn1.className = "candy-btn px-4 py-2 rounded-xl body-24 font-bold bg-amber-500 text-white shadow";
+        btn2.className = "candy-btn px-4 py-2 rounded-xl body-24 font-bold bg-slate-100 text-slate-700 hover:bg-slate-200";
+        step1.classList.remove('hidden');
+        step1.classList.add('flex');
+        step2.classList.add('hidden');
+        step2.classList.remove('flex');
+        renderBasicsPizza();
+      } else {
+        btn2.className = "candy-btn px-4 py-2 rounded-xl body-24 font-bold bg-amber-500 text-white shadow";
+        btn1.className = "candy-btn px-4 py-2 rounded-xl body-24 font-bold bg-slate-100 text-slate-700 hover:bg-slate-200";
+        step2.classList.remove('hidden');
+        step2.classList.add('flex');
+        step1.classList.add('hidden');
+        step1.classList.remove('flex');
+        renderSortingCards();
+      }
+    }
+
+    function setBasicsDivisions(parts) {
+      playSound('click');
+      basicsDivisions = parts;
+      if (basicsTaken > basicsDivisions) basicsTaken = basicsDivisions;
+      document.querySelectorAll('.basics-div-btn').forEach(btn => {
+        if (btn.innerText.includes(`${parts}`)) {
+          btn.className = "basics-div-btn px-3 py-1 rounded-lg text-base font-bold border border-amber-500 bg-amber-400 text-amber-950 font-black shadow-sm";
+        } else {
+          btn.className = "basics-div-btn px-3 py-1 rounded-lg text-base font-bold border border-slate-300 bg-white";
+        }
+      });
+      renderBasicsPizza();
+    }
+
+    function renderBasicsPizza() {
+      const svg = document.getElementById('pizzaBasicsSvg');
+      if (!svg) return;
+      svg.innerHTML = '';
+      const r = 85, cx = 100, cy = 100;
+
+      for (let i = 0; i < basicsDivisions; i++) {
+        const isFilled = i < basicsTaken;
+        const startAngle = (i * 360) / basicsDivisions - 90;
+        const endAngle = ((i + 1) * 360) / basicsDivisions - 90;
+        const rad1 = (startAngle * Math.PI) / 180;
+        const rad2 = (endAngle * Math.PI) / 180;
+        const x1 = cx + r * Math.cos(rad1);
+        const y1 = cy + r * Math.sin(rad1);
+        const x2 = cx + r * Math.cos(rad2);
+        const y2 = cy + r * Math.sin(rad2);
+        const largeArc = 360 / basicsDivisions > 180 ? 1 : 0;
+        const d = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", d);
+        path.setAttribute("fill", isFilled ? "#FBBF24" : "#FFFFFF");
+        path.setAttribute("stroke", "#78350F");
+        path.setAttribute("stroke-width", "2.5");
+        path.setAttribute("class", "hover:opacity-80 transition-all");
+        path.onclick = () => {
+          playSound('click');
+          basicsTaken = (i < basicsTaken) ? i : i + 1;
+          renderBasicsPizza();
+        };
+        svg.appendChild(path);
+      }
+
+      document.getElementById('basicNumDisplay').innerText = basicsTaken;
+      document.getElementById('basicDenDisplay').innerText = basicsDivisions;
+      const numZh = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+      document.getElementById('basicReadText').innerText = `${numZh[basicsDivisions]}分之${numZh[basicsTaken] || basicsTaken}`;
+      document.getElementById('basicMeaningText').innerText = 
+        `代表 1 個披薩平分成 ${basicsDivisions} 等份，拿取了其中的 ${basicsTaken} 份！`;
+    }
+
+    const samplePool = [
+      { id: 1, num: 2, den: 5, int: null, type: 'proper', label: '2/5' },
+      { id: 2, num: 7, den: 4, int: null, type: 'improper', label: '7/4' },
+      { id: 3, num: 1, den: 2, int: 3, type: 'mixed', label: '3又1/2' },
+      { id: 4, num: 6, den: 3, int: null, type: 'improper', label: '6/3' },
+      { id: 5, num: 7, den: 10, int: 2, type: 'mixed', label: '2又7/10' },
+      { id: 6, num: 3, den: 8, int: null, type: 'proper', label: '3/8' },
+      { id: 7, num: 11, den: 4, int: null, type: 'improper', label: '11/4' },
+      { id: 8, num: 5, den: 6, int: null, type: 'proper', label: '5/6' }
+    ];
+
+    let currentCards = [];
+    let selectedSortingCard = null;
+    let bucketCounts = { proper: 0, improper: 0, mixed: 0 };
+
+    function resetSortingGame() {
+      playSound('click');
+      currentCards = JSON.parse(JSON.stringify(samplePool)).sort(() => Math.random() - 0.5);
+      selectedSortingCard = null;
+      bucketCounts = { proper: 0, improper: 0, mixed: 0 };
+      document.getElementById('properCount').innerText = `已收集: 0`;
+      document.getElementById('improperCount').innerText = `已收集: 0`;
+      document.getElementById('mixedCount').innerText = `已收集: 0`;
+      document.getElementById('properBucketItems').innerHTML = '';
+      document.getElementById('improperBucketItems').innerHTML = '';
+      document.getElementById('mixedBucketItems').innerHTML = '';
+      document.getElementById('sortingFeedback').innerText = '請先點選下方任一張分數卡片，再點選分類桶！';
+      renderSortingCards();
+    }
+
+    function renderSortingCards() {
+      const container = document.getElementById('cardsPool');
+      container.innerHTML = '';
+      if (currentCards.length === 0) {
+        container.innerHTML = `<span class="body-24 font-bold text-emerald-700 bg-emerald-100 px-6 py-2 rounded-2xl">🎉 太厲害了！所有分數都分類完成囉！</span>`;
+        playSound('victory');
+        return;
+      }
+
+      currentCards.forEach(card => {
+        const btn = document.createElement('button');
+        const isSelected = selectedSortingCard && selectedSortingCard.id === card.id;
+        btn.className = `candy-btn px-4 py-2 rounded-2xl border-3 body-24 font-black transition-all flex items-center gap-2 ${
+          isSelected 
+            ? 'bg-amber-400 border-amber-600 text-amber-950 scale-105 shadow-md' 
+            : 'bg-white border-slate-300 text-slate-800 hover:border-amber-400'
+        }`;
+        
+        if (card.int) {
+          btn.innerHTML = `<span>${card.int}</span><span class="math-fraction"><span class="numerator">${card.num}</span><span class="denominator">${card.den}</span></span>`;
+        } else {
+          btn.innerHTML = `<span class="math-fraction"><span class="numerator">${card.num}</span><span class="denominator">${card.den}</span></span>`;
+        }
+
+        btn.onclick = () => {
+          playSound('click');
+          selectedSortingCard = card;
+          document.getElementById('sortingFeedback').innerText = `已選取卡片，請點選下方的分類桶放入！`;
+          renderSortingCards();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function dropCardTo(bucketType) {
+      if (!selectedSortingCard) {
+        document.getElementById('sortingFeedback').innerText = '⚠️ 請先點選一張卡片再選擇分類桶喔！';
+        playSound('wrong');
+        return;
+      }
+      const feedback = document.getElementById('sortingFeedback');
+      if (selectedSortingCard.type === bucketType) {
+        playSound('correct');
+        bucketCounts[bucketType]++;
+        document.getElementById(`${bucketType}Count`).innerText = `已收集: ${bucketCounts[bucketType]}`;
+        const targetContainer = document.getElementById(`${bucketType}BucketItems`);
+        const badge = document.createElement('span');
+        badge.className = "bg-white px-2 py-0.5 rounded-lg text-sm font-bold shadow-sm border border-slate-300 inline-block";
+        badge.innerText = selectedSortingCard.label;
+        targetContainer.appendChild(badge);
+
+        feedback.innerHTML = `<span class="text-emerald-700 font-bold">答對了！【${selectedSortingCard.label}】是正確的歸類！🌟</span>`;
+        currentCards = currentCards.filter(c => c.id !== selectedSortingCard.id);
+        selectedSortingCard = null;
+        renderSortingCards();
+      } else {
+        playSound('wrong');
+        const nameMap = { proper: '真分數', improper: '假分數', mixed: '帶分數' };
+        feedback.innerHTML = `<span class="text-rose-600 font-bold">哎呀！【${selectedSortingCard.label}】其實是【${nameMap[selectedSortingCard.type]}】，再想想看！</span>`;
+      }
+    }
+
+    /* ==========================================================================
+       4. TAB 2: 分數多功能工具板
+       ========================================================================== */
+    let toolDen = 12;
+    let toolFilledCount = 13;
+    let toolShape = 'circle';
+    let isToolAnswerVisible = true;
+
+    function initToolDenButtons() {
+      const grid = document.getElementById('denButtonsGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      for (let d = 1; d <= 12; d++) {
+        const btn = document.createElement('button');
+        btn.id = `denBtn-${d}`;
+        btn.innerText = `${d}`;
+        btn.className = `candy-btn py-2 rounded-xl text-lg font-black border-2 transition-all ${
+          d === toolDen ? 'bg-sky-500 text-white border-sky-600 shadow' : 'bg-white text-slate-700 border-slate-300 hover:bg-sky-50'
+        }`;
+        btn.onclick = () => {
+          playSound('click');
+          setToolDenominator(d);
+        };
+        grid.appendChild(btn);
+      }
+    }
+
+    function setToolDenominator(d) {
+      toolDen = d;
+      if (toolFilledCount > toolDen * 3) toolFilledCount = toolDen * 2;
+      document.querySelectorAll('#denButtonsGrid button').forEach((b, idx) => {
+        const val = idx + 1;
+        b.className = val === toolDen
+          ? "candy-btn py-2 rounded-xl text-lg font-black border-2 bg-sky-500 text-white border-sky-600 shadow"
+          : "candy-btn py-2 rounded-xl text-lg font-black border-2 bg-white text-slate-700 border-slate-300 hover:bg-sky-50";
+      });
+      renderToolBoard();
+    }
+
+    function setToolShape(shape) {
+      playSound('click');
+      toolShape = shape;
+      ['circle', 'bar', 'grid', 'pear'].forEach(s => {
+        const btn = document.getElementById(`shapeBtn-${s}`);
+        if (btn) {
+          btn.className = (s === shape)
+            ? "candy-btn p-2 rounded-xl border-3 border-orange-500 bg-amber-200 flex flex-col items-center justify-center gap-1 shadow"
+            : "candy-btn p-2 rounded-xl border-2 border-slate-300 bg-white flex flex-col items-center justify-center gap-1";
+        }
+      });
+      renderToolBoard();
+    }
+
+    function changeToolPieces(delta) {
+      playSound('click');
+      const next = toolFilledCount + delta;
+      if (next >= 0 && next <= toolDen * 4) {
+        toolFilledCount = next;
+        renderToolBoard();
+      }
+    }
+
+    function fillAllTool() {
+      playSound('click');
+      const wholeBoxes = Math.max(1, Math.ceil(toolFilledCount / toolDen));
+      toolFilledCount = wholeBoxes * toolDen;
+      renderToolBoard();
+    }
+
+    function clearTool() {
+      playSound('click');
+      toolFilledCount = 0;
+      renderToolBoard();
+    }
+
+    function toggleToolAnswerVisibility() {
+      playSound('click');
+      isToolAnswerVisible = !isToolAnswerVisible;
+      const eyeBtn = document.getElementById('toggleEyeBtn');
+      const mixedBox = document.getElementById('toolMixedBox');
+      if (isToolAnswerVisible) {
+        eyeBtn.innerText = '👁️';
+        mixedBox.classList.remove('opacity-0', 'pointer-events-none');
+      } else {
+        eyeBtn.innerText = '🙈';
+        mixedBox.classList.add('opacity-0', 'pointer-events-none');
+      }
+    }
+
+    function renderToolBoard() {
+      document.getElementById('toolNumDisplay').innerText = toolFilledCount;
+      document.getElementById('toolDenDisplay').innerText = toolDen;
+
+      const whole = Math.floor(toolFilledCount / toolDen);
+      const rem = toolFilledCount % toolDen;
+      const mixedDisplay = document.getElementById('toolMixedDisplay');
+
+      if (rem === 0) {
+        mixedDisplay.innerHTML = `<span class="text-3xl">${whole}</span>`;
+      } else {
+        mixedDisplay.innerHTML = `
+          ${whole > 0 ? `<span>${whole}</span>` : ''}
+          <span class="math-fraction">
+            <span class="numerator">${rem}</span>
+            <span class="denominator">${toolDen}</span>
+          </span>
+        `;
+      }
+
+      const shapeNames = { circle: '圓餅', bar: '長條', grid: '方格', pear: '盒裝水梨' };
+      document.getElementById('canvasDescription').innerHTML = `
+        <span>🎨</span> ${shapeNames[toolShape]}模型：每單位平分 ${toolDen} 份，已著色 <span class="font-black text-orange-600">${toolFilledCount}</span> 份 (相當於 ${whole > 0 ? whole + '單位整' : ''}${rem > 0 ? ` 又 ${rem}/${toolDen}` : ''})
+      `;
+
+      const canvas = document.getElementById('toolCanvas');
+      canvas.innerHTML = '';
+      let numContainers = Math.max(2, Math.ceil(toolFilledCount / toolDen));
+      if (numContainers > 4) numContainers = 4;
+
+      for (let c = 0; c < numContainers; c++) {
+        if (toolShape === 'circle') {
+          const wrap = document.createElement('div');
+          wrap.className = "flex flex-col items-center gap-2";
+          wrap.innerHTML = `<span class="text-sm font-bold text-slate-500">第 ${c + 1} 個圓</span>`;
+
+          const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+          svg.setAttribute("width", "190");
+          svg.setAttribute("height", "190");
+          svg.setAttribute("viewBox", "0 0 200 200");
+          svg.className = "filter drop-shadow-sm cursor-pointer";
+          const r = 90, cx = 100, cy = 100;
+
+          if (toolDen === 1) {
+            const isFilled = c * toolDen < toolFilledCount;
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("cx", cx);
+            circle.setAttribute("cy", cy);
+            circle.setAttribute("r", r);
+            circle.setAttribute("fill", isFilled ? "#93C5FD" : "#FFFFFF");
+            circle.setAttribute("stroke", "#1E293B");
+            circle.setAttribute("stroke-width", "3");
+            circle.onclick = () => toggleSliceClick(c * toolDen);
+            svg.appendChild(circle);
+          } else {
+            for (let i = 0; i < toolDen; i++) {
+              const globalIndex = c * toolDen + i;
+              const isFilled = globalIndex < toolFilledCount;
+              const startAngle = (i * 360) / toolDen - 90;
+              const endAngle = ((i + 1) * 360) / toolDen - 90;
+              const rad1 = (startAngle * Math.PI) / 180;
+              const rad2 = (endAngle * Math.PI) / 180;
+              const x1 = cx + r * Math.cos(rad1);
+              const y1 = cy + r * Math.sin(rad1);
+              const x2 = cx + r * Math.cos(rad2);
+              const y2 = cy + r * Math.sin(rad2);
+              const largeArc = 360 / toolDen > 180 ? 1 : 0;
+              const d = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+
+              const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+              path.setAttribute("d", d);
+              path.setAttribute("fill", isFilled ? "#BFDBFE" : "#FFFFFF");
+              path.setAttribute("stroke", "#1E293B");
+              path.setAttribute("stroke-width", "2");
+              path.setAttribute("class", "hover:opacity-80 transition-all");
+              path.onclick = () => toggleSliceClick(globalIndex);
+              svg.appendChild(path);
+            }
+          }
+          wrap.appendChild(svg);
+          canvas.appendChild(wrap);
+
+        } else if (toolShape === 'bar') {
+          const wrap = document.createElement('div');
+          wrap.className = "flex flex-col items-center gap-2 bg-white p-3 rounded-2xl border border-slate-300 shadow-sm";
+          wrap.innerHTML = `<span class="text-sm font-bold text-slate-500">第 ${c + 1} 條</span>`;
+          const barGrid = document.createElement('div');
+          barGrid.className = "flex h-16 w-52 rounded-xl overflow-hidden border-2 border-slate-800 bg-white";
+
+          for (let i = 0; i < toolDen; i++) {
+            const globalIndex = c * toolDen + i;
+            const isFilled = globalIndex < toolFilledCount;
+            const cell = document.createElement('div');
+            cell.className = `flex-1 border-r border-slate-400 last:border-r-0 flex items-center justify-center font-bold text-sm cursor-pointer transition-colors ${
+              isFilled ? 'bg-amber-300 text-amber-950 font-black' : 'bg-white hover:bg-slate-100'
+            }`;
+            cell.innerText = isFilled ? `1/${toolDen}` : '';
+            cell.onclick = () => toggleSliceClick(globalIndex);
+            barGrid.appendChild(cell);
+          }
+          wrap.appendChild(barGrid);
+          canvas.appendChild(wrap);
+
+        } else if (toolShape === 'grid') {
+          const wrap = document.createElement('div');
+          wrap.className = "flex flex-col items-center gap-2 bg-white p-3 rounded-2xl border border-slate-300 shadow-sm";
+          wrap.innerHTML = `<span class="text-sm font-bold text-slate-500">第 ${c + 1} 個大方塊</span>`;
+          const grid = document.createElement('div');
+          const cols = toolDen <= 4 ? 2 : (toolDen <= 9 ? 3 : 4);
+          grid.className = `grid gap-1.5 p-2 rounded-xl border-2 border-slate-800 bg-slate-100`;
+          grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+
+          for (let i = 0; i < toolDen; i++) {
+            const globalIndex = c * toolDen + i;
+            const isFilled = globalIndex < toolFilledCount;
+            const box = document.createElement('div');
+            box.className = `w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xs cursor-pointer border border-slate-400 transition-all ${
+              isFilled ? 'bg-rose-400 text-white font-black scale-105 shadow-sm' : 'bg-white hover:bg-rose-50'
+            }`;
+            box.innerText = isFilled ? `✓` : '';
+            box.onclick = () => toggleSliceClick(globalIndex);
+            grid.appendChild(box);
+          }
+          wrap.appendChild(grid);
+          canvas.appendChild(wrap);
+
+        } else if (toolShape === 'pear') {
+          const wrap = document.createElement('div');
+          wrap.className = "flex flex-col items-center gap-2 bg-emerald-50/80 p-3 rounded-2xl border-2 border-emerald-300 shadow-sm";
+          wrap.innerHTML = `<span class="text-sm font-bold text-emerald-800">第 ${c + 1} 盒水梨 (${toolDen} 顆/盒)</span>`;
+          const pearGrid = document.createElement('div');
+          const cols = toolDen <= 4 ? 2 : 4;
+          pearGrid.className = `grid gap-2 p-2 rounded-xl border border-emerald-200 bg-white`;
+          pearGrid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+
+          for (let i = 0; i < toolDen; i++) {
+            const globalIndex = c * toolDen + i;
+            const isFilled = globalIndex < toolFilledCount;
+            const item = document.createElement('button');
+            item.className = `w-11 h-11 rounded-xl flex items-center justify-center text-2xl transition-all border ${
+              isFilled ? 'bg-amber-100 border-amber-400 shadow-sm scale-105' : 'bg-slate-50 border-dashed border-slate-300 opacity-40'
+            }`;
+            item.innerText = isFilled ? '🍐' : '⚪';
+            item.onclick = () => toggleSliceClick(globalIndex);
+            pearGrid.appendChild(item);
+          }
+          wrap.appendChild(pearGrid);
+          canvas.appendChild(wrap);
+        }
+      }
+    }
+
+    function toggleSliceClick(clickedIndex) {
+      playSound('click');
+      toolFilledCount = (clickedIndex < toolFilledCount) ? clickedIndex : clickedIndex + 1;
+      renderToolBoard();
+    }
+
+    /* ==========================================================================
+       5. TAB 3: 生活情境關卡 ＆ 數線小青蛙（徹底分離數字與數線）
+       ========================================================================== */
+    let currentBookStageIndex = 0;
+
+    const bookStagesData = [
+      {
+        badge: "情境挑戰 1",
+        title: "3又1/2 張紙是幾個 1/2 張紙？是二分之幾張紙？",
+        hint: "觀察色紙圖示：3 張完整紙中，每一張都可以平分成 2 個 1/2 張！",
+        render: () => `
+          <div class="flex flex-wrap items-center justify-center gap-4 py-2">
+            <div class="flex items-center gap-2 bg-pink-50 p-3 rounded-2xl border-2 border-pink-300 shadow-sm">
+              <div class="w-20 h-24 bg-pink-300 border-2 border-slate-800 rounded-lg flex items-center justify-center font-black body-24 text-slate-800 shadow">1張</div>
+              <div class="w-20 h-24 bg-pink-300 border-2 border-slate-800 rounded-lg flex items-center justify-center font-black body-24 text-slate-800 shadow">1張</div>
+              <div class="w-20 h-24 bg-pink-300 border-2 border-slate-800 rounded-lg flex items-center justify-center font-black body-24 text-slate-800 shadow">1張</div>
+            </div>
+            <span class="text-3xl font-black text-pink-400">＋</span>
+            <div class="bg-pink-50 p-3 rounded-2xl border-2 border-pink-300 shadow-sm flex items-center">
+              <div class="w-20 h-24 flex border-2 border-slate-800 rounded-lg overflow-hidden">
+                <div class="w-1/2 h-full bg-pink-400 flex items-center justify-center font-bold text-sm text-white">1/2</div>
+                <div class="w-1/2 h-full bg-slate-100 border-dashed border-l border-slate-400"></div>
+              </div>
+            </div>
+          </div>
+        `,
+        solution: "【解說】1張紙是 2 個 1/2 張；3張紙就是 3 × 2 ＝ 6 個 1/2 張。<br>再加上最後的 1/2 張，總共有 <b>6 ＋ 1 ＝ 7 個 1/2 張</b>。<br>寫成假分數就是 <b>7/2 張紙</b>！"
+      },
+      {
+        badge: "情境挑戰 2",
+        title: "2又7/10 公升的水也可以說是幾公升？答案用假分數表示。",
+        hint: "每個完整的量杯是 1 公升，等於 10 個 1/10 公升！",
+        render: () => `
+          <div class="flex flex-wrap items-center justify-center gap-5 py-2">
+            <div class="w-24 h-36 bg-blue-100 border-3 border-blue-600 rounded-b-2xl relative flex flex-col justify-end p-1 shadow-sm">
+              <div class="w-full h-full bg-sky-400 rounded-b-xl flex items-center justify-center body-24 font-black text-white">1 L</div>
+              <span class="text-xs text-center font-bold text-blue-900 mt-1">滿杯 (10/10)</span>
+            </div>
+            <div class="w-24 h-36 bg-blue-100 border-3 border-blue-600 rounded-b-2xl relative flex flex-col justify-end p-1 shadow-sm">
+              <div class="w-full h-full bg-sky-400 rounded-b-xl flex items-center justify-center body-24 font-black text-white">1 L</div>
+              <span class="text-xs text-center font-bold text-blue-900 mt-1">滿杯 (10/10)</span>
+            </div>
+            <div class="w-24 h-36 bg-blue-50 border-3 border-blue-600 rounded-b-2xl relative flex flex-col justify-end p-1 shadow-sm">
+              <div class="w-full h-[70%] bg-sky-400 rounded-b-xl flex items-center justify-center body-24 font-black text-white">7/10 L</div>
+              <span class="text-xs text-center font-bold text-blue-900 mt-1">第3杯 (7格)</span>
+            </div>
+          </div>
+        `,
+        solution: "【解說】1公升有 10 個 1/10 公升，2公升就有 2 × 10 ＝ 20 個 1/10 公升。<br>合起來是 20 ＋ 7 ＝ <b>27 個 1/10 公升</b>。<br>寫成假分數為 <b>27/10 公升</b>！"
+      },
+      {
+        badge: "情境挑戰 3",
+        title: "6/3 張薄餅也可以說是幾張薄餅？",
+        hint: "每張薄餅平分成 3 份（每片是 1/3 張），現在有 6 片扇形薄餅！",
+        render: () => `
+          <div class="flex flex-wrap items-center justify-center gap-3 py-2">
+            <div class="flex gap-1.5 p-3 bg-amber-100 rounded-2xl border-2 border-amber-300">
+              <div class="w-12 h-12 bg-amber-400 border border-slate-700 rounded-tr-full flex items-center justify-center text-xs font-black">1/3</div>
+              <div class="w-12 h-12 bg-amber-400 border border-slate-700 rounded-tr-full flex items-center justify-center text-xs font-black">1/3</div>
+              <div class="w-12 h-12 bg-amber-400 border border-slate-700 rounded-tr-full flex items-center justify-center text-xs font-black">1/3</div>
+              <span class="body-24 font-bold text-amber-900 ml-2 self-center">➔ 滿 1 整張</span>
+            </div>
+            <div class="flex gap-1.5 p-3 bg-amber-100 rounded-2xl border-2 border-amber-300">
+              <div class="w-12 h-12 bg-amber-400 border border-slate-700 rounded-tr-full flex items-center justify-center text-xs font-black">1/3</div>
+              <div class="w-12 h-12 bg-amber-400 border border-slate-700 rounded-tr-full flex items-center justify-center text-xs font-black">1/3</div>
+              <div class="w-12 h-12 bg-amber-400 border border-slate-700 rounded-tr-full flex items-center justify-center text-xs font-black">1/3</div>
+              <span class="body-24 font-bold text-amber-900 ml-2 self-center">➔ 又 1 整張</span>
+            </div>
+          </div>
+        `,
+        solution: "【解說】3個 1/3 張薄餅可以拼成 1 張完整的薄餅。<br>6 ÷ 3 ＝ <b>2</b>。<br>所以 6/3 張薄餅剛好可以拼成 <b>2 張薄餅</b>（剛好整除，是整數）！"
+      },
+      {
+        badge: "情境挑戰 4",
+        title: "11/4 片酥餅也可以說是幾片酥餅？答案用帶分數表示。",
+        hint: "4 個 1/4 片可以湊成 1 片酥餅。算算看 11 片可以湊滿幾片？",
+        render: () => `
+          <div class="flex flex-wrap items-center justify-center gap-4 py-2">
+            <div class="grid grid-cols-2 gap-1 p-2 bg-orange-100 border-2 border-orange-300 rounded-2xl">
+              <div class="w-10 h-10 bg-orange-400 rounded-tl-full flex items-center justify-center text-xs font-black text-white">1/4</div>
+              <div class="w-10 h-10 bg-orange-400 rounded-tr-full flex items-center justify-center text-xs font-black text-white">1/4</div>
+              <div class="w-10 h-10 bg-orange-400 rounded-bl-full flex items-center justify-center text-xs font-black text-white">1/4</div>
+              <div class="w-10 h-10 bg-orange-400 rounded-br-full flex items-center justify-center text-xs font-black text-white">1/4</div>
+            </div>
+            <div class="grid grid-cols-2 gap-1 p-2 bg-orange-100 border-2 border-orange-300 rounded-2xl">
+              <div class="w-10 h-10 bg-orange-400 rounded-tl-full flex items-center justify-center text-xs font-black text-white">1/4</div>
+              <div class="w-10 h-10 bg-orange-400 rounded-tr-full flex items-center justify-center text-xs font-black text-white">1/4</div>
+              <div class="w-10 h-10 bg-orange-400 rounded-bl-full flex items-center justify-center text-xs font-black text-white">1/4</div>
+              <div class="w-10 h-10 bg-orange-400 rounded-br-full flex items-center justify-center text-xs font-black text-white">1/4</div>
+            </div>
+            <div class="grid grid-cols-2 gap-1 p-2 bg-orange-50 border-2 border-dashed border-orange-300 rounded-2xl">
+              <div class="w-10 h-10 bg-orange-400 rounded-tl-full flex items-center justify-center text-xs font-black text-white">1/4</div>
+              <div class="w-10 h-10 bg-orange-400 rounded-tr-full flex items-center justify-center text-xs font-black text-white">1/4</div>
+              <div class="w-10 h-10 bg-orange-400 rounded-bl-full flex items-center justify-center text-xs font-black text-white">1/4</div>
+              <div class="w-10 h-10 bg-slate-200 rounded-br-full opacity-30"></div>
+            </div>
+          </div>
+        `,
+        solution: "【解說】用除法來計算：11 ÷ 4 ＝ <b>2 ... 餘 3</b>。<br>商數 2 代表可以湊滿 2 片酥餅；餘數 3 代表還剩下 3 個 1/4 片。<br>答案用帶分數寫成 <b>2又3/4 片酥餅</b>！"
+      },
+      {
+        badge: "情境挑戰 5",
+        title: "1盒水梨有 8 個，30/8 盒水梨也可以說是幾盒水梨？答案用帶分數表示。",
+        hint: "每盒裝 8 顆，現在有 30 顆水梨！",
+        render: () => `
+          <div class="flex flex-wrap items-center justify-center gap-3 py-2">
+            <div class="grid grid-cols-4 gap-1 p-2 bg-emerald-50 border-2 border-emerald-300 rounded-xl">
+              <div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div>
+              <div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div>
+              <span class="col-span-4 text-xs font-bold text-center text-emerald-800">第1盒滿 (8/8)</span>
+            </div>
+            <div class="grid grid-cols-4 gap-1 p-2 bg-emerald-50 border-2 border-emerald-300 rounded-xl">
+              <div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div>
+              <div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div>
+              <span class="col-span-4 text-xs font-bold text-center text-emerald-800">第2盒滿 (8/8)</span>
+            </div>
+            <div class="grid grid-cols-4 gap-1 p-2 bg-emerald-50 border-2 border-emerald-300 rounded-xl">
+              <div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div>
+              <div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div>
+              <span class="col-span-4 text-xs font-bold text-center text-emerald-800">第3盒滿 (8/8)</span>
+            </div>
+            <div class="grid grid-cols-4 gap-1 p-2 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl">
+              <div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl">🍐</div>
+              <div class="text-xl">🍐</div><div class="text-xl">🍐</div><div class="text-xl opacity-30">⚪</div><div class="text-xl opacity-30">⚪</div>
+              <span class="col-span-4 text-xs font-bold text-center text-slate-600">第4盒裝6顆 (6/8)</span>
+            </div>
+          </div>
+        `,
+        solution: "【解說】1盒有8個，30個水梨用除法算算看：<br>30 ÷ 8 ＝ <b>3 ... 餘 6</b>。<br>表示可以裝滿整整 3 盒，還剩下 6 個（也就是 6/8 盒）。<br>所以合起來是 <b>3又6/8 盒水梨</b>！"
+      }
+    ];
+
+    function switchStageMode(mode) {
+      playSound('click');
+      const btn1 = document.getElementById('subStageBtn1');
+      const btn2 = document.getElementById('subStageBtn2');
+      const secA = document.getElementById('stageModeSection');
+      const secB = document.getElementById('frogModeSection');
+
+      if (mode === 'stages') {
+        btn1.className = "candy-btn px-4 py-2 rounded-xl body-24 font-bold bg-amber-500 text-white shadow";
+        btn2.className = "candy-btn px-4 py-2 rounded-xl body-24 font-bold bg-slate-100 text-slate-700 hover:bg-slate-200";
+        secA.classList.remove('hidden');
+        secA.classList.add('flex');
+        secB.classList.add('hidden');
+        secB.classList.remove('flex');
+        loadBookStage(currentBookStageIndex);
+      } else {
+        btn2.className = "candy-btn px-4 py-2 rounded-xl body-24 font-bold bg-emerald-500 text-white shadow";
+        btn1.className = "candy-btn px-4 py-2 rounded-xl body-24 font-bold bg-slate-100 text-slate-700 hover:bg-slate-200";
+        secB.classList.remove('hidden');
+        secB.classList.add('flex');
+        secA.classList.add('hidden');
+        secA.classList.remove('flex');
+        renderNumberLine();
+      }
+    }
+
+    function loadBookStage(index) {
+      playSound('click');
+      currentBookStageIndex = index;
+      const data = bookStagesData[index];
+
+      for (let i = 0; i < bookStagesData.length; i++) {
+        const btn = document.getElementById(`stageTab${i}`);
+        btn.className = (i === index)
+          ? "stage-tab-btn candy-btn px-4 py-1.5 rounded-xl font-bold body-24 bg-amber-400 text-amber-950 border-2 border-amber-500 shadow-sm shrink-0"
+          : "stage-tab-btn candy-btn px-4 py-1.5 rounded-xl font-bold body-24 bg-white text-slate-700 border border-slate-300 shrink-0";
+      }
+
+      document.getElementById('stageBadge').innerText = data.badge;
+      document.getElementById('stageQuestionText').innerText = data.title;
+      document.getElementById('stageHintText').innerText = data.hint;
+      document.getElementById('stageVisualBox').innerHTML = data.render();
+      document.getElementById('stageSolutionCard').classList.add('hidden');
+      document.getElementById('stageSolutionContent').innerHTML = data.solution;
+    }
+
+    function toggleStageSolution() {
+      playSound('click');
+      document.getElementById('stageSolutionCard').classList.toggle('hidden');
+    }
+
+    /* -------------------------------------------------------------
+       數線小青蛙實作（精確計算 Y 軸座標：青蛙在上方，數字在下方，絕不碰線）
+       ------------------------------------------------------------- */
+    let currentPartitions = 4;
+    let currentFrogStep = 5;
+
+    function setLinePartitions(parts) {
+      playSound('click');
+      currentPartitions = parts;
+      document.querySelectorAll('.partition-btn').forEach(b => {
+        b.className = b.innerText.includes(`${parts}`)
+          ? "partition-btn candy-btn px-4 py-1.5 rounded-xl body-24 font-bold bg-emerald-500 text-white border border-emerald-600 shadow-sm"
+          : "partition-btn candy-btn px-4 py-1.5 rounded-xl body-24 font-bold bg-white text-slate-700 border border-slate-300";
+      });
+      renderNumberLine();
+    }
+
+    function renderNumberLine() {
+      const container = document.getElementById('ticksContainer');
+      container.innerHTML = '';
+      const totalSteps = 3 * currentPartitions;
+      if (currentFrogStep > totalSteps) currentFrogStep = totalSteps;
+
+      for (let s = 0; s <= totalSteps; s++) {
+        const isWhole = s % currentPartitions === 0;
+        const percent = (s / totalSteps) * 100;
+
+        const tickWrapper = document.createElement('div');
+        tickWrapper.style.position = 'absolute';
+        tickWrapper.style.left = `${percent}%`;
+        tickWrapper.style.top = '0';
+        tickWrapper.style.bottom = '0';
+        tickWrapper.className = "w-0 flex flex-col items-center pointer-events-auto cursor-pointer group";
+
+        // 垂直刻度線：貫穿 Y: 75px 主軸 (整數高 24px: 63~87px; 分數高 14px: 68~82px)
+        const tickLine = document.createElement('div');
+        tickLine.style.position = 'absolute';
+        tickLine.style.top = isWhole ? '63px' : '68px';
+        tickLine.className = isWhole 
+          ? "w-1 h-6 bg-slate-900 rounded-full transition-all group-hover:bg-emerald-500 -ml-0.5" 
+          : "w-0.5 h-3.5 bg-slate-400 rounded-full transition-all group-hover:bg-emerald-400";
+        tickWrapper.appendChild(tickLine);
+
+        // 數字卡片：固定在 top: 110px（與 75px 主軸距離 35px，絕不碰線！）
+        const labelCard = document.createElement('div');
+        labelCard.style.position = 'absolute';
+        labelCard.style.top = '106px';
+        labelCard.className = `number-line-card -translate-x-1/2 flex flex-col items-center justify-center group-hover:scale-105 ${
+          isWhole ? 'whole-card px-2.5 py-1 min-w-[36px]' : 'px-1.5 py-1 min-w-[30px] text-slate-700 text-xs font-bold'
+        }`;
+
+        if (isWhole) {
+          labelCard.innerHTML = `<span class="body-24 text-2xl font-black text-amber-950 leading-none">${s / currentPartitions}</span>`;
+        } else {
+          labelCard.innerHTML = `
+            <span class="math-fraction text-sm leading-tight">
+              <span class="numerator">${s}</span>
+              <span class="denominator">${currentPartitions}</span>
+            </span>
+          `;
+        }
+        tickWrapper.appendChild(labelCard);
+
+        tickWrapper.onclick = () => setFrogPosition(s);
+        container.appendChild(tickWrapper);
+      }
+
+      updateFrogVisual();
+    }
+
+    function setFrogPosition(step) {
+      playSound('click');
+      currentFrogStep = step;
+      updateFrogVisual();
+    }
+
+    function randomFrogJump() {
+      const totalSteps = 3 * currentPartitions;
+      const rand = Math.floor(Math.random() * (totalSteps + 1));
+      setFrogPosition(rand);
+    }
+
+    function updateFrogVisual() {
+      const totalSteps = 3 * currentPartitions;
+      const percent = (currentFrogStep / totalSteps) * 100;
+
+      // 1. 青蛙游標（依據 left: 6px ~ right: 6px 的有效寬度內移動）
+      const frogMarker = document.getElementById('frogMarker');
+      if (frogMarker) frogMarker.style.left = `calc(24px + (100% - 48px) * ${currentFrogStep / totalSteps})`;
+
+      // 2. 主軸定位紅點
+      const dotMarker = document.getElementById('axisDotMarker');
+      if (dotMarker) dotMarker.style.left = `calc(24px + (100% - 48px) * ${currentFrogStep / totalSteps})`;
+
+      const frogBadge = document.getElementById('frogBadge');
+      const whole = Math.floor(currentFrogStep / currentPartitions);
+      const rem = currentFrogStep % currentPartitions;
+
+      let fractionText = "";
+      if (rem === 0) {
+        fractionText = `${whole}`;
+      } else if (whole === 0) {
+        fractionText = `${rem}/${currentPartitions}`;
+      } else {
+        fractionText = `${whole}又${rem}/${currentPartitions}`;
+      }
+
+      if (frogBadge) frogBadge.innerText = `${currentFrogStep}/${currentPartitions} (${fractionText})`;
+      document.getElementById('frogCurrentPosBadge').innerText = 
+        `目前位置: ${currentFrogStep}/${currentPartitions} ＝ ${fractionText}`;
+
+      document.getElementById('numberLineExplainTitle').innerText = 
+        `小青蛙跳了 ${currentFrogStep} 步，每一步等於 1/${currentPartitions}`;
+
+      if (currentFrogStep === 0) {
+        document.getElementById('numberLineExplainSub').innerText = `現在位於起點整數 0！`;
+      } else if (rem === 0) {
+        document.getElementById('numberLineExplainSub').innerHTML = 
+          `剛好落在整數 <span class="font-black text-emerald-800">${whole}</span> 的刻度上！`;
+      } else if (whole === 0) {
+        document.getElementById('numberLineExplainSub').innerHTML = 
+          `這是【真分數】，數值比 1 小，位於 0 與 1 之間！`;
+      } else {
+        document.getElementById('numberLineExplainSub').innerHTML = 
+          `假分數是 <span class="font-black text-sky-700">${currentFrogStep}/${currentPartitions}</span>，化成帶分數是 <span class="font-black text-purple-700">${whole}又${rem}/${currentPartitions}</span>，落在整數 ${whole} 和 ${whole + 1} 之間！`;
+      }
+    }
+
+    /* ==========================================================================
+       6. 學生浮動計算草稿板繪圖核心引擎 (支援滑鼠、觸控、方格背景與拖曳)
+       ========================================================================== */
+    let padCanvas, padCtx;
+    let isDrawingPad = false;
+    let currentPadColor = '#1e293b';
+    let currentPadLineWidth = 4;
+    let isPadEraser = false;
+    let isGridBg = false;
+
+    function initScratchpad() {
+      padCanvas = document.getElementById('scratchpadCanvas');
+      if (!padCanvas) return;
+      padCtx = padCanvas.getContext('2d');
+      padCtx.lineCap = 'round';
+      padCtx.lineJoin = 'round';
+
+      function getPos(e) {
+        const rect = padCanvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const scaleX = padCanvas.width / rect.width;
+        const scaleY = padCanvas.height / rect.height;
+        return {
+          x: (clientX - rect.left) * scaleX,
+          y: (clientY - rect.top) * scaleY
+        };
+      }
+
+      function startDraw(e) {
+        isDrawingPad = true;
+        const pos = getPos(e);
+        padCtx.beginPath();
+        padCtx.moveTo(pos.x, pos.y);
+      }
+
+      function drawMove(e) {
+        if (!isDrawingPad) return;
+        const pos = getPos(e);
+        padCtx.strokeStyle = isPadEraser ? '#ffffff' : currentPadColor;
+        padCtx.lineWidth = isPadEraser ? 20 : currentPadLineWidth;
+        padCtx.lineTo(pos.x, pos.y);
+        padCtx.stroke();
+      }
+
+      function stopDraw() {
+        if (!isDrawingPad) return;
+        isDrawingPad = false;
+        padCtx.closePath();
+      }
+
+      padCanvas.addEventListener('mousedown', startDraw);
+      padCanvas.addEventListener('mousemove', drawMove);
+      window.addEventListener('mouseup', stopDraw);
+
+      padCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e); }, { passive: false });
+      padCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); drawMove(e); }, { passive: false });
+      padCanvas.addEventListener('touchend', stopDraw);
+
+      // 支援面板視窗拖曳
+      initDraggablePad();
+    }
+
+    function toggleScratchpad() {
+      playSound('click');
+      const pad = document.getElementById('scratchpadBox');
+      if (!pad) return;
+      if (pad.classList.contains('hidden')) {
+        pad.classList.remove('hidden');
+        pad.classList.add('flex');
+        if (!padCtx) initScratchpad();
+      } else {
+        pad.classList.add('hidden');
+        pad.classList.remove('flex');
+      }
+    }
+
+    function setPadColor(color) {
+      playSound('click');
+      isPadEraser = false;
+      currentPadColor = color;
+      document.querySelectorAll('.pad-color-btn').forEach(b => {
+        b.classList.remove('border-amber-500');
+        b.classList.add('border-white');
+      });
+      if (event && event.currentTarget) {
+        event.currentTarget.classList.remove('border-white');
+        event.currentTarget.classList.add('border-amber-500');
+      }
+    }
+
+    function setPadEraser() {
+      playSound('click');
+      isPadEraser = true;
+    }
+
+    function setPadLineWidth(w) {
+      playSound('click');
+      currentPadLineWidth = w;
+    }
+
+    function clearScratchpad() {
+      playSound('click');
+      if (padCtx && padCanvas) {
+        padCtx.clearRect(0, 0, padCanvas.width, padCanvas.height);
+      }
+    }
+
+    function toggleGridPad() {
+      playSound('click');
+      isGridBg = !isGridBg;
+      const wrap = document.getElementById('padCanvasWrapper');
+      wrap.classList.toggle('math-grid-bg', isGridBg);
+    }
+
+    function initDraggablePad() {
+      const pad = document.getElementById('scratchpadBox');
+      const header = document.getElementById('padHeader');
+      let isDragging = false, startX, startY, origX, origY;
+
+      header.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = pad.getBoundingClientRect();
+        origX = rect.left;
+        origY = rect.top;
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        pad.style.left = `${origX + dx}px`;
+        pad.style.top = `${origY + dy}px`;
+        pad.style.bottom = 'auto';
+        pad.style.right = 'auto';
+      });
+
+      window.addEventListener('mouseup', () => { isDragging = false; });
+    }
+
+    /* ==========================================================================
+       7. TAB 4: 終點成效檢核：10 題精選完整小測驗
+       ========================================================================== */
+    const quizData = [
+      {
+        question: "【核心觀念】下列哪一個分數屬於「真分數」？",
+        options: [
+          "A.  4/3",
+          "B.  5/5",
+          "C.  3/7",
+          "D.  1又1/2"
+        ],
+        answer: 2,
+        tip: "真分數的定義是「分子小於分母」，數值小於 1。選項中只有 3/7 的分子(3)小於分母(7)！"
+      },
+      {
+        question: "【色紙情境】3又1/2 張紙是幾個 1/2 張紙？是二分之幾張？",
+        options: [
+          "A.  5 個，5/2 張",
+          "B.  6 個，6/2 張",
+          "C.  7 個，7/2 張",
+          "D.  8 個，8/2 張"
+        ],
+        answer: 2,
+        tip: "每張紙有 2 個 1/2 張，3張紙有 3 × 2 ＝ 6 個，再加半張共有 7 個 1/2 張，就是 7/2 張！"
+      },
+      {
+        question: "【容量情境】2又7/10 公升的水，用假分數表示是多少公升？",
+        options: [
+          "A.  17/10 公升",
+          "B.  27/10 公升",
+          "C.  20/10 公升",
+          "D.  72/10 公升"
+        ],
+        answer: 1,
+        tip: "帶分數化假分數公式：(整數 × 分母) ＋ 分子 ＝ (2 × 10) ＋ 7 ＝ 27，所以是 27/10 公升！"
+      },
+      {
+        question: "【薄餅情境】6/3 張薄餅也可以說是幾張薄餅？",
+        options: [
+          "A.  1 張",
+          "B.  2 張",
+          "C.  3 張",
+          "D.  18 張"
+        ],
+        answer: 1,
+        tip: "6 ÷ 3 ＝ 2。每 3 片可拼成 1 張薄餅，6 片剛好整除拼成整整 2 張！"
+      },
+      {
+        question: "【酥餅情境】將 11/4 片酥餅用帶分數表示，應該是多少片？",
+        options: [
+          "A.  2又3/4 片",
+          "B.  3又1/4 片",
+          "C.  2又1/4 片",
+          "D.  1又7/4 片"
+        ],
+        answer: 0,
+        tip: "11 ÷ 4 ＝ 2 餘 3。商數 2 當作整數部分，餘數 3 當新分子，答案是 2又3/4 片！"
+      },
+      {
+        question: "【離散量情境】1 盒水梨有 8 個，30/8 盒水梨相當於幾盒？（用帶分數表示）",
+        options: [
+          "A.  2又6/8 盒",
+          "B.  3又6/8 盒",
+          "C.  4又2/8 盒",
+          "D.  30 盒"
+        ],
+        answer: 1,
+        tip: "30 ÷ 8 ＝ 3 ... 餘 6。表示可以裝滿 3 盒，還剩下 6 個（6/8 盒），合起來是 3又6/8 盒！"
+      },
+      {
+        question: "【算算看】將帶分數 4又3/8 化成假分數，結果是多少？",
+        options: [
+          "A.  32/8",
+          "B.  35/8",
+          "C.  15/8",
+          "D.  27/8"
+        ],
+        answer: 1,
+        tip: "(整數 × 分母) ＋ 分子 ＝ (4 × 8) ＋ 3 ＝ 32 ＋ 3 ＝ 35，所以是 35/8！"
+      },
+      {
+        question: "【數線探險】數線上一大格平分成 4 等分，小青蛙從 0 往右跳了 5 小步，牠停在哪個位置？",
+        options: [
+          "A.  4/5",
+          "B.  5/4 (也就是 1又1/4)",
+          "C.  2又1/4",
+          "D.  5"
+        ],
+        answer: 1,
+        tip: "每一步是 1/4，跳了 5 步就是 5 個 1/4，也就是 5/4，化為帶分數是 1又1/4！"
+      },
+      {
+        question: "【生活應用題】做一條吐司需要 5/6 包麵粉，如果做了 2 條又 5/6 條吐司，共用了幾包麵粉？（將 2又5/6 化為假分數）",
+        options: [
+          "A.  12/6 包",
+          "B.  15/6 包",
+          "C.  17/6 包",
+          "D.  25/6 包"
+        ],
+        answer: 2,
+        tip: "(2 × 6) ＋ 5 ＝ 12 ＋ 5 ＝ 17，所以是 17/6 包！"
+      },
+      {
+        question: "【概念判斷】關於假分數「5/5」，下列敘述何者完全正確？",
+        options: [
+          "A.  它是真分數，因為分子小於 6",
+          "B.  它是帶分數",
+          "C.  它是假分數，數值剛好等於 1",
+          "D.  它不能畫在數線上"
+        ],
+        answer: 2,
+        tip: "假分數的定義是「分子大於或等於分母」。分子分母相同時也是假分數，且數值等於整數 1！"
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let quizScore = 0;
+    let hasAnsweredCurrent = false;
+
+    function loadQuestion(index) {
+      hasAnsweredCurrent = false;
+      const q = quizData[index];
+      
+      document.getElementById('quizProgressText').innerText = `第 ${index + 1} / 10 題`;
+      document.getElementById('quizProgressBar').style.width = `${((index + 1) / 10) * 100}%`;
+      document.getElementById('questionBadge').innerText = `Q${index + 1}`;
+      document.getElementById('questionText').innerText = q.question;
+
+      document.getElementById('explanationBox').classList.add('hidden');
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = '';
+
+      q.options.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = "quiz-opt-btn candy-btn text-left p-3.5 rounded-2xl border-3 border-slate-200 bg-white hover:border-amber-400 hover:bg-amber-50/50 body-24 font-bold text-slate-800 transition-all flex items-center justify-between shadow-sm min-h-[64px]";
+        btn.innerHTML = `<span>${optText}</span><span class="opt-check text-2xl opacity-0">✔</span>`;
+        btn.onclick = () => selectQuizOption(optIdx, btn);
+        grid.appendChild(btn);
+      });
+    }
+
+    function selectQuizOption(selectedIdx, btnElement) {
+      if (hasAnsweredCurrent) return;
+      hasAnsweredCurrent = true;
+
+      const q = quizData[currentQuestionIndex];
+      const allButtons = document.querySelectorAll('.quiz-opt-btn');
+      const expBox = document.getElementById('explanationBox');
+      const resultIcon = document.getElementById('resultIcon');
+      const resultTitle = document.getElementById('resultTitle');
+      const resultExp = document.getElementById('resultExplanation');
+
+      expBox.classList.remove('hidden');
+
+      if (selectedIdx === q.answer) {
+        playSound('correct');
+        quizScore += 10;
+        btnElement.classList.remove('border-slate-200', 'bg-white');
+        btnElement.classList.add('border-emerald-500', 'bg-emerald-100', 'text-emerald-950');
+        btnElement.querySelector('.opt-check').classList.remove('opacity-0');
+        btnElement.querySelector('.opt-check').innerText = '🎉';
+
+        resultIcon.innerText = '🌟';
+        resultTitle.className = "body-24 font-black text-emerald-700 mb-1";
+        resultTitle.innerText = "太優秀了！完全答對！";
+      } else {
+        playSound('wrong');
+        btnElement.classList.remove('border-slate-200', 'bg-white');
+        btnElement.classList.add('border-rose-400', 'bg-rose-100', 'text-rose-950');
+        btnElement.querySelector('.opt-check').classList.remove('opacity-0');
+        btnElement.querySelector('.opt-check').innerText = '❌';
+
+        allButtons[q.answer].classList.add('border-emerald-500', 'bg-emerald-50');
+
+        resultIcon.innerText = '💡';
+        resultTitle.className = "body-24 font-black text-amber-800 mb-1";
+        resultTitle.innerText = "差一點點，看看老師的觀念小叮嚀：";
+      }
+
+      resultExp.innerHTML = `<span class="font-bold text-slate-800">【新趨勢老師觀念小叮嚀】</span><br>${q.tip}`;
+
+      const nextBtn = document.getElementById('nextQuestionBtn');
+      nextBtn.innerText = (currentQuestionIndex === 9) ? "查看總結算成績 🏆" : "下一題 ➔";
+    }
+
+    function nextQuestion() {
+      playSound('click');
+      if (currentQuestionIndex < 9) {
+        currentQuestionIndex++;
+        loadQuestion(currentQuestionIndex);
+      } else {
+        showQuizSummary();
+      }
+    }
+
+    function showQuizSummary() {
+      playSound('victory');
+      document.getElementById('quizContainer').classList.add('hidden');
+      const summary = document.getElementById('quizSummaryScreen');
+      summary.classList.remove('hidden');
+      summary.classList.add('flex');
+
+      document.getElementById('finalScoreText').innerText = `${quizScore} 分`;
+      let badge = "";
+      if (quizScore === 100) badge = "榮獲稱號：【分數特級全能小魔導師 👑】";
+      else if (quizScore >= 80) badge = "榮獲稱號：【分數實力探險家 🌟】";
+      else if (quizScore >= 60) badge = "榮獲稱號：【分數潛力新星 🌱】";
+      else badge = "榮獲稱號：【再接再厲的分數勇者 🛡️】";
+      document.getElementById('honoraryBadge').innerText = badge;
+    }
+
+    function restartQuiz() {
+      playSound('click');
+      currentQuestionIndex = 0;
+      quizScore = 0;
+      document.getElementById('quizSummaryScreen').classList.remove('flex');
+      document.getElementById('quizSummaryScreen').classList.add('hidden');
+      document.getElementById('quizContainer').classList.remove('hidden');
+      loadQuestion(0);
+    }
+
+    /* ==========================================================================
+       8. 初始化啟動
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      switchConceptStep(1);
+      resetSortingGame();
+      initToolDenButtons();
+      renderToolBoard();
+      loadBookStage(0);
+      renderNumberLine();
+      loadQuestion(0);
+      initScratchpad();
+    });
+  </script>
+</body>
+</html>
