@@ -1,0 +1,78 @@
+- generic [active] [ref=e1]:
+  - link "跳到主要內容" [ref=e2] [cursor=pointer]:
+    - /url: "#home-panel"
+  - banner [ref=e3]:
+    - link "回到首頁" [ref=e4] [cursor=pointer]:
+      - /url: "#home"
+      - img "新趨勢老師人物 Logo" [ref=e5]
+      - generic [ref=e6]:
+        - strong [ref=e7]: 新方法教語文課
+        - generic [ref=e8]: 新趨勢老師設計
+    - tablist "演講分頁" [ref=e9]:
+      - tab "首頁" [selected] [ref=e10] [cursor=pointer]
+      - tab "一站式備課" [ref=e11] [cursor=pointer]
+      - tab "互動教材提示詞" [ref=e12] [cursor=pointer]
+      - tab "總結" [ref=e13] [cursor=pointer]
+  - main [ref=e14]:
+    - tabpanel "首頁" [ref=e15]:
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - paragraph [ref=e18]: 從備課現場出發
+          - heading [level=1] [ref=e19]:
+            - text: AI 備課，
+            - emphasis [ref=e20]: 為什麼還是這麼累？
+          - paragraph [ref=e21]: 先勾出老師真正卡住的地方，再讓工具接手最耗時的那一段。
+        - region [ref=e22]:
+          - generic [ref=e23]:
+            - generic [ref=e24]: "01"
+            - generic [ref=e25]:
+              - paragraph [ref=e26]: PAIN POINTS
+              - heading "AI 備課痛點" [level=2] [ref=e27]
+          - generic [ref=e28]:
+            - generic [ref=e29] [cursor=pointer]:
+              - checkbox "「這個難度適合學生嗎？」 難易度與年段嚴重脫鉤。"
+              - generic [aria-hidden] [ref=e30]: ✓
+              - generic [ref=e31]:
+                - strong [ref=e32]: 「這個難度適合學生嗎？」
+                - generic [ref=e33]: 難易度與年段嚴重脫鉤。
+            - generic [ref=e34] [cursor=pointer]:
+              - checkbox "「一本正經的瞎掰？」 查核與除錯時間比自己出題還久。"
+              - generic [aria-hidden] [ref=e35]: ✓
+              - generic [ref=e36]:
+                - strong [ref=e37]: 「一本正經的瞎掰？」
+                - generic [ref=e38]: 查核與除錯時間比自己出題還久。
+            - generic [ref=e39] [cursor=pointer]:
+              - checkbox "「要下什麼提示詞？」 不知如何下精準指令的提示詞焦慮。"
+              - generic [aria-hidden] [ref=e40]: ✓
+              - generic [ref=e41]:
+                - strong [ref=e42]: 「要下什麼提示詞？」
+                - generic [ref=e43]: 不知如何下精準指令的提示詞焦慮。
+            - generic [ref=e44] [cursor=pointer]:
+              - checkbox "「如何變成可以使用的內容？」 不知道如何快速轉變成教材。"
+              - generic [aria-hidden] [ref=e45]: ✓
+              - generic [ref=e46]:
+                - strong [ref=e47]: 「如何變成可以使用的內容？」
+                - generic [ref=e48]: 不知道如何快速轉變成教材。
+        - region [ref=e49]:
+          - generic [ref=e50]:
+            - generic [ref=e51]: "02"
+            - generic [ref=e52]:
+              - paragraph [ref=e53]: THE GAP
+              - heading "如何解決 AI 備課痛點？" [level=2] [ref=e54]
+          - generic "兩階段解決路徑" [ref=e55]:
+            - article [ref=e56]:
+              - generic [ref=e57]: "01"
+              - generic [ref=e58]:
+                - heading "Gemini、NotebookLM" [level=3] [ref=e59]
+                - paragraph [ref=e60]: 工具很強，但還是要自己下提示詞。
+            - generic [aria-hidden] [ref=e61]: ↘
+            - article [ref=e62]:
+              - generic [ref=e63]: "02"
+              - generic [ref=e64]:
+                - paragraph [ref=e65]: 補上關鍵缺口
+                - heading "一站式的國語備課" [level=3] [ref=e66]
+                - paragraph [ref=e67]: 選好教材後自行貼上課文，勾選學習重點與備課任務，立即得到可直接交給 AI 的完整提示詞。
+          - button "進入一站式備課 →" [ref=e68] [cursor=pointer]
+  - contentinfo [ref=e69]:
+    - generic [ref=e70]: 新
+    - paragraph [ref=e71]: 新趨勢老師設計｜讓備課更快，把專業留在課堂裡。
