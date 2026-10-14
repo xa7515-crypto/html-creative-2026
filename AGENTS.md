@@ -24,8 +24,8 @@
 | 層級 | 平台 | 位置 | 讀取時機 |
 |------|------|------|---------|
 | L1 | 本地（雲端硬碟資料夾） | `AGENTS.md`＋`handoff.md` | 每個 session |
-| L2 | GitHub | xa7515-crypto/html-creative-2026（私有，建置中） | 指定時 |
-| L3 | Obsidian | 2026html創作學習/專案工作流程.md（建置中） | 有需要時 |
+| L2 | GitHub | xa7515-crypto/html-creative-2026（私有） | 指定時 |
+| L3 | Obsidian | 2026html創作學習/專案工作流程.md | 有需要時 |
 
 ## 工作約定
 - 任何 Agent、任何電腦：**開工先讀 `handoff.md`，收工必更新 `handoff.md`**
