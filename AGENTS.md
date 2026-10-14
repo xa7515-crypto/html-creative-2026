@@ -14,9 +14,13 @@
 - [ ] 階段二：完成一份可上線的教學用網頁教材
 
 ## 資料夾結構
-<!-- 2026-10-14 初始化時掃描生成 -->
+<!-- 2026-10-14 初始化時掃描生成；2026-10-14 匯入朋友 lesson-prep-public 純前端站台並改為新趨勢老師品牌 -->
 - `AGENTS.md` — 專案藍圖（本檔）
 - `handoff.md` — 交接檔（開工必讀、收工必更新）
+- `index.html`、`styles.css`、`script.js` — 國語備課站台（新趨勢老師品牌，原作者 sunny680228）
+- `public-data.js`、`learning-focus-data.js` — 教材索引與學習重點資料
+- `assets/` — 頭像等素材（`my-avatar.png` 待補）
+- `.nojekyll` — GitHub Pages 設定
 - `.git/` — Git 版本控制（L2：GitHub 私有 repo）
 
 ## 同步層級（本專案初始化至第 3 層級）
