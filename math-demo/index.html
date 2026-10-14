@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>四年級數學 (4上) 互動學習入口 | 南一・康軒・翰林通用版</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2357466f'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='serif'%3E%E6%96%B0%3C/text%3E%3C/svg%3E">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    body {
+      background-color: #FAF8F5;
+      color: #3F4448;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* 海報主標題 28~32 號字體 */
+    .poster-heading {
+      font-family: 'Zen Maru Gothic', 'ZCOOL KuaiLe', cursive, sans-serif;
+      font-size: clamp(28px, 3.8vw, 32px);
+      font-weight: 900;
+      letter-spacing: 0.04em;
+    }
+
+    /* 單元核心主題名稱 36 號字體 */
+    .unit-title-36 {
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-size: clamp(28px, 3.2vw, 36px);
+      line-height: 1.25;
+      font-weight: 900;
+      letter-spacing: 0.01em;
+    }
+
+    /* 浮動數學童趣符號動畫 */
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-7px) rotate(3deg); }
+    }
+    .animate-float {
+      animation: gentleFloat 4.5s ease-in-out infinite;
+    }
+    .animate-float-delay {
+      animation: gentleFloat 5.2s ease-in-out 1.8s infinite;
+    }
+
+    /* 卡片互動動態 */
+    .unit-card {
+      transition: all 0.25s cubic-bezier(0.34, 1.3, 0.64, 1);
+    }
+    .unit-card:hover {
+      transform: translateY(-5px);
+    }
+
+    /* 自訂平滑捲軸 */
+    ::-webkit-scrollbar {
+      width: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F4EFEA;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D8CCC4;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen relative flex flex-col justify-between selection:bg-rose-200">
+
+  <!-- 背景柔和淡彩數學裝飾元素 -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-20">
+    <div class="absolute top-10 left-8 text-amber-500 text-5xl animate-float font-black">＋</div>
+    <div class="absolute top-28 right-12 text-rose-400 text-5xl animate-float-delay font-black">×</div>
+    <div class="absolute top-2/3 left-6 text-sky-400 text-5xl animate-float font-black">÷</div>
+    <div class="absolute bottom-16 right-10 text-emerald-400 text-5xl animate-float-delay font-black">＝</div>
+    <div class="absolute top-1/4 right-1/4 w-40 h-40 rounded-full bg-amber-100 filter blur-2xl"></div>
+    <div class="absolute bottom-1/4 left-1/4 w-48 h-48 rounded-full bg-rose-100 filter blur-2xl"></div>
+  </div>
+
+  <div class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-10 flex-1">
+    
+    <!-- 頁面標題（無南一版，改為通用版海報體） -->
+    <header class="text-center mb-8 sm:mb-10">
+      <h1 class="poster-heading text-[#3F4448] flex items-center justify-center flex-wrap gap-2 sm:gap-3">
+        <span class="text-[#E11D48] drop-shadow-sm">四年級數學 (4上)</span>
+        <span class="text-[#0284C7] drop-shadow-sm">互動學習入口</span>
+      </h1>
+
+      <!-- 通用版與設計者標籤 -->
+      <div class="mt-3 flex items-center justify-center flex-wrap gap-2">
+        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200 shadow-xs">
+          <i class="fa-solid fa-book-open text-amber-600"></i> 南一 ‧ 康軒 ‧ 翰林 三版本通用
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 text-xs sm:text-sm font-bold text-gray-700 shadow-xs border border-stone-200">
+          <i class="fa-solid fa-chalkboard-user text-rose-400"></i> 設計：新趨勢老師
+        </span>
+        <button id="refreshBtn" onclick="syncFromGoogleSheet(true)" title="立即檢查試算表更新" class="w-7 h-7 rounded-full bg-white/90 text-stone-500 hover:text-stone-800 border border-stone-200 flex items-center justify-center text-xs shadow-xs transition-transform active:scale-95">
+          <i id="refreshIcon" class="fa-solid fa-rotate-right"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- 十個主題單元卡片列表 -->
+    <main>
+      <div id="unitGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-5">
+        <!-- 單元卡片由 JavaScript 動態生成 -->
+      </div>
+    </main>
+
+  </div>
+
+  <!-- 頁面頁尾 -->
+  <footer class="relative z-10 w-full py-4 text-center text-xs text-stone-400">
+    <p>國小四年級數學 (4上) ‧ 南一 / 康軒 / 翰林 通用對照互動入口</p>
+  </footer>
+
+  <!-- 未完成單元提示彈窗 -->
+  <div id="noticeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/30 backdrop-blur-sm hidden">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border border-stone-200">
+      <div class="w-16 h-16 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center text-3xl mx-auto mb-3">
+        <i class="fa-solid fa-seedling"></i>
+      </div>
+      <span class="text-xs font-bold text-stone-500 bg-stone-100 px-3 py-1 rounded-full">未完成 ‧ 籌備中</span>
+      <h3 id="noticeTitle" class="text-2xl font-black text-stone-800 mt-3">單元名稱</h3>
+      <div id="noticeDesc" class="text-xs sm:text-sm text-stone-600 mt-2 leading-relaxed">
+        <!-- 彈窗內容 -->
+      </div>
+      <div class="mt-6">
+        <button onclick="closeNoticeModal()" class="w-full py-2.5 bg-stone-700 hover:bg-stone-800 text-white font-bold rounded-2xl text-xs sm:text-sm transition-all shadow-sm">
+          好，我先學習其他單元
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 提示 Toast -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-stone-800/95 text-white text-xs sm:text-sm px-4 py-2 rounded-2xl shadow-xl backdrop-blur-sm border border-white/10 transform transition-all duration-300 opacity-0 pointer-events-none translate-y-3 flex items-center gap-2">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+    <span id="toastMsg">訊息內容</span>
+  </div>
+
+  <script>
+    const SPREADSHEET_ID = "1UPKM8c9KwckyU8OfCMLE8f5ttUtBW4LR4K9zSHIty5g";
+
+    // 10 個單元的淡色明亮莫蘭迪配色方案
+    const UNIT_PALETTES = [
+      {
+        bg: "bg-[#FFF6ED]",
+        border: "border-[#FED7AA]",
+        hoverBorder: "hover:border-[#FB923C]",
+        badgeBg: "bg-[#FFEDD5] text-[#9A3412]",
+        titleColor: "text-[#9A3412]",
+        btnBg: "bg-[#FB923C] text-white hover:bg-[#F97316]",
+        icon: "fa-solid fa-coins"
+      },
+      {
+        bg: "bg-[#FFF0F5]",
+        border: "border-[#FBCFE8]",
+        hoverBorder: "hover:border-[#F472B6]",
+        badgeBg: "bg-[#FCE7F3] text-[#9D174D]",
+        titleColor: "text-[#9D174D]",
+        btnBg: "bg-[#F472B6] text-white hover:bg-[#EC4899]",
+        icon: "fa-solid fa-xmark"
+      },
+      {
+        bg: "bg-[#FEFCE8]",
+        border: "border-[#FEF08A]",
+        hoverBorder: "hover:border-[#FACC15]",
+        badgeBg: "bg-[#FEF9C3] text-[#854D0E]",
+        titleColor: "text-[#854D0E]",
+        btnBg: "bg-[#FACC15] text-[#713F12] hover:bg-[#EAB308]",
+        icon: "fa-solid fa-shapes"
+      },
+      {
+        bg: "bg-[#F0FDF4]",
+        border: "border-[#BBF7D0]",
+        hoverBorder: "hover:border-[#4ADE80]",
+        badgeBg: "bg-[#DCFCE7] text-[#166534]",
+        titleColor: "text-[#166534]",
+        btnBg: "bg-[#4ADE80] text-white hover:bg-[#22C55E]",
+        icon: "fa-solid fa-divide"
+      },
+      {
+        bg: "bg-[#F0F9FF]",
+        border: "border-[#BAE6FD]",
+        hoverBorder: "hover:border-[#38BDF8]",
+        badgeBg: "bg-[#E0F2FE] text-[#075985]",
+        titleColor: "text-[#075985]",
+        btnBg: "bg-[#38BDF8] text-white hover:bg-[#0EA5E9]",
+        icon: "fa-solid fa-draw-polygon"
+      },
+      {
+        bg: "bg-[#FAF5FF]",
+        border: "border-[#E9D5FF]",
+        hoverBorder: "hover:border-[#C084FC]",
+        badgeBg: "bg-[#F3E8FF] text-[#6B21A8]",
+        titleColor: "text-[#6B21A8]",
+        btnBg: "bg-[#C084FC] text-white hover:bg-[#A855F7]",
+        icon: "fa-solid fa-percent"
+      },
+      {
+        bg: "bg-[#ECFEFF]",
+        border: "border-[#A5F3FC]",
+        hoverBorder: "hover:border-[#22D3EE]",
+        badgeBg: "bg-[#CFFAFE] text-[#155E75]",
+        titleColor: "text-[#155E75]",
+        btnBg: "bg-[#22D3EE] text-[#083344] hover:bg-[#06B6D4]",
+        icon: "fa-solid fa-diagram-project"
+      },
+      {
+        bg: "bg-[#FFF1F2]",
+        border: "border-[#FECDD3]",
+        hoverBorder: "hover:border-[#FB7185]",
+        badgeBg: "bg-[#FFE4E6] text-[#9F1239]",
+        titleColor: "text-[#9F1239]",
+        btnBg: "bg-[#FB7185] text-white hover:bg-[#F43F5E]",
+        icon: "fa-solid fa-calculator"
+      },
+      {
+        bg: "bg-[#F5F3FF]",
+        border: "border-[#DDD6FE]",
+        hoverBorder: "hover:border-[#A78BFA]",
+        badgeBg: "bg-[#EDE9FE] text-[#5B21B6]",
+        titleColor: "text-[#5B21B6]",
+        btnBg: "bg-[#A78BFA] text-white hover:bg-[#8B5CF6]",
+        icon: "fa-solid fa-circle-dot"
+      },
+      {
+        bg: "bg-[#F0FDFA]",
+        border: "border-[#99F6E4]",
+        hoverBorder: "hover:border-[#2DD4BF]",
+        badgeBg: "bg-[#CCFBF1] text-[#115E59]",
+        titleColor: "text-[#115E59]",
+        btnBg: "bg-[#2DD4BF] text-[#042F2E] hover:bg-[#14B8A6]",
+        icon: "fa-solid fa-ruler-combined"
+      }
+    ];
+
+    // 10 個核心單元基礎設定：嚴格只保留「第 X 單元」，不附帶括號名稱
+    const BASE_UNITS_DATA = [
+      {
+        id: 1,
+        topic: "一億以內的數",
+        nanI: "第 1 單元",
+        kangHsuan: "第 1 單元",
+        hanLin: "第 1 單元",
+        url: "https://gemini.google.com/share/6a82077dd38f?skid=8ea65033-bb0b-429c-a12e-d61366aef8af",
+        status: "active"
+      },
+      {
+        id: 2,
+        topic: "乘法",
+        nanI: "第 2 單元",
+        kangHsuan: "第 2 單元",
+        hanLin: "第 2 單元",
+        url: "https://gemini.google.com/share/95c6546d80f0?skid=2f162640-ac2d-4bc1-8851-1ab446eefee9",
+        status: "active"
+      },
+      {
+        id: 3,
+        topic: "角度",
+        nanI: "第 3 單元",
+        kangHsuan: "第 3 單元",
+        hanLin: "第 3 單元",
+        url: "https://share.gemini.google/JzulLNs4tH7l",
+        status: "active"
+      },
+      {
+        id: 4,
+        topic: "除法",
+        nanI: "第 4 單元",
+        kangHsuan: "第 4 單元",
+        hanLin: "第 6 單元",
+        url: "https://share.gemini.google/evD0osBEKQsu",
+        status: "active"
+      },
+      {
+        id: 5,
+        topic: "三角形",
+        nanI: "第 5 單元",
+        kangHsuan: "第 6 單元",
+        hanLin: "第 7 單元",
+        url: "",
+        status: "upcoming"
+      },
+      {
+        id: 6,
+        topic: "分數",
+        nanI: "第 6 單元",
+        kangHsuan: "第 9 單元",
+        hanLin: "第 4 單元",
+        url: "",
+        status: "upcoming"
+      },
+      {
+        id: 7,
+        topic: "數量關係",
+        nanI: "第 7 單元",
+        kangHsuan: "第 8 單元",
+        hanLin: "第 8 單元",
+        url: "",
+        status: "upcoming"
+      },
+      {
+        id: 8,
+        topic: "整數四則",
+        nanI: "第 8 單元",
+        kangHsuan: "第 8 單元",
+        hanLin: "第 8 單元",
+        url: "",
+        status: "upcoming"
+      },
+      {
+        id: 9,
+        topic: "小數",
+        nanI: "第 9 單元",
+        kangHsuan: "第 7 單元",
+        hanLin: "第 9 單元",
+        url: "",
+        status: "upcoming"
+      },
+      {
+        id: 10,
+        topic: "長度",
+        nanI: "第 10 單元",
+        kangHsuan: "第 5 單元",
+        hanLin: "第 5 單元",
+        url: "",
+        status: "upcoming"
+      }
+    ];
+
+    let currentUnits = JSON.parse(JSON.stringify(BASE_UNITS_DATA));
+
+    // 試算表關鍵字識別
+    const UNIT_KEYWORDS = [
+      { id: 1, keys: ["一億", "數"] },
+      { id: 2, keys: ["乘法", "乘"] },
+      { id: 3, keys: ["角度", "角"] },
+      { id: 4, keys: ["除法", "除"] },
+      { id: 5, keys: ["三角形", "角形"] },
+      { id: 6, keys: ["分數"] },
+      { id: 7, keys: ["數量關係", "數量"] },
+      { id: 8, keys: ["整數四則", "四則"] },
+      { id: 9, keys: ["小數"] },
+      { id: 10, keys: ["長度", "公里"] }
+    ];
+
+    // 渲染卡片
+    function renderUnitGrid() {
+      const container = document.getElementById('unitGrid');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      currentUnits.forEach((unit, index) => {
+        const color = UNIT_PALETTES[index % UNIT_PALETTES.length];
+        const isReady = unit.status === 'active' && unit.url && unit.url.trim() !== '';
+
+        const card = document.createElement('div');
+        card.className = `unit-card ${color.bg} rounded-3xl p-5 border-2 ${color.border} ${color.hoverBorder} shadow-xs flex flex-col justify-between cursor-pointer select-none relative overflow-hidden`;
+        
+        card.onclick = () => handleUnitClick(unit);
+
+        card.innerHTML = `
+          <div>
+            <!-- 卡片頂部：主題序號與狀態 -->
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <span class="text-xs font-black tracking-wide px-2.5 py-0.5 rounded-lg ${color.badgeBg}">
+                主題 0${index + 1}
+              </span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                isReady 
+                  ? 'bg-white/90 text-emerald-700 border border-emerald-300 shadow-xs' 
+                  : 'bg-white/70 text-stone-400 border border-stone-200'
+              }">
+                ${isReady ? '✨ 立即進入' : '⏳ 籌備中'}
+              </span>
+            </div>
+
+            <!-- 單元核心名稱 (36 號大字) -->
+            <div class="my-2">
+              <h2 class="unit-title-36 ${color.titleColor}">
+                ${escapeHtml(unit.topic)}
+              </h2>
+            </div>
+
+            <!-- 三版本單元對照（僅保留第幾單元） -->
+            <div class="mt-3.5 space-y-1.5 text-xs">
+              <div class="flex items-center justify-between bg-white/70 px-3 py-1.5 rounded-xl border border-black/5">
+                <span class="font-extrabold text-[#D97706]">南一：</span>
+                <span class="font-bold text-stone-700">${escapeHtml(unit.nanI)}</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/70 px-3 py-1.5 rounded-xl border border-black/5">
+                <span class="font-extrabold text-[#2563EB]">康軒：</span>
+                <span class="font-bold text-stone-700">${escapeHtml(unit.kangHsuan)}</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/70 px-3 py-1.5 rounded-xl border border-black/5">
+                <span class="font-extrabold text-[#059669]">翰林：</span>
+                <span class="font-bold text-stone-700">${escapeHtml(unit.hanLin)}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 卡片底部狀態列 -->
+          <div class="mt-4 pt-3 border-t border-black/5 flex items-center justify-between">
+            <span class="text-xs font-bold ${isReady ? color.titleColor : 'text-stone-400'} opacity-85">
+              <i class="${escapeHtml(color.icon)} mr-1"></i> ${isReady ? '進入互動' : '未完成'}
+            </span>
+            <div class="w-8 h-8 rounded-xl ${
+              isReady 
+                ? `${color.btnBg} shadow-xs` 
+                : 'bg-stone-200 text-stone-400'
+            } flex items-center justify-center text-xs transition-all">
+              <i class="fa-solid ${isReady ? 'fa-arrow-up-right-from-square' : 'fa-lock'}"></i>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function handleUnitClick(unit) {
+      if (unit.status === 'active' && unit.url && unit.url.trim() !== '') {
+        showToast(`前往【${unit.topic}】學習教材 🚀`);
+        setTimeout(() => {
+          window.open(unit.url, '_blank');
+        }, 180);
+      } else {
+        openNoticeModal(unit.topic, `
+          <div class="mt-2 text-left bg-stone-50 p-3 rounded-xl border border-stone-200 space-y-1.5 text-xs">
+            <div class="flex justify-between"><strong>南一版：</strong><span>${escapeHtml(unit.nanI)}</span></div>
+            <div class="flex justify-between"><strong>康軒版：</strong><span>${escapeHtml(unit.kangHsuan)}</span></div>
+            <div class="flex justify-between"><strong>翰林版：</strong><span>${escapeHtml(unit.hanLin)}</span></div>
+          </div>
+          <p class="mt-3 text-stone-600">老師將在 Google 試算表填入連結，填妥後本單元將會自動解鎖並可點進去學習喔！🌱</p>
+        `);
+      }
+    }
+
+    function parseCSV(text) {
+      const lines = text.split(/\r\n|\n/).filter(line => line.trim() !== '');
+      if (lines.length === 0) return [];
+
+      const result = [];
+      for (let i = 0; i < lines.length; i++) {
+        const row = [];
+        let inQuotes = false;
+        let currentValue = '';
+        const line = lines[i];
+
+        for (let j = 0; j < line.length; j++) {
+          const char = line[j];
+          if (char === '"' || char === "'") {
+            inQuotes = !inQuotes;
+          } else if (char === ',' && !inQuotes) {
+            row.push(currentValue.trim());
+            currentValue = '';
+          } else {
+            currentValue += char;
+          }
+        }
+        row.push(currentValue.trim());
+        result.push(row);
+      }
+      return result;
+    }
+
+    function isUrl(str) {
+      if (!str) return false;
+      return /^https?:\/\/[^\s]+/i.test(str.trim());
+    }
+
+    function parseUnitIndex(text) {
+      if (!text) return -1;
+      const str = text.trim();
+      const cnMap = { "一": 0, "二": 1, "三": 2, "四": 3, "五": 4, "六": 5, "七": 6, "八": 7, "九": 8, "十": 9 };
+
+      const numMatch = str.match(/第?\s*([1-9]|10)\s*單元?/i);
+      if (numMatch) {
+        return parseInt(numMatch[1], 10) - 1;
+      }
+
+      const cnMatch = str.match(/第?\s*([一二三四五六七八九十])\s*單元?/);
+      if (cnMatch && cnMap[cnMatch[1]] !== undefined) {
+        return cnMap[cnMatch[1]];
+      }
+
+      for (let i = 0; i < UNIT_KEYWORDS.length; i++) {
+        for (const k of UNIT_KEYWORDS[i].keys) {
+          if (str.includes(k)) {
+            return i;
+          }
+        }
+      }
+      return -1;
+    }
+
+    // Google 試算表自動同步與解鎖
+    async function syncFromGoogleSheet(isManual = false) {
+      const icon = document.getElementById('refreshIcon');
+      if (icon) icon.classList.add('fa-spin');
+
+      try {
+        const freshUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&_t=${Date.now()}`;
+        const response = await fetch(freshUrl);
+        if (!response.ok) throw new Error("Google Sheet 無法存取");
+
+        const csvText = await response.text();
+        const rows = parseCSV(csvText);
+
+        if (rows && rows.length > 1) {
+          const updated = [...currentUnits];
+          let unlockedCount = 0;
+
+          for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            if (!row || row.length === 0) continue;
+
+            let foundUrl = '';
+            let detectedIndex = -1;
+
+            for (let c = 0; c < row.length; c++) {
+              const cell = (row[c] || '').trim();
+              if (!cell) continue;
+
+              if (isUrl(cell)) {
+                foundUrl = cell;
+              } else {
+                const parsedIdx = parseUnitIndex(cell);
+                if (parsedIdx !== -1 && detectedIndex === -1) {
+                  detectedIndex = parsedIdx;
+                }
+              }
+            }
+
+            let targetIdx = detectedIndex !== -1 ? detectedIndex : (i - 1);
+
+            if (targetIdx >= 0 && targetIdx < updated.length) {
+              if (foundUrl && isUrl(foundUrl)) {
+                const wasUpcoming = updated[targetIdx].status !== 'active';
+                updated[targetIdx].url = foundUrl;
+                updated[targetIdx].status = 'active';
+                if (wasUpcoming && targetIdx >= 4) {
+                  unlockedCount++;
+                }
+              }
+            }
+          }
+
+          currentUnits = updated;
+          renderUnitGrid();
+
+          if (isManual) {
+            showToast("已同步試算表最新單元！✨");
+          } else if (unlockedCount > 0) {
+            showToast(`已自動解鎖 ${unlockedCount} 個新完成單元！🎉`);
+          }
+        }
+      } catch (err) {
+        console.warn("試算表讀取提示：維持現況", err);
+        if (isManual) showToast("已重整單元列表！✨");
+      } finally {
+        if (icon) icon.classList.remove('fa-spin');
+      }
+    }
+
+    function openNoticeModal(title, htmlDesc) {
+      document.getElementById('noticeTitle').innerText = title;
+      if (htmlDesc) {
+        document.getElementById('noticeDesc').innerHTML = htmlDesc;
+      }
+      document.getElementById('noticeModal').classList.remove('hidden');
+    }
+
+    function closeNoticeModal() {
+      document.getElementById('noticeModal').classList.add('hidden');
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = msg;
+
+      toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-3');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-3');
+      }, 2300);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // 初始化與背景監聽
+    window.onload = function () {
+      renderUnitGrid();
+      syncFromGoogleSheet(false);
+
+      // 分頁切換回視窗時自動重新檢查
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          syncFromGoogleSheet(false);
+        }
+      });
+
+      // 每 30 秒自動向試算表輪詢同步一次
+      setInterval(() => {
+        syncFromGoogleSheet(false);
+      }, 30000);
+    };
+  </script>
+</body>
+</html>
